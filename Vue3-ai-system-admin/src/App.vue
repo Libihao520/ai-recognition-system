@@ -4,6 +4,8 @@ import { useUserStore } from '@/stores'
 const userStore = useUserStore()
 </script>
 <template>
+  <router-view></router-view>
+  <hr />
   <test-demo></test-demo>
   <div>
     <el-button>按钮</el-button>
