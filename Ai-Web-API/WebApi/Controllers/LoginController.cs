@@ -34,4 +34,10 @@ public class LoginController:ControllerBase
         });
         return await res;
     }
+
+    [HttpPost]
+    public async Task<ApiResult> add(UserAdd userAdd)
+    {
+        return ResultHelper.Success(await _userService.add(userAdd));
+    }
 }

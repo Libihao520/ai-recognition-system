@@ -8,8 +8,9 @@ const form = ref()
 const register = async () => {
   //注册成功之前，先进行校验
   await form.value.validate()
+  console.log('开始注册')
   await userRegisterService(formModel.value)
-  alert('注册成功')
+  ElMessage.success('注册成功')
   isRegister.value = false
 }
 //用于提交的from数据对象

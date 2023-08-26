@@ -3,6 +3,7 @@ using EFCoreMigrations;
 using Interface;
 using Model.Dto.User;
 using Model.Entitys;
+using Model.Other;
 
 namespace Service;
 
@@ -27,5 +28,20 @@ public class UserService : IUserService
         }
 
         return new UserRes();
+    }
+
+    public async Task<string> add(UserAdd userAdd)
+    {
+        Users user = new Users()
+        {
+            Name = userAdd.username,
+            Password = userAdd.Password,
+            CreateDate = DateTime.Now,
+            CreateUserId = 0,
+            IsDeleted = 0
+        };
+        _context.Users.Add(user);
+        _context.SaveChanges();
+        return "注册成功！";
     }
 }
