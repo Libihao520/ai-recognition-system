@@ -1,8 +1,17 @@
 <script setup>
+import { userRegisterService } from '@/api/user.js'
 import { User, Lock } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 
 const isRegister = ref(true)
+const form = ref()
+const register = async () => {
+  //注册成功之前，先进行校验
+  await form.value.validate()
+  await userRegisterService(formModel.value)
+  alert('注册成功')
+  isRegister.value = false
+}
 //用于提交的from数据对象
 const formModel = ref({
   username: '',
@@ -48,6 +57,7 @@ const rules = {
   <el-row class="login-page">
     <el-col :span="12" class="bg"></el-col>
     <el-col :span="6" :offset="3" class="form">
+      <h1 style="color: rgb(81, 146, 220)">AI识别系统</h1>
       <el-form
         :model="formModel"
         :rules="rules"
@@ -83,7 +93,12 @@ const rules = {
           ></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button class="button" type="primary" auto-insert-space>
+          <el-button
+            @click="register"
+            class="button"
+            type="primary"
+            auto-insert-space
+          >
             注册
           </el-button>
         </el-form-item>
@@ -135,7 +150,7 @@ const rules = {
   background-color: #fff;
   .bg {
     background:
-      url('@/assets/login-box-bg.svg') no-repeat 50% center / 300px auto,
+      url('@/assets/login-box-bg.svg') no-repeat 50% center / 500px auto,
       url('@/assets/login-bg.svg') no-repeat center / cover;
     border-radius: 0 20px 20px 0;
   }
