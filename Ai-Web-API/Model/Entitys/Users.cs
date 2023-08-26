@@ -1,0 +1,19 @@
+using System.ComponentModel.DataAnnotations;
+using Model.Common;
+
+namespace Model.Entitys;
+
+public class Users : IEntity
+{
+    /// <summary>
+    /// 用户名
+    /// </summary>
+    [Required]
+    public string Name { get; set; }
+
+    /// <summary>
+    /// 密码
+    /// </summary>
+    [Required]
+    public string Password { get; set; }
+}
