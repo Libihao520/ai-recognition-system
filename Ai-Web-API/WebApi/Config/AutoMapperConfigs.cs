@@ -1,6 +1,6 @@
 using AutoMapper;
+using Model.Dto.User;
 using Model.Entitys;
-using Model.User;
 
 namespace WebApi.Config;
 
@@ -8,9 +8,9 @@ public class AutoMapperConfigs : Profile
 {
     public AutoMapperConfigs()
     {
+        //左往右
         //用户
-        CreateMap<Users, UserAdd>();
-        CreateMap<UserAdd, Users>();
+        CreateMap<Users, UserRes>();
         
     }
 }
