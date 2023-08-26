@@ -1,9 +1,15 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Model.User;
+namespace Model.Dto.User;
 
 public class UserAdd
 {
+    /// <summary>
+    /// id
+    /// </summary>
+    [Required]
+    public long Id { get; set; }
+
     /// <summary>
     /// 用户名
     /// </summary>
