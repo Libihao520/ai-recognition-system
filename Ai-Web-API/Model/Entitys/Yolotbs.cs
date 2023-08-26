@@ -3,7 +3,7 @@ using Model.Common;
 
 namespace Model.Entitys;
 
-public class yolotb : IEntity
+public class Yolotbs : IEntity
 {
     /// <summary>
     /// 类别
