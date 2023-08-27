@@ -16,21 +16,21 @@ public class LoginController:ControllerBase
         _userService = userService;
         _jwtService = jwtService;
     }
-    [HttpGet]
-    public async Task<ApiResult> GetToken(string name, string password)
+    [HttpPost]
+    public async Task<ApiResult> GetToken(UserReq userReq)
     {
         var res = Task.Run(() =>
         {
-            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(userReq.username) || string.IsNullOrEmpty(userReq.Password))
             {
                 return ResultHelper.Error("参数不能为空");
             }
-            UserRes user = _userService.GetUser(name, password);
+            UserRes user = _userService.GetUser(userReq.username, userReq.Password);
             if (string.IsNullOrEmpty(user.Name))
             {
                 return ResultHelper.Error("账号不存在，用户名或密码错误！");
             }
-            return ResultHelper.Success(_jwtService.GetToken(user));
+            return ResultHelper.Success("登录成功！",_jwtService.GetToken(user));
         });
         return await res;
     }
@@ -38,6 +38,6 @@ public class LoginController:ControllerBase
     [HttpPost]
     public async Task<ApiResult> add(UserAdd userAdd)
     {
-        return ResultHelper.Success(await _userService.add(userAdd));
+        return ResultHelper.Success("添加成功！",await _userService.add(userAdd));
     }
 }
