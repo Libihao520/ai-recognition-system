@@ -1,10 +1,24 @@
 <script setup>
-import { userRegisterService } from '@/api/user.js'
+import { userRegisterService, userLoginService } from '@/api/user.js'
 import { User, Lock } from '@element-plus/icons-vue'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import { useUserStore } from '@/stores'
+import { useRouter } from 'vue-router'
 
-const isRegister = ref(true)
+const isRegister = ref(false)
 const form = ref()
+//登录提交
+const userStore = useUserStore()
+const router = useRouter()
+const login = async () => {
+  await form.value.validate()
+  const res = await userLoginService(formModel.value)
+  console.log(res)
+  userStore.setToken(res.data.data)
+  ElMessage.success('登录成功')
+  router.push('/')
+}
+//注册提交
 const register = async () => {
   //注册成功之前，先进行校验
   await form.value.validate()
@@ -52,6 +66,14 @@ const rules = {
     }
   ]
 }
+//切换的时候，重置表单内容
+watch(isRegister, () => {
+  formModel.value = {
+    username: '',
+    password: '',
+    repassword: ''
+  }
+})
 </script>
 
 <template>
@@ -59,6 +81,7 @@ const rules = {
     <el-col :span="12" class="bg"></el-col>
     <el-col :span="6" :offset="3" class="form">
       <h1 style="color: rgb(81, 146, 220)">AI识别系统</h1>
+      <!-- 注册表单 -->
       <el-form
         :model="formModel"
         :rules="rules"
@@ -109,15 +132,29 @@ const rules = {
           </el-link>
         </el-form-item>
       </el-form>
-      <el-form ref="form" size="large" autocomplete="off" v-else>
+      <!-- 登录表单 -->
+      <el-form
+        :model="formModel"
+        :rules="rules"
+        ref="form"
+        size="large"
+        autocomplete="off"
+        v-else
+      >
         <el-form-item>
           <h1>登录</h1>
         </el-form-item>
-        <el-form-item>
-          <el-input :prefix-icon="User" placeholder="请输入用户名"></el-input>
-        </el-form-item>
-        <el-form-item>
+        <el-form-item prop="username">
           <el-input
+            v-model="formModel.username"
+            :prefix-icon="User"
+            placeholder="请输入用户名"
+          ></el-input>
+        </el-form-item>
+
+        <el-form-item prop="password">
+          <el-input
+            v-model="formModel.password"
             name="password"
             :prefix-icon="Lock"
             type="password"
@@ -131,7 +168,11 @@ const rules = {
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button class="button" type="primary" auto-insert-space
+          <el-button
+            @click="login"
+            class="button"
+            type="primary"
+            auto-insert-space
             >登录</el-button
           >
         </el-form-item>

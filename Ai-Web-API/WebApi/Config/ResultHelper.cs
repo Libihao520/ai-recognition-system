@@ -4,9 +4,9 @@ namespace WebApi.Config;
 
 public class ResultHelper
 {
-    public static ApiResult Success(object res)
+    public static ApiResult Success(string message,object res)
     {
-        return new ApiResult() { code = 0, data = res };
+        return new ApiResult() { code = 0,message = message, data = res };
     }
 
     public static ApiResult Error(string message)
