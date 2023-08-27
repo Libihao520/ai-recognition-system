@@ -1,1 +1,1 @@
-<template>个人详情</template>
+<template>设置头像</template>

@@ -1,1 +1,1 @@
-<template>更换头像</template>
+<template>基本资料</template>
