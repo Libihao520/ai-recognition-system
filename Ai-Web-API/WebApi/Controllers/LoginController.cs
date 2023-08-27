@@ -1,4 +1,6 @@
+using System.IdentityModel.Tokens.Jwt;
 using Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.Dto.User;
 using Model.Other;
@@ -39,5 +41,24 @@ public class LoginController:ControllerBase
     public async Task<ApiResult> add(UserAdd userAdd)
     {
         return ResultHelper.Success("添加成功！",await _userService.add(userAdd));
+    }
+    [HttpGet]
+    [Authorize]
+    public async Task<ApiResult> userinfo( )
+    {
+        //解析token
+        string token = Request.Headers["Authorization"];
+        if (token.StartsWith("Bearer "))
+        {
+            token = token.Substring("Bearer ".Length);
+        }
+        var handler = new JwtSecurityTokenHandler();
+        var jwtToken = handler.ReadJwtToken(token);
+        var nameClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "Name").Value;
+        var userRes = new UserRes()
+        {
+            Name = nameClaim
+        };
+        return ResultHelper.Success("成功！",userRes);
     }
 }
