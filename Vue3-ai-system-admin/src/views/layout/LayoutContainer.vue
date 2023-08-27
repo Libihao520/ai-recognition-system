@@ -14,10 +14,30 @@ import {
 import avatar from '@/assets/default.png'
 import { useUserStore } from '@/stores'
 import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
 const userStore = useUserStore()
+const router = useRouter()
+
 onMounted(() => {
   userStore.getUser()
 })
+
+const handleCommand = async (key) => {
+  if (key === 'logout') {
+    await ElMessageBox.confirm('你确认要退出吗?', '温馨提示', {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+    //退出操作,清除本地信息
+    userStore.removeToken()
+    userStore.setUser({})
+    router.push('/login')
+  } else {
+    router.push(`/user/${key}`)
+  }
+}
 </script>
 
 <template>
@@ -79,14 +99,15 @@ onMounted(() => {
     <el-container>
       <el-header>
         <div>
-          当前用户：<strong>{{ userStore.user.name || 默认值 }}</strong>
+          用户昵称：<strong>{{ userStore.user.name || 默认值 }}</strong>
         </div>
-        <el-dropdown placement="bottom-end">
+        <el-dropdown placement="bottom-end" @command="handleCommand">
           <span class="el-dropdown__box">
             <!-- TODO:头像后续在数据库中添加默认头像至userStore.user.user_pic（base 64） -->
             <el-avatar :src="userStore.user.user_pic || avatar" />
             <el-icon><CaretBottom /></el-icon>
           </span>
+          <!-- 折叠下拉部分 -->
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item command="profile" :icon="User"
