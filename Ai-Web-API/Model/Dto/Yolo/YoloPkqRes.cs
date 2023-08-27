@@ -13,6 +13,11 @@ public class YoloPkqRes
     public int sbjgCount { get; set; }
 
     /// <summary>
+    /// 创建时间
+    /// </summary>
+    public DateTime CreateDate { get; set; }
+
+    /// <summary>
     /// 是否人工审核
     /// </summary>
     public bool IsManualReview { get; set; }

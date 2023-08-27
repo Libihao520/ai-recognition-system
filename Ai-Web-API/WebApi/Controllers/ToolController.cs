@@ -35,7 +35,10 @@ public class ToolController : ControllerBase
             sbzqCount = 10,
             rgmsCount = 10,
             zql = 99.99,
-            zhl = 99.99
+            zhl = 99.99,
+            CreateDate = DateTime.Now,
+            CreateUserId = 0,
+            IsDeleted = 0
         };
 
         _context.Users.Add(user);
