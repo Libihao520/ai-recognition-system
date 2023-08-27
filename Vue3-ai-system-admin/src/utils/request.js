@@ -39,6 +39,7 @@ instance.interceptors.response.use(
       router.push('/login')
     }
     //错误默认情况
+    router.push('/login')
     ElMessage.error(err.response.data.message || '服务异常')
     return Promise.reject(err)
   }
