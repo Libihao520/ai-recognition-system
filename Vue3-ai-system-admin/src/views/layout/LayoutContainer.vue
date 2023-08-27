@@ -12,6 +12,12 @@ import {
   CaretBottom
 } from '@element-plus/icons-vue'
 import avatar from '@/assets/default.png'
+import { useUserStore } from '@/stores'
+import { onMounted } from 'vue'
+const userStore = useUserStore()
+onMounted(() => {
+  userStore.getUser()
+})
 </script>
 
 <template>
@@ -72,10 +78,13 @@ import avatar from '@/assets/default.png'
     </el-aside>
     <el-container>
       <el-header>
-        <div>当前用户：<strong>超级管理员kb哥</strong></div>
+        <div>
+          当前用户：<strong>{{ userStore.user.name || 默认值 }}</strong>
+        </div>
         <el-dropdown placement="bottom-end">
           <span class="el-dropdown__box">
-            <el-avatar :src="avatar" />
+            <!-- TODO:头像后续在数据库中添加默认头像至userStore.user.user_pic（base 64） -->
+            <el-avatar :src="userStore.user.user_pic || avatar" />
             <el-icon><CaretBottom /></el-icon>
           </span>
           <template #dropdown>
@@ -99,7 +108,7 @@ import avatar from '@/assets/default.png'
       <el-main>
         <router-view></router-view>
       </el-main>
-      <el-footer>大事件 ©2023 Created by 黑马程序员</el-footer>
+      <el-footer>AI识别 ©2023 Created by 爱吃香蕉的阿豪</el-footer>
     </el-container>
   </el-container>
 </template>
