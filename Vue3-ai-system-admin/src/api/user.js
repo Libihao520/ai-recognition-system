@@ -6,3 +6,6 @@ export const userRegisterService = ({ username, password, repassword }) =>
 //用户登录接口
 export const userLoginService = ({ username, password }) =>
   request.post('/login/GetToken', { username, password })
+
+//获取用户基本信息
+export const userGetInfoService = () => request.get('/login/userinfo')
