@@ -141,7 +141,7 @@ const handleCommand = async (key) => {
     background-color: #232323;
     &__logo {
       height: 120px;
-      background: url('@/assets/logodes.png') no-repeat center / 120px auto;
+      background: url('@/assets/logoai.png') no-repeat center / 250px auto;
     }
     .el-menu {
       border-right: none;
