@@ -2,6 +2,8 @@
 import { ref } from 'vue'
 import { GetPkqTbService } from '../../api/yolo'
 import { Edit, Delete } from '@element-plus/icons-vue'
+import yoloEdit from './yoloEdit.vue'
+
 const channelList = ref([])
 //转菊花
 const loading = ref(false)
@@ -12,16 +14,29 @@ const getPkqtbList = async () => {
   loading.value = false
 }
 getPkqtbList()
+const yoloEditRef = ref()
+
+//添加逻辑
+const onAddTblist = () => {
+  yoloEditRef.value.open({})
+}
+//编辑逻辑
 const onEditChannel = (row, $index) => {
+  yoloEditRef.value.open({ row })
   console.log(row, $index)
 }
+//删除逻辑
 const onDelChannel = (row, $index) => {
   console.log(row, $index)
 }
 </script>
 <template>
   <page-containel title="皮卡丘识别详情"
-    ><template #extra><el-button>测试按钮</el-button></template>
+    ><template #extra
+      ><el-button type="primary" @click="onAddTblist"
+        >测试按钮</el-button
+      ></template
+    >
     <!-- 表单数据 -->
     <el-table v-loading="loading" :data="channelList" style="width: 100%">
       <el-table-column type="index" label="序号" width="100"></el-table-column>
@@ -50,6 +65,9 @@ const onDelChannel = (row, $index) => {
         </template>
       </el-table-column>
     </el-table>
+
+    <!-- 添加编辑抽屉 -->
+    <yolo-edit ref="yoloEditRef"></yolo-edit>
   </page-containel>
 </template>
 <style lang="scss" scoped></style>
