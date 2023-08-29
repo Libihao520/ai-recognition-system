@@ -1,16 +1,19 @@
 <script setup>
 import { ref } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
+import { PubListPkqTbService } from '@/api/yolo'
 
 //控制抽屉显示隐藏
 const visibleDrawer = ref(false)
 
 //默认表单数据
 const defaultForm = {
+  id: '',
   cls: '',
   sbjgCount: '',
   createDate: '',
-  isManualReview: ''
+  isManualReview: '',
+  cover_img: ''
   // TODO
 }
 
@@ -22,7 +25,32 @@ const formModel = ref({
 const imgUrl = ref('')
 const onUploadFile = (uploadFile) => {
   imgUrl.value = URL.createObjectURL(uploadFile.raw)
+  //将上传的图片保存到formModel，后面提交
+  formModel.value.cover_img = uploadFile.raw
 }
+//提交
+const emit = defineEmits(['sucess'])
+const onSave = async (state) => {
+  if (state == '取消') {
+    visibleDrawer.value = false
+  }
+  const fd = new FormData()
+  for (let key in formModel.value) {
+    fd.append(key, formModel.value[key])
+  }
+  //有id是编辑操作
+  if (formModel.value.id) {
+    console.log('编辑操作')
+  } else {
+    console.log('添加操作')
+    await PubListPkqTbService(fd)
+    ElMessage.success('手动添加数据成功')
+    visibleDrawer.value = false
+    //通知
+    emit('success', 'add')
+  }
+}
+
 const open = (row) => {
   visibleDrawer.value = true
   if (row.id) {
@@ -64,8 +92,8 @@ defineExpose({
         </el-upload>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">保存</el-button>
-        <el-button type="info">取消</el-button>
+        <el-button @click="onSave('已保存')" type="primary">保存</el-button>
+        <el-button @click="onSave('取消')" type="info">取消</el-button>
       </el-form-item>
     </el-form>
   </el-drawer>
