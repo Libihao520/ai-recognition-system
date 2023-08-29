@@ -21,9 +21,9 @@ const onAddTblist = () => {
   yoloEditRef.value.open({})
 }
 //编辑逻辑
-const onEditChannel = (row, $index) => {
-  yoloEditRef.value.open({ row })
-  console.log(row, $index)
+const onEditChannel = (row) => {
+  console.log(row)
+  yoloEditRef.value.open(row)
 }
 //删除逻辑
 const onDelChannel = (row, $index) => {
