@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
-import { PubListPkqTbService } from '@/api/yolo'
+import { PubListPkqTbService, getPkqEditTbService } from '@/api/yolo'
 
 //控制抽屉显示隐藏
 const visibleDrawer = ref(false)
@@ -33,33 +33,38 @@ const emit = defineEmits(['sucess'])
 const onSave = async (state) => {
   if (state == '取消') {
     visibleDrawer.value = false
-  }
-  const fd = new FormData()
-  for (let key in formModel.value) {
-    fd.append(key, formModel.value[key])
-  }
-  //有id是编辑操作
-  if (formModel.value.id) {
-    console.log('编辑操作')
   } else {
-    console.log('添加操作')
-    await PubListPkqTbService(fd)
-    ElMessage.success('手动添加数据成功')
-    visibleDrawer.value = false
-    //通知
-    emit('success', 'add')
+    const fd = new FormData()
+    for (let key in formModel.value) {
+      fd.append(key, formModel.value[key])
+    }
+    //有id是编辑操作
+    if (formModel.value.id) {
+      console.log('编辑保存操作')
+    } else {
+      console.log('添加保存操作')
+      await PubListPkqTbService(fd)
+      ElMessage.success('手动添加数据成功')
+      visibleDrawer.value = false
+      //通知
+      emit('success', 'add')
+    }
   }
 }
-
-const open = (row) => {
+// 父类点击抽屉时传row到这里
+const open = async (row) => {
   visibleDrawer.value = true
+  console.log(row)
   if (row.id) {
     //如果id存在，要发请求获取对应数据，进行回显
+    const res = await getPkqEditTbService(row.id)
+    formModel.value = res.data.data
   } else {
     formModel.value = {
       ...defaultForm
-    }
-    console.log('注册')
+    } //手动重置数据
+    imgUrl.value = ''
+    console.log('添加')
   }
 }
 
