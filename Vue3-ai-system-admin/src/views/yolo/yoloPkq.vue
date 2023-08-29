@@ -29,6 +29,17 @@ const onEditChannel = (row, $index) => {
 const onDelChannel = (row, $index) => {
   console.log(row, $index)
 }
+
+//添加或者编辑成功回调
+const onSuccess = (type) => {
+  if (type === 'add') {
+    //TODO渲染最后一页
+    getPkqtbList()
+  } else {
+    //编辑直接渲染当前页
+    getPkqtbList()
+  }
+}
 </script>
 <template>
   <page-containel title="皮卡丘识别详情"
@@ -67,7 +78,8 @@ const onDelChannel = (row, $index) => {
     </el-table>
 
     <!-- 添加编辑抽屉 -->
-    <yolo-edit ref="yoloEditRef"></yolo-edit>
+    <!-- //success监听 -->
+    <yolo-edit ref="yoloEditRef" @success="onSuccess"></yolo-edit>
   </page-containel>
 </template>
 <style lang="scss" scoped></style>
