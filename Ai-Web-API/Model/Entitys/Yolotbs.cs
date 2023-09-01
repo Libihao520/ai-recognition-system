@@ -12,6 +12,11 @@ public class Yolotbs : IEntity
     public string Cls { get; set; }
 
     /// <summary>
+    /// 照片(base 64)
+    /// </summary>
+    public string Photo { get; set; }
+
+    /// <summary>
     /// 识别结果数量
     /// </summary>
     [Required]
