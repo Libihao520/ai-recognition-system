@@ -14,5 +14,6 @@ public class AutoMapperConfigs : Profile
         CreateMap<Users, UserRes>();
         //yolo
         CreateMap<Yolotbs, YoloPkqRes>();
+        CreateMap<Yolotbs, YoloPkqEditRes>();
     }
 }
