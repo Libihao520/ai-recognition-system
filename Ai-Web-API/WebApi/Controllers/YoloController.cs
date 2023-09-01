@@ -28,7 +28,11 @@ public class YoloController : ControllerBase
     {
         return ResultHelper.Success("获取成功！", _yoloService.getpkqTb());
     }
-    
+    /// <summary>
+    /// 传入照片识别接口，返回照片
+    /// </summary>
+    /// <param name="po"></param>
+    /// <returns></returns>
     [HttpPut]
     public async Task<ApiResult> PutPhoto(PhotoAdd po)
     {
