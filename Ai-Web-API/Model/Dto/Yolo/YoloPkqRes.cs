@@ -3,6 +3,11 @@ namespace Model.Dto.Yolo;
 public class YoloPkqRes
 {
     /// <summary>
+    /// 主键
+    /// </summary>
+    public long Id { get; set; }
+
+    /// <summary>
     /// 类别
     /// </summary>
     public string Cls { get; set; }
