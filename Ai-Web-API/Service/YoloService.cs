@@ -3,12 +3,13 @@ using EFCoreMigrations;
 using Interface;
 using Model.Dto.photo;
 using Model.Dto.Yolo;
+using Model.Entitys;
 using RestSharp;
 using RestSharp.Serializers.NewtonsoftJson;
 
 namespace Service;
 
-public class YoloService:IYoloService
+public class YoloService : IYoloService
 {
     private readonly IMapper _mapper;
     private MyDbContext _context;
@@ -18,10 +19,11 @@ public class YoloService:IYoloService
         _context = context;
         _mapper = mapper;
     }
+
     public List<YoloPkqRes> getpkqTb()
     {
         var yolotb = _context.yolotbs.ToList();
-        var  yoloPkqResList = _mapper.Map<List<YoloPkqRes>>(yolotb);
+        var yoloPkqResList = _mapper.Map<List<YoloPkqRes>>(yolotb);
         return yoloPkqResList;
     }
 
@@ -43,7 +45,27 @@ public class YoloService:IYoloService
         if (po.name == "皮卡丘")
         {
             var response = await client.ExecuteAsync<PhotoRes>(request);
-            return  response.Data.Image_Base64;
+            if (response.Data.Code == 200)
+            {
+                var yolotbs = new Yolotbs()
+                {
+                    Cls = po.name,
+                    sbjgCount = response.Data.result.Count,
+                    IsManualReview = false,
+                    Photo = response.Data.Image_Base64,
+                    sbzqCount = 0,
+                    rgmsCount = 0,
+                    zql = 0,
+                    zhl = 0,
+                    CreateDate = DateTime.Now,
+                    CreateUserId = 0,
+                    IsDeleted = 0
+                };
+                _context.yolotbs.Add(yolotbs);
+                _context.SaveChanges();
+            }
+
+            return response.Data.Image_Base64;
         }
         else
         {
