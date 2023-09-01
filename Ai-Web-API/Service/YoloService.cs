@@ -73,4 +73,16 @@ public class YoloService : IYoloService
             return response.Data.Image_Base64;
         }
     }
+
+    public async Task<YoloPkqEditRes> GetPkqEdtTb(long id)
+    {
+        var yoloTb = await _context.yolotbs.FindAsync(id);
+        if (yoloTb == null)
+        {
+            return null;
+        }
+
+        var yoloPkqEditRes = _mapper.Map<YoloPkqEditRes>(yoloTb);
+        return yoloPkqEditRes;
+    }
 }

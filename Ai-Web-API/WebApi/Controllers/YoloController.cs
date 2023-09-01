@@ -39,4 +39,10 @@ public class YoloController : ControllerBase
 
         return ResultHelper.Success("识别成功！",await _yoloService.PutPhoto(po));
     }
+
+    [HttpGet]
+    public async Task<ApiResult> GetPkqEditTb(long id)
+    {
+        return ResultHelper.Success("获取表单", await _yoloService.GetPkqEdtTb(id));
+    }
 }
