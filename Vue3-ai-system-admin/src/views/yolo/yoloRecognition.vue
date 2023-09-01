@@ -19,9 +19,12 @@ const onUpdateAvatar = async () => {
   if (imgUrl.value) {
     const res = await PutPhotoService(imgUrl.value, name.value)
     console.log(res.data)
-    imgUrl.value = res.data.data
-    // 提示用户
-    ElMessage.success('识别成功')
+    if (res.data.data) {
+      imgUrl.value = res.data.data
+      ElMessage.success('识别成功')
+    } else {
+      ElMessage.error('未识别出目标')
+    }
   } else {
     ElMessage.error('请先上传图片')
   }
