@@ -24,9 +24,9 @@ public class YoloController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    public ApiResult yolopkq()
+    public async Task<ApiResult>  yolopkq()
     {
-        return ResultHelper.Success("获取成功！", _yoloService.getpkqTb());
+        return ResultHelper.Success("获取成功！", await _yoloService.getpkqTb());
     }
     /// <summary>
     /// 传入照片识别接口，返回照片

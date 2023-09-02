@@ -9,7 +9,7 @@ public interface IYoloService
     /// 获取表单
     /// </summary>
     /// <returns></returns>
-    List<YoloPkqRes> getpkqTb();
+    Task<List<YoloPkqRes>> getpkqTb();
 
     /// <summary>
     /// 上传照片识别
