@@ -1,6 +1,7 @@
 using AutoMapper;
 using EFCoreMigrations;
 using Interface;
+using Microsoft.EntityFrameworkCore;
 using Model.Dto.photo;
 using Model.Dto.Yolo;
 using Model.Entitys;
@@ -20,9 +21,9 @@ public class YoloService : IYoloService
         _mapper = mapper;
     }
 
-    public List<YoloPkqRes> getpkqTb()
+    public async Task<List<YoloPkqRes>> getpkqTb()
     {
-        var yolotb = _context.yolotbs.ToList();
+        var yolotb = await _context.yolotbs.ToListAsync();
         var yoloPkqResList = _mapper.Map<List<YoloPkqRes>>(yolotb);
         return yoloPkqResList;
     }
@@ -52,7 +53,6 @@ public class YoloService : IYoloService
                     Cls = po.name,
                     sbjgCount = response.Data.result.Count,
                     IsManualReview = false,
-                    Photo = response.Data.Image_Base64,
                     sbzqCount = 0,
                     rgmsCount = 0,
                     zql = 0,
@@ -61,6 +61,7 @@ public class YoloService : IYoloService
                     CreateUserId = 0,
                     IsDeleted = 0
                 };
+                yolotbs.Photos = new Photos() { Photobase64 = response.Data.Image_Base64 };
                 _context.yolotbs.Add(yolotbs);
                 _context.SaveChanges();
             }
@@ -83,6 +84,8 @@ public class YoloService : IYoloService
         }
 
         var yoloPkqEditRes = _mapper.Map<YoloPkqEditRes>(yoloTb);
+        var photos = _context.Photos.Where(u => u.PhotosId == yoloTb.PhotosId).FirstOrDefault();
+        yoloPkqEditRes.Photo = photos?.Photobase64;
         return yoloPkqEditRes;
     }
 }

@@ -12,17 +12,35 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCoreMigrations.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20230826150333_Init")]
+    [Migration("20230902024643_Init")]
     partial class Init
     {
+        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("ProductVersion", "7.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Model.Entitys.Photos", b =>
+                {
+                    b.Property<long>("PhotosId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("PhotosId"));
+
+                    b.Property<string>("Photobase64")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("PhotosId");
+
+                    b.ToTable("Photos");
+                });
 
             modelBuilder.Entity("Model.Entitys.Users", b =>
                 {
@@ -30,7 +48,7 @@ namespace EFCoreMigrations.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
@@ -60,7 +78,7 @@ namespace EFCoreMigrations.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Cls")
                         .IsRequired()
@@ -77,6 +95,9 @@ namespace EFCoreMigrations.Migrations
 
                     b.Property<bool>("IsManualReview")
                         .HasColumnType("bit");
+
+                    b.Property<long>("PhotosId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("rgmsCount")
                         .HasColumnType("int");
@@ -95,7 +116,20 @@ namespace EFCoreMigrations.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PhotosId");
+
                     b.ToTable("yolotbs");
+                });
+
+            modelBuilder.Entity("Model.Entitys.Yolotbs", b =>
+                {
+                    b.HasOne("Model.Entitys.Photos", "Photos")
+                        .WithMany()
+                        .HasForeignKey("PhotosId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Photos");
                 });
 #pragma warning restore 612, 618
         }
