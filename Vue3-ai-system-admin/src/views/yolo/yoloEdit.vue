@@ -12,9 +12,8 @@ const defaultForm = {
   cls: '',
   sbjgCount: '',
   createDate: '',
-  isManualReview: '',
-  cover_img: ''
-  // TODO
+  photo: '',
+  isManualReview: '' // TODO
 }
 
 //准备数据
@@ -26,7 +25,7 @@ const imgUrl = ref('')
 const onUploadFile = (uploadFile) => {
   imgUrl.value = URL.createObjectURL(uploadFile.raw)
   //将上传的图片保存到formModel，后面提交
-  formModel.value.cover_img = uploadFile.raw
+  formModel.value.photo = uploadFile.raw
 }
 //提交
 const emit = defineEmits(['sucess'])
@@ -54,11 +53,12 @@ const onSave = async (state) => {
 // 父类点击抽屉时传row到这里
 const open = async (row) => {
   visibleDrawer.value = true
-  console.log(row)
   if (row.id) {
     //如果id存在，要发请求获取对应数据，进行回显
     const res = await getPkqEditTbService(row.id)
     formModel.value = res.data.data
+    imgUrl.value = res.data.data.photo
+    console.log(formModel)
   } else {
     formModel.value = {
       ...defaultForm
@@ -82,10 +82,10 @@ defineExpose({
     <!-- l类别框 -->
     <el-form :model="formModel" ref="formRef" label-width="100px">
       <el-form-item label="类别" prop="title">
-        <el-input v-model="formModel.title" placeholder="请输入类别"></el-input>
+        <el-input v-model="formModel.cls" placeholder="请输入类别"></el-input>
       </el-form-item>
       <!-- 图片 -->
-      <el-form-item label="识别图片" prop="cover_img">
+      <el-form-item label="识别图片" prop="photo">
         <el-upload
           class="avatar-uploader"
           :auto-upload="false"
