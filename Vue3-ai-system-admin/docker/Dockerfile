@@ -1,6 +1,7 @@
 # 使用Nginx作为基础镜像
 FROM nginx:stable-alpine
 
+WORKDIR /app
 # 将dist文件夹中的文件复制到Nginx的html文件夹中
 COPY dist/ /usr/share/nginx/html/
 
