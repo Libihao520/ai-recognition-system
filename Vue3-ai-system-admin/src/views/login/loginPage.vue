@@ -192,7 +192,7 @@ watch(isRegister, () => {
   background-color: #fff;
   .bg {
     background:
-      url('@/assets/login-box-bg.svg') no-repeat 50% center / 500px auto,
+      url('@/assets/login.png') no-repeat 50% center / 900px auto,
       url('@/assets/login-bg.svg') no-repeat center / cover;
     border-radius: 0 20px 20px 0;
   }
