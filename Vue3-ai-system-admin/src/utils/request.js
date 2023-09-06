@@ -7,7 +7,7 @@ const baseURL = 'http://localhost:5157/api'
 const instance = axios.create({
   //基础地址，超时时间
   baseURL,
-  timeout: 10000
+  timeout: 200000
 })
 //请求拦截器
 instance.interceptors.request.use(
