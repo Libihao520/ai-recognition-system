@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useUserStore } from '@/stores'
 import { ElMessage } from 'element-plus'
 import router from '../router'
-const baseURL = 'http://localhost:5157/api'
+const baseURL = '/api'
 
 const instance = axios.create({
   //基础地址，超时时间
