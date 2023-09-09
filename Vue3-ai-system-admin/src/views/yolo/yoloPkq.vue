@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { GetPkqTbService } from '../../api/yolo'
 import { Edit, Delete } from '@element-plus/icons-vue'
+import { formatTime } from '@/utils/format.js'
 import yoloEdit from './yoloEdit.vue'
 
 const channelList = ref([])
@@ -53,7 +54,11 @@ const onSuccess = (type) => {
       <el-table-column type="index" label="序号" width="100"></el-table-column>
       <el-table-column prop="cls" label="类别"></el-table-column>
       <el-table-column prop="sbjgCount" label="数量"></el-table-column>
-      <el-table-column prop="createDate" label="时间"></el-table-column>
+      <el-table-column prop="createDate" label="时间">
+        <template #default="{ row }">
+          {{ formatTime(row.createDate) }}
+        </template>
+      </el-table-column>
       <el-table-column prop="isManualReview" label="审核"></el-table-column>
       <el-table-column label="操作" width="150">
         <!-- row就是channelList的一项，$index是下标 -->
