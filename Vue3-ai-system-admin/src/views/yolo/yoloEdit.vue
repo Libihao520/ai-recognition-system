@@ -5,6 +5,8 @@ import { PubListPkqTbService, getPkqEditTbService } from '@/api/yolo'
 
 //控制抽屉显示隐藏
 const visibleDrawer = ref(false)
+//抽屉是添加还是编辑
+const isAdd = ref(true)
 
 //默认表单数据
 const defaultForm = {
@@ -53,17 +55,20 @@ const onSave = async (state) => {
 // 父类点击抽屉时传row到这里
 const open = async (row) => {
   visibleDrawer.value = true
+  //手动重置数据
+  formModel.value = {
+    ...defaultForm
+  }
+  imgUrl.value = ''
   if (row.id) {
+    isAdd.value = false
+
     //如果id存在，要发请求获取对应数据，进行回显
     const res = await getPkqEditTbService(row.id)
     formModel.value = res.data.data
     imgUrl.value = res.data.data.photo
     console.log(formModel)
   } else {
-    formModel.value = {
-      ...defaultForm
-    } //手动重置数据
-    imgUrl.value = ''
     console.log('添加')
   }
 }
@@ -75,7 +80,7 @@ defineExpose({
 <template>
   <el-drawer
     v-model="visibleDrawer"
-    :title="formModel.cls ? '编辑' : '添加'"
+    :title="isAdd ? '手动新增' : '编辑'"
     direction="rtl"
     size="50%"
   >
@@ -83,6 +88,33 @@ defineExpose({
     <el-form :model="formModel" ref="formRef" label-width="100px">
       <el-form-item label="类别" prop="title">
         <el-input v-model="formModel.cls" placeholder="请输入类别"></el-input>
+      </el-form-item>
+      <el-form-item label="数量" prop="title">
+        <el-input
+          v-model="formModel.sbjgCount"
+          placeholder="请输入数量"
+        ></el-input>
+      </el-form-item>
+
+      <el-form-item label="审核" prop="title">
+        <el-input
+          v-model="formModel.isManualReview"
+          placeholder="审核状态"
+        ></el-input>
+      </el-form-item>
+
+      <el-form-item>
+        <div class="block">
+          <span class="demonstration">时间</span>
+          <el-date-picker
+            v-model="formModel.createDate"
+            type="date"
+            placeholder="Pick a day"
+            :disabled-date="disabledDate"
+            :shortcuts="shortcuts"
+            :size="size"
+          />
+        </div>
       </el-form-item>
       <!-- 图片 -->
       <el-form-item label="识别图片" prop="photo">
