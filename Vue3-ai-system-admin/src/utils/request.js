@@ -2,6 +2,7 @@ import axios from 'axios'
 import { useUserStore } from '@/stores'
 import { ElMessage } from 'element-plus'
 import router from '../router'
+
 const baseURL = '/api'
 
 const instance = axios.create({
@@ -36,6 +37,11 @@ instance.interceptors.response.use(
     // 处理401错误
     //错误特殊情况 权限不足，或token过期，拦截到login
     if (err.response?.status === 401) {
+      ElMessage.error('登录已过期，请重新登录！')
+      //返回login,清除本地信息
+      const userStore = useUserStore()
+      userStore.removeToken()
+      userStore.setUser({})
       router.push('/login')
     }
     //错误默认情况
