@@ -43,10 +43,11 @@ instance.interceptors.response.use(
       userStore.removeToken()
       userStore.setUser({})
       router.push('/login')
+    } else {
+      //错误默认情况
+      ElMessage.error(err.response.data.message || '服务异常')
+      return Promise.reject(err)
     }
-    //错误默认情况
-    ElMessage.error(err.response.data.message || '服务异常')
-    return Promise.reject(err)
   }
 )
 
