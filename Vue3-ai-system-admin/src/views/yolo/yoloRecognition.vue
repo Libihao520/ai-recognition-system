@@ -2,6 +2,8 @@
 import { ref } from 'vue'
 import { Plus, Upload } from '@element-plus/icons-vue'
 import { PutPhotoService } from '../../api/yolo'
+
+const loading = ref(false)
 const imgUrl = ref('')
 const uploadRef = ref()
 const onSelectFile = (uploadFile) => {
@@ -17,6 +19,7 @@ const name = ref('皮卡丘')
 const onUpdateAvatar = async () => {
   // 上传图片
   if (imgUrl.value) {
+    loading.value = true
     const res = await PutPhotoService(imgUrl.value, name.value)
     console.log(res.data)
     if (res.data.data) {
@@ -28,6 +31,7 @@ const onUpdateAvatar = async () => {
   } else {
     ElMessage.error('请先上传图片')
   }
+  loading.value = false
 }
 </script>
 <template>
@@ -64,6 +68,7 @@ const onUpdateAvatar = async () => {
       type="success"
       :icon="Upload"
       size="large"
+      v-loading="loading"
       >上传图片</el-button
     >
   </page-container>
