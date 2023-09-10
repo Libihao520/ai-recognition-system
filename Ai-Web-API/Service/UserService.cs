@@ -32,16 +32,24 @@ public class UserService : IUserService
 
     public async Task<string> add(UserAdd userAdd)
     {
-        Users user = new Users()
+        var users = _context.Users.Where(u => u.Name == userAdd.username).FirstOrDefault();
+        if (users == null)
         {
-            Name = userAdd.username,
-            Password = userAdd.Password,
-            CreateDate = DateTime.Now,
-            CreateUserId = 0,
-            IsDeleted = 0
-        };
-        _context.Users.Add(user);
-        _context.SaveChanges();
-        return "注册成功！";
+            Users user = new Users()
+            {
+                Name = userAdd.username,
+                Password = userAdd.Password,
+                CreateDate = DateTime.Now,
+                CreateUserId = 0,
+                IsDeleted = 0
+            };
+            _context.Users.Add(user);
+            _context.SaveChanges();
+            return "注册成功";
+        }
+        else
+        {
+            return "用户已存在";
+        }
     }
 }

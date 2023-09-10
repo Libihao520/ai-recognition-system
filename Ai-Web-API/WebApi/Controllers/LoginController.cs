@@ -40,8 +40,18 @@ public class LoginController:ControllerBase
     [HttpPost]
     public async Task<ApiResult> add(UserAdd userAdd)
     {
-        return ResultHelper.Success("添加成功！",await _userService.add(userAdd));
+        var res = await _userService.add(userAdd);
+        if (res == "注册成功")
+        {
+        return ResultHelper.Success("添加成功！",$"添加成功：{userAdd.username}");
+            
+        }
+        else
+        {
+            return ResultHelper.Error("用户已存在");
+        }
     }
+    
     [HttpGet]
     [Authorize]
     public async Task<ApiResult> userinfo( )
