@@ -24,4 +24,10 @@ public interface IYoloService
     /// <param name="id"></param>
     /// <returns></returns>
     Task<YoloPkqEditRes> GetPkqEdtTb(long id);
+
+    /// <summary>
+    /// 获取数据大屏数据
+    /// </summary>
+    /// <returns></returns>
+    Task<YoloSjdpRes> Getsjdp();
 }

@@ -88,4 +88,19 @@ public class YoloService : IYoloService
         yoloPkqEditRes.Photo = photos?.Photobase64;
         return yoloPkqEditRes;
     }
+
+    public async Task<YoloSjdpRes> Getsjdp()
+    {   
+        var userCount = await _context.Users.CountAsync();
+        var sbcsCount = await _context.yolotbs.CountAsync();
+        var mbslCount = await _context.yolotbs.SumAsync(x => x.sbjgCount);
+        var yoloSjdpRes = new YoloSjdpRes()
+        {
+            userCount=userCount,
+            sbcsCount=sbcsCount,
+            mbslCount=mbslCount,
+            yxslCount=mbslCount,
+        };
+        return yoloSjdpRes;
+    }
 }
