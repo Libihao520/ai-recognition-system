@@ -3,7 +3,7 @@ import { useUserStore } from '@/stores'
 import { ElMessage } from 'element-plus'
 import router from '../router'
 
-const baseURL = '/api'
+const baseURL = 'http://119.3.218.15:5157/api'
 
 const instance = axios.create({
   //基础地址，超时时间
