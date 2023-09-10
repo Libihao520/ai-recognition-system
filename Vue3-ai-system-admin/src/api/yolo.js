@@ -17,4 +17,7 @@ export const PubListPkqTbService = (data) =>
 export const getPkqEditTbService = (id) =>
   request.get('/yolo/GetPkqEditTb', { params: { id } })
 
-//皮卡丘表单编辑，要传id
+// TODO  皮卡丘表单编辑，要传id
+
+//yolo数据大屏获取数据
+export const getYoloSjdpService = () => request.get('/yolo/Getsjdp')
