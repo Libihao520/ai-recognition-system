@@ -31,6 +31,9 @@ if (app.Environment.IsDevelopment())
 //HTTPS 重定向
 // app.UseHttpsRedirection();
 
+//使用跨域策略
+app.UseCors("CorsPolicy");
+
 #region 鉴权授权
 //通过 ASP.NET Core 中配置的授权认证，读取客户端中的身份标识(Cookie,Token等)并解析出来，存储到 context.User 中
 app.UseAuthentication();
@@ -39,8 +42,7 @@ app.UseAuthorization();
 
 #endregion
 
-//使用跨域策略
-app.UseCors("CorsPolicy");
+
 
 app.MapControllers();
 
