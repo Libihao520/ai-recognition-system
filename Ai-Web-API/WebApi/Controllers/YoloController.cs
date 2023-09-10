@@ -24,10 +24,11 @@ public class YoloController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    public async Task<ApiResult>  yolopkq()
+    public async Task<ApiResult> yolopkq()
     {
         return ResultHelper.Success("获取成功！", await _yoloService.getpkqTb());
     }
+
     /// <summary>
     /// 传入照片识别接口，返回照片
     /// </summary>
@@ -36,13 +37,24 @@ public class YoloController : ControllerBase
     [HttpPut]
     public async Task<ApiResult> PutPhoto(PhotoAdd po)
     {
-
-        return ResultHelper.Success("识别成功！",await _yoloService.PutPhoto(po));
+        return ResultHelper.Success("识别成功！", await _yoloService.PutPhoto(po));
     }
 
+    /// <summary>
+    /// 获取表单数据
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet]
     public async Task<ApiResult> GetPkqEditTb(long id)
     {
-        return ResultHelper.Success("获取表单", await _yoloService.GetPkqEdtTb(id));
+        return ResultHelper.Success("获取成功！", await _yoloService.GetPkqEdtTb(id));
+    }
+
+
+    [HttpGet]
+    public async Task<ApiResult> Getsjdp()
+    {
+        return ResultHelper.Success("获取成功！", await _yoloService.Getsjdp());
     }
 }
