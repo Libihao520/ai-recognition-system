@@ -35,9 +35,9 @@ public class YoloController : ControllerBase
     /// <param name="po"></param>
     /// <returns></returns>
     [HttpPut]
-    public async Task<ApiResult> PutPhoto(PhotoAdd po)
+    public async Task<ApiResult> PutPhoto(PhotoAdd po,CancellationToken cancellationToken)
     {
-        return ResultHelper.Success("识别成功！", await _yoloService.PutPhoto(po));
+        return ResultHelper.Success("识别成功！", await _yoloService.PutPhoto(po,cancellationToken));
     }
 
     /// <summary>
