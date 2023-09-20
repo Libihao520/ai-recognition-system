@@ -16,7 +16,7 @@ public interface IYoloService
     /// </summary>
     /// <param name="po"></param>
     /// <returns></returns>
-    Task<string> PutPhoto(PhotoAdd po);
+    Task<string> PutPhoto(PhotoAdd po,CancellationToken cancellationToken);
 
     /// <summary>
     /// 获取表单

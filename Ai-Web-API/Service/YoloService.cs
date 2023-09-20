@@ -28,7 +28,7 @@ public class YoloService : IYoloService
         return yoloPkqResList;
     }
 
-    public async Task<string> PutPhoto(PhotoAdd po)
+    public async Task<string> PutPhoto(PhotoAdd po ,CancellationToken cancellationToken)
     {
         string base64 = po.photo.Substring(po.photo.IndexOf(',') + 1);
         byte[] data = Convert.FromBase64String(base64);
@@ -45,7 +45,7 @@ public class YoloService : IYoloService
         request.AddParameter("download_image", "True");
         if (po.name == "皮卡丘")
         {
-            var response = await client.ExecuteAsync<PhotoRes>(request);
+            var response = await client.ExecuteAsync<PhotoRes>(request,cancellationToken);
             if (response.Data.Code == 200)
             {
                 var yolotbs = new Yolotbs()
