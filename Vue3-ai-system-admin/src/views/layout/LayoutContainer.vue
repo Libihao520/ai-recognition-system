@@ -60,11 +60,13 @@ const handleCommand = async (key) => {
           <el-icon><Cpu /></el-icon>
           <span>模型识别入口</span>
         </el-menu-item>
+
         <el-sub-menu index="/yolo">
           <template #title>
             <el-icon><FolderOpened /></el-icon>
             <span>识别结果表单</span>
           </template>
+
           <el-menu-item index="/yolo/yolopkq">
             <el-icon><List /></el-icon>
             <span>皮卡丘表单</span>
@@ -89,9 +91,9 @@ const handleCommand = async (key) => {
             <el-icon><Crop /></el-icon>
             <span>更换头像</span>
           </el-menu-item>
-          <el-menu-item index="/user/password">
+          <el-menu-item index="/user/MyBlog">
             <el-icon><EditPen /></el-icon>
-            <span>重置密码</span>
+            <span>我的博客</span>
           </el-menu-item>
         </el-sub-menu>
       </el-menu>
@@ -116,8 +118,8 @@ const handleCommand = async (key) => {
               <el-dropdown-item command="avatar" :icon="Crop"
                 >更换头像</el-dropdown-item
               >
-              <el-dropdown-item command="password" :icon="EditPen"
-                >重置密码</el-dropdown-item
+              <el-dropdown-item command="MyBlog" :icon="EditPen"
+                >我的博客</el-dropdown-item
               >
               <el-dropdown-item command="logout" :icon="SwitchButton"
                 >退出登录</el-dropdown-item
