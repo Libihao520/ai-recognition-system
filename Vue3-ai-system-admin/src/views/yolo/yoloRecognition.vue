@@ -40,10 +40,19 @@ const onUpdateAvatar = async () => {
       <el-form-item label="选择模型：">
         <el-select v-model="name">
           <el-option label="皮卡丘" value="皮卡丘"></el-option>
-          <el-option label="木头运输" value="木头运输"></el-option>
+          <el-option label="车牌识别" value="车牌识别"></el-option>
+          <el-option label="动物识别" value="动物识别"></el-option>
         </el-select>
       </el-form-item>
     </el-form>
+    <el-form-item class="sbjg" v-if="name != '皮卡丘'" label="识别结果：">
+      <el-input
+        v-model="input1"
+        class="input"
+        placeholder="现在还木有开始识别呢！"
+        :suffix-icon="Calendar"
+      />
+    </el-form-item>
     <el-upload
       ref="uploadRef"
       :auto-upload="false"
@@ -74,6 +83,11 @@ const onUpdateAvatar = async () => {
   </page-container>
 </template>
 <style lang="scss" scoped>
+.sbjg {
+  .input {
+    width: 208px;
+  }
+}
 .avatar-uploader {
   :deep() {
     .avatar {
