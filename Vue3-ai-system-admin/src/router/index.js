@@ -41,6 +41,10 @@ const router = createRouter({
         {
           path: '/user/MyBlog',
           component: () => import('@/views/user/MyBlog.vue')
+        },
+        {
+          path: '/gjx/ewm',
+          component: () => import('@/views/gjx/ewm.vue')
         }
       ]
     }
