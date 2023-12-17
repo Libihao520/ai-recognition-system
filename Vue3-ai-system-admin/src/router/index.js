@@ -39,8 +39,8 @@ const router = createRouter({
           component: () => import('@/views/user/UserAvatar.vue')
         },
         {
-          path: '/user/password',
-          component: () => import('@/views/user/UserPassword.vue')
+          path: '/user/MyBlog',
+          component: () => import('@/views/user/MyBlog.vue')
         }
       ]
     }
