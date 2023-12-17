@@ -9,7 +9,9 @@ import {
   Crop,
   EditPen,
   SwitchButton,
-  CaretBottom
+  CaretBottom,
+  Briefcase,
+  Picture
 } from '@element-plus/icons-vue'
 import avatar from '@/assets/default.png'
 import { useUserStore } from '@/stores'
@@ -75,6 +77,17 @@ const handleCommand = async (key) => {
           <el-menu-item index="/yolo/yolocar">
             <el-icon><List /></el-icon>
             <span>车辆表单</span>
+          </el-menu-item>
+        </el-sub-menu>
+        <el-sub-menu index="/gjx">
+          <template #title>
+            <el-icon><Briefcase /></el-icon>
+            <span>工具箱</span>
+          </template>
+
+          <el-menu-item index="/gjx/ewm">
+            <el-icon><Picture /></el-icon>
+            <span>二维码生成</span>
           </el-menu-item>
         </el-sub-menu>
         <el-sub-menu index="/user">
