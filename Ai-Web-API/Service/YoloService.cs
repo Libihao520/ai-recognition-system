@@ -7,6 +7,11 @@ using Model.Dto.Yolo;
 using Model.Entitys;
 using RestSharp;
 using RestSharp.Serializers.NewtonsoftJson;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.PixelFormats;
+using YoloDotNet;
+using YoloDotNet.Extensions;
 
 namespace Service;
 
@@ -14,6 +19,9 @@ public class YoloService : IYoloService
 {
     private readonly IMapper _mapper;
     private MyDbContext _context;
+
+    private static readonly string? BasePath =
+        Path.GetDirectoryName(typeof(YoloService).Assembly.Location);
 
     public YoloService(MyDbContext context, IMapper mapper)
     {
@@ -28,50 +36,45 @@ public class YoloService : IYoloService
         return yoloPkqResList;
     }
 
-    public async Task<string> PutPhoto(PhotoAdd po ,CancellationToken cancellationToken)
+    public async Task<string> PutPhoto(PhotoAdd po, CancellationToken cancellationToken)
     {
         string base64 = po.photo.Substring(po.photo.IndexOf(',') + 1);
         byte[] data = Convert.FromBase64String(base64);
-        ByteArrayContent bytes = new ByteArrayContent(data);
-        MemoryStream stream = new MemoryStream(data);
 
-
-        var client = new RestClient("http://127.0.0.1:8005/detect");
-        client.UseNewtonsoftJson();
-        var request = new RestRequest();
-        request.Method = Method.Post;
-        request.AddFile("file_list", stream.ToArray(), "filename.png");
-        request.AddParameter("model_name", po.name);
-        request.AddParameter("download_image", "True");
-        if (po.name == "皮卡丘")
+        using (MemoryStream ms = new MemoryStream(data))
         {
-            var response = await client.ExecuteAsync<PhotoRes>(request,cancellationToken);
-            if (response.Data.Code == 200)
+            using (var image = Image.Load<Rgba32>(ms))
             {
-                var yolotbs = new Yolotbs()
-                {
-                    Cls = po.name,
-                    sbjgCount = response.Data.result.Count,
-                    IsManualReview = false,
-                    sbzqCount = 0,
-                    rgmsCount = 0,
-                    zql = 0,
-                    zhl = 0,
-                    CreateDate = DateTime.Now,
-                    CreateUserId = 0,
-                    IsDeleted = 0
-                };
-                yolotbs.Photos = new Photos() { Photobase64 = response.Data.Image_Base64 };
-                _context.yolotbs.Add(yolotbs);
-                _context.SaveChanges();
-            }
+                using var yolo = new Yolo(Path.Combine(BasePath, "best.onnx"), false);
+                var results = yolo.RunObjectDetection(image, 0.3);
 
-            return response.Data.Image_Base64;
-        }
-        else
-        {
-            var response = await client.ExecuteAsync<PhotoCarRes>(request);
-            return response.Data.Image_Base64;
+                image.Draw(results);
+
+                using (MemoryStream outputMs = new MemoryStream())
+                {
+                    image.Save(outputMs, new JpegEncoder());
+                    byte[] imageBytes = outputMs.ToArray();
+                    string base64Image = Convert.ToBase64String(imageBytes);
+
+                    var yolotbs = new Yolotbs()
+                    {
+                        Cls = po.name,
+                        sbjgCount = results.Count,
+                        IsManualReview = false,
+                        sbzqCount = 0,
+                        rgmsCount = 0,
+                        zql = 0,
+                        zhl = 0,
+                        CreateDate = DateTime.Now,
+                        CreateUserId = 0,
+                        IsDeleted = 0
+                    };
+                    yolotbs.Photos = new Photos() { Photobase64 = "data:image/jpeg;base64," + base64Image };
+                    _context.yolotbs.Add(yolotbs);
+                    _context.SaveChanges();
+                    return "data:image/jpeg;base64," + base64Image;
+                }
+            }
         }
     }
 
@@ -90,16 +93,16 @@ public class YoloService : IYoloService
     }
 
     public async Task<YoloSjdpRes> Getsjdp()
-    {   
+    {
         var userCount = await _context.Users.CountAsync();
         var sbcsCount = await _context.yolotbs.CountAsync();
         var mbslCount = await _context.yolotbs.SumAsync(x => x.sbjgCount);
         var yoloSjdpRes = new YoloSjdpRes()
         {
-            userCount=userCount,
-            sbcsCount=sbcsCount,
-            mbslCount=mbslCount,
-            yxslCount=mbslCount,
+            userCount = userCount,
+            sbcsCount = sbcsCount,
+            mbslCount = mbslCount,
+            yxslCount = mbslCount,
         };
         return yoloSjdpRes;
     }
