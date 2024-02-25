@@ -16,7 +16,7 @@ builder.Register();
 builder.Services.AddDbContext<MyDbContext>(p =>
 {
     // p.UseSqlServer(builder.Configuration.GetConnectionString("SQL"));
-    p.UseMySql(builder.Configuration.GetConnectionString("MySQL"),new MySqlServerVersion(new Version(5,7,18)));
+    p.UseMySql(builder.Configuration.GetConnectionString("MySQL"),new MySqlServerVersion(new Version(8,0,33)));
 
 });
 
