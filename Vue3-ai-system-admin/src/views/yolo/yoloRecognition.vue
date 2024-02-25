@@ -40,8 +40,8 @@ const onUpdateAvatar = async () => {
       <el-form-item label="选择模型：">
         <el-select v-model="name">
           <el-option label="皮卡丘" value="皮卡丘"></el-option>
-          <el-option label="车牌识别" value="车牌识别"></el-option>
-          <el-option label="动物识别" value="动物识别"></el-option>
+          <el-option label="车牌识别（暂未开放）" value="车牌识别"></el-option>
+          <el-option label="动物识别（暂未开放）" value="动物识别"></el-option>
         </el-select>
       </el-form-item>
     </el-form>

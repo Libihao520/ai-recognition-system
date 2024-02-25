@@ -66,18 +66,18 @@ const handleCommand = async (key) => {
         <el-sub-menu index="/yolo">
           <template #title>
             <el-icon><FolderOpened /></el-icon>
-            <span>识别结果表单</span>
+            <span>识别结果记录</span>
           </template>
 
           <el-menu-item index="/yolo/yolopkq">
             <el-icon><List /></el-icon>
-            <span>皮卡丘表单</span>
+            <span>皮卡丘识别记录</span>
           </el-menu-item>
-
+<!-- 
           <el-menu-item index="/yolo/yolocar">
             <el-icon><List /></el-icon>
             <span>车辆表单</span>
-          </el-menu-item>
+          </el-menu-item> -->
         </el-sub-menu>
         <el-sub-menu index="/gjx">
           <template #title>
