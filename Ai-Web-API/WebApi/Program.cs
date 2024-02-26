@@ -15,7 +15,7 @@ builder.Register();
 //注入MyDbcontext
 builder.Services.AddDbContext<MyDbContext>(p =>
 {
-    p.UseSqlServer(builder.Configuration.GetConnectionString("SQL"));
+    p.UseSqlite(builder.Configuration.GetConnectionString("SQL"));
 });
 
 var app = builder.Build();

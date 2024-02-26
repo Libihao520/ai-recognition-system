@@ -51,30 +51,12 @@ const handleCommand = async (key) => {
         text-color="#fff"
         router
       >
-        <el-menu-item index="/sjdp/yoloSjdp">
+        <el-menu-item index="/sjdp/Sjdp">
           <el-icon><Odometer /></el-icon>
           <span>数据大屏</span>
         </el-menu-item>
 
-        <el-menu-item index="/yolo/yolorecognition">
-          <el-icon><Cpu /></el-icon>
-          <span>模型识别入口</span>
-        </el-menu-item>
-        <el-sub-menu index="/yolo">
-          <template #title>
-            <el-icon><FolderOpened /></el-icon>
-            <span>识别结果表单</span>
-          </template>
-          <el-menu-item index="/yolo/yolopkq">
-            <el-icon><List /></el-icon>
-            <span>皮卡丘表单</span>
-          </el-menu-item>
-
-          <el-menu-item index="/yolo/yolocar">
-            <el-icon><List /></el-icon>
-            <span>车辆表单</span>
-          </el-menu-item>
-        </el-sub-menu>
+      
         <el-sub-menu index="/user">
           <template #title>
             <el-icon><UserFilled /></el-icon>
@@ -129,7 +111,7 @@ const handleCommand = async (key) => {
       <el-main>
         <router-view></router-view>
       </el-main>
-      <el-footer>AI识别 ©2023 Created by 爱吃香蕉的阿豪</el-footer>
+      <el-footer>通用登录系统 ©2023 Created by 爱吃香蕉的阿豪</el-footer>
     </el-container>
   </el-container>
 </template>

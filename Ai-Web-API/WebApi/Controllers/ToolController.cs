@@ -19,7 +19,7 @@ public class ToolController : ControllerBase
     public string InitDateBase()
     {
         //创建初始化值
-        Users user = new Users()
+        users user = new users()
         {
             Name = "lbh",
             Password = "123456",
@@ -28,7 +28,7 @@ public class ToolController : ControllerBase
             IsDeleted = 0
         };
 
-        _context.Users.Add(user);
+        _context.users.Add(user);
         _context.SaveChanges();
         return "ok";
     }

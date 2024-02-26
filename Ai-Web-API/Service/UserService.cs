@@ -21,7 +21,7 @@ public class UserService : IUserService
 
     public UserRes GetUser(string userName, string passWord)
     {
-        var users = _context.Users.Where(u => u.Name == userName && u.Password == passWord).FirstOrDefault();
+        var users = _context.users.Where(u => u.Name == userName && u.Password == passWord).FirstOrDefault();
         if (users != null)
         {
             return _mapper.Map<UserRes>(users);
@@ -32,7 +32,7 @@ public class UserService : IUserService
 
     public async Task<string> add(UserAdd userAdd)
     {
-        Users user = new Users()
+        users user = new users()
         {
             Name = userAdd.username,
             Password = userAdd.Password,
@@ -40,7 +40,7 @@ public class UserService : IUserService
             CreateUserId = 0,
             IsDeleted = 0
         };
-        _context.Users.Add(user);
+        _context.users.Add(user);
         _context.SaveChanges();
         return "注册成功！";
     }

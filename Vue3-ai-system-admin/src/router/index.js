@@ -15,20 +15,8 @@ const router = createRouter({
       redirect: '/sjdp/yolosjdp',
       children: [
         {
-          path: '/sjdp/yolosjdp',
-          component: () => import('@/views/sjdp/yoloSjdp.vue')
-        },
-        {
-          path: '/yolo/yolocar',
-          component: () => import('@/views/yolo/yoloCar.vue')
-        },
-        {
-          path: '/yolo/yolopkq',
-          component: () => import('@/views/yolo/yoloPkq.vue')
-        },
-        {
-          path: '/yolo/yolorecognition',
-          component: () => import('@/views/yolo/yoloRecognition.vue')
+          path: '/sjdp/sjdp',
+          component: () => import('@/views/sjdp/Sjdp.vue')
         },
         {
           path: '/user/profile',

@@ -80,7 +80,7 @@ watch(isRegister, () => {
   <el-row class="login-page">
     <el-col :span="12" class="bg"></el-col>
     <el-col :span="6" :offset="3" class="form">
-      <h1 style="color: rgb(81, 146, 220)">AI识别系统</h1>
+      <h1 style="color: rgb(81, 146, 220)">通用登录系统</h1>
       <!-- 注册表单 -->
       <el-form
         :model="formModel"
