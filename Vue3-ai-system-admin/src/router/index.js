@@ -12,7 +12,7 @@ const router = createRouter({
       path: '/',
       //架子
       component: () => import('@/views/layout/LayoutContainer.vue'),
-      redirect: '/sjdp/yolosjdp',
+      redirect: '/sjdp/Sjdp',
       children: [
         {
           path: '/sjdp/sjdp',
