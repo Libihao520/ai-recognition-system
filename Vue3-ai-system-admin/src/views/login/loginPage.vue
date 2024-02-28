@@ -4,6 +4,7 @@ import { User, Lock, Message, EditPen } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
 import { useUserStore } from '@/stores'
 import { useRouter } from 'vue-router'
+import { encrypt } from '@/utils/util'
 
 const isRegister = ref(false)
 const form = ref()
@@ -12,7 +13,10 @@ const userStore = useUserStore()
 const router = useRouter()
 const login = async () => {
   await form.value.validate()
-  const res = await userLoginService(formModel.value)
+  const res = await userLoginService({
+    username: formModel.value.username,
+    password: encrypt(formModel.value.password)
+  })
   console.log(res)
   userStore.setToken(res.data.data)
   ElMessage.success('登录成功')
@@ -26,9 +30,9 @@ const forgetThePassword = async () => {
   })
 }
 //TODO发送验证码
-const sendAuthCode = async ()=>{
-  if(formModel.email == null){
-    ElMessage.warning("请先输入邮箱！")
+const sendAuthCode = async () => {
+  if (formModel.email == null) {
+    ElMessage.warning('请先输入邮箱！')
     return
   }
   ElMessage.success('TODO发送验证码')
@@ -38,7 +42,13 @@ const register = async () => {
   //注册成功之前，先进行校验
   await form.value.validate()
   console.log('开始注册')
-  await userRegisterService(formModel.value)
+  await userRegisterService({
+    username: formModel.value.username,
+    password: encrypt(formModel.value.password),
+    repassword: encrypt(formModel.value.repassword),
+    email: encrypt(formModel.value.email),
+    authcode: formModel.value.authcode
+  })
   ElMessage.success('注册成功')
   isRegister.value = false
 }
