@@ -18,4 +18,11 @@ public interface IUserService
     /// <param name="userAdd"></param>
     /// <returns></returns>
    Task<string>  add(UserAdd userAdd);
+
+    /// <summary>
+    /// 发送邮箱验证码
+    /// </summary>
+    /// <param name="email"></param>
+    /// <returns></returns>
+    Task<ApiResult> SendVerificationCode(string email);
 }

@@ -1,5 +1,5 @@
 <script setup>
-import { userRegisterService, userLoginService } from '@/api/user.js'
+import { userRegisterService, userLoginService,SendVerificationCode } from '@/api/user.js'
 import { User, Lock, Message, EditPen } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
 import { useUserStore } from '@/stores'
@@ -31,11 +31,16 @@ const forgetThePassword = async () => {
 }
 //TODO发送验证码
 const sendAuthCode = async () => {
-  if (formModel.email == null) {
+  if (formModel.value.email == null) {
     ElMessage.warning('请先输入邮箱！')
     return
   }
-  ElMessage.success('TODO发送验证码')
+  const res = await SendVerificationCode(
+   encrypt(formModel.value.email)
+  )
+  
+  console.log(res.data.code)
+  ElMessage.success(res.data.data)
 }
 //注册提交
 const register = async () => {

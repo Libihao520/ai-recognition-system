@@ -9,3 +9,6 @@ export const userLoginService = ({ username, password }) =>
 
 //获取用户基本信息
 export const userGetInfoService = () => request.get('/login/userinfo')
+
+//传邮箱，发送验证码
+export const SendVerificationCode =(email)=>request.get('/login/SendVerificationCode',{params:{email}})
