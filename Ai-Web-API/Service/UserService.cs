@@ -2,10 +2,12 @@ using System.Text.RegularExpressions;
 using AutoMapper;
 using EFCoreMigrations;
 using Interface;
+using Model.Consts;
 using Model.Dto.User;
 using Model.Entitys;
 using Model.Other;
 using Service.Utils;
+using Service.Utils.RedisUtil;
 using WebApi.Config;
 
 namespace Service;
@@ -33,36 +35,66 @@ public class UserService : IUserService
         return new UserRes();
     }
 
-    public async Task<string> add(UserAdd userAdd)
+    public async Task<ApiResult> add(UserAdd userAdd)
     {
         if (string.IsNullOrWhiteSpace(userAdd.Password) || string.IsNullOrWhiteSpace(userAdd.RePassword))
         {
-            return "密码为空";
+            return ResultHelper.Error("密码为空!");
         }
 
         if (userAdd.Password != userAdd.RePassword)
         {
-            return "两次输入的密码不一致";
+            return ResultHelper.Error("两次输入的密码不一致!");
         }
 
-        if (userAdd.Email != null && userAdd.Username != null)
+        if (string.IsNullOrWhiteSpace(userAdd.Email))
+        {
+            return ResultHelper.Error("邮箱为空！");
+        }
+
+        if (string.IsNullOrWhiteSpace(userAdd.Username))
+        {
+            return ResultHelper.Error("用户名为空！");
+        }
+
+        try
         {
             var password = AesUtilities.Decrypt(userAdd.Password);
-            var rePassword = AesUtilities.Decrypt(userAdd.RePassword);
-            var email = AesUtilities.Decrypt(userAdd.Email);
-        }
+            var decodeEmail = AesUtilities.Decrypt(userAdd.Email);
 
-        users user = new users()
+            if (!IsValidEmail(decodeEmail))
+            {
+                return ResultHelper.Error("请输入正确格式的邮箱!");
+            }
+            
+
+            var s = CacheManager.Get<string>(string.Format(RedisKey.UserActiveCode, decodeEmail));
+            if (string.IsNullOrWhiteSpace(s))
+            {
+                return ResultHelper.Error("验证码还未发送或已失效，请再发送一次！");
+            }
+            if(userAdd.Authcode != s)
+            {
+                return ResultHelper.Error("验证码错误！");
+            }
+
+            users user = new users()
+            {
+                Name = userAdd.Username,
+                Password = userAdd.Password,
+                CreateDate = DateTime.Now,
+                CreateUserId = 0,
+                IsDeleted = 0,
+                Email = decodeEmail
+            };
+            _context.users.Add(user);
+            _context.SaveChanges();
+            return ResultHelper.Success("注册成功！", "验证码正确！已注册成功！  ");
+        }
+        catch (Exception e)
         {
-            Name = userAdd.Username,
-            Password = userAdd.Password,
-            CreateDate = DateTime.Now,
-            CreateUserId = 0,
-            IsDeleted = 0
-        };
-        _context.users.Add(user);
-        _context.SaveChanges();
-        return "注册成功！";
+            return ResultHelper.Error("注册失败！");
+        }
     }
 
     /// <summary>
@@ -76,12 +108,25 @@ public class UserService : IUserService
         {
             return ResultHelper.Error("请输入正确格式的邮箱!");
         }
-        string randomId = RandomIdGenerator.GenerateRandomId(6);  
-        //发送邮箱
-        EmailUtil.NetSendEmail($"欢迎注册通用管理系统,您的激活码是：{randomId},激活码有效期至-{DateTime.Now}", "通用管理系统注册",
-            decodeEmail);
 
-        return ResultHelper.Success("注册成功，尽快激活！", $"验证码已经发送到您输入的邮箱{decodeEmail}中！");
+        var users = _context.users.Where(u => u.Email == decodeEmail ).FirstOrDefault();
+        
+        //查看缓存有没有这条key
+        var exist = CacheManager.Exist(string.Format(RedisKey.UserActiveCode, decodeEmail));
+        if (exist)
+        {
+            return ResultHelper.Error("该邮箱的上一条验证码还未失效,请查看您的邮箱继续激活！");
+        }
+
+        //将验证码写入缓存，并设置过期时间
+        string randomId = RandomIdGenerator.GenerateRandomId(6);
+        CacheManager.Set(string.Format(RedisKey.UserActiveCode, decodeEmail), randomId, TimeSpan.FromMinutes(1));
+
+        // 发送邮箱
+        // EmailUtil.NetSendEmail($"欢迎注册通用管理系统,您的验证码是：{randomId},验证码有效期至-{DateTime.Now.AddMinutes(3)}", "通用管理系统注册",
+        //     decodeEmail);
+
+        return ResultHelper.Success("发送成功，尽快验证！", $"验证码已经发送到您输入的邮箱{decodeEmail}中！验证码有效期至-{DateTime.Now.AddMinutes(1)}");
     }
 
     /// <summary>

@@ -17,7 +17,7 @@ public interface IUserService
     /// </summary>
     /// <param name="userAdd"></param>
     /// <returns></returns>
-   Task<string>  add(UserAdd userAdd);
+    Task<ApiResult>  add(UserAdd userAdd);
 
     /// <summary>
     /// 发送邮箱验证码

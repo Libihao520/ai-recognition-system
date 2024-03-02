@@ -16,4 +16,10 @@ public class users : IEntity
     /// </summary>
     [Required]
     public string Password { get; set; }
+
+    /// <summary>
+    /// 邮箱
+    /// </summary>
+    [Required]
+    public string Email { get; set; }
 }
