@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using AutoMapper;
 using EFCoreMigrations;
 using Interface;
+using Microsoft.EntityFrameworkCore;
 using Model.Consts;
 using Model.Dto.User;
 using Model.Entitys;
@@ -66,7 +67,11 @@ public class UserService : IUserService
             {
                 return ResultHelper.Error("请输入正确格式的邮箱!");
             }
-            
+
+            if (_context.users.Any(u => u.Email == decodeEmail && u.IsDeleted == 0))
+            {
+                return ResultHelper.Error("该邮箱已经注册过了！");
+            }
 
             var s = CacheManager.Get<string>(string.Format(RedisKey.UserActiveCode, decodeEmail));
             if (string.IsNullOrWhiteSpace(s))
@@ -109,7 +114,10 @@ public class UserService : IUserService
             return ResultHelper.Error("请输入正确格式的邮箱!");
         }
 
-        var users = _context.users.Where(u => u.Email == decodeEmail ).FirstOrDefault();
+        if (_context.users.Any(u => u.Email == decodeEmail && u.IsDeleted == 0))
+        {
+            return ResultHelper.Error("该邮箱已经注册过了！");
+        }
         
         //查看缓存有没有这条key
         var exist = CacheManager.Exist(string.Format(RedisKey.UserActiveCode, decodeEmail));
@@ -120,13 +128,13 @@ public class UserService : IUserService
 
         //将验证码写入缓存，并设置过期时间
         string randomId = RandomIdGenerator.GenerateRandomId(6);
-        CacheManager.Set(string.Format(RedisKey.UserActiveCode, decodeEmail), randomId, TimeSpan.FromMinutes(1));
+        CacheManager.Set(string.Format(RedisKey.UserActiveCode, decodeEmail), randomId, TimeSpan.FromMinutes(30));
 
         // 发送邮箱
-        // EmailUtil.NetSendEmail($"欢迎注册通用管理系统,您的验证码是：{randomId},验证码有效期至-{DateTime.Now.AddMinutes(3)}", "通用管理系统注册",
-        //     decodeEmail);
+        EmailUtil.NetSendEmail($"欢迎注册通用管理系统,您的验证码是：{randomId},验证码有效期至-{DateTime.Now.AddMinutes(30)}", "通用管理系统注册",
+            decodeEmail);
 
-        return ResultHelper.Success("发送成功，尽快验证！", $"验证码已经发送到您输入的邮箱{decodeEmail}中！验证码有效期至-{DateTime.Now.AddMinutes(1)}");
+        return ResultHelper.Success("发送成功，尽快验证！", $"验证码已经发送到您的邮箱{decodeEmail}！有效期30分钟");
     }
 
     /// <summary>
