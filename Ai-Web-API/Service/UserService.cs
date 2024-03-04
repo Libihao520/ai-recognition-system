@@ -57,7 +57,10 @@ public class UserService : IUserService
         {
             return ResultHelper.Error("用户名为空！");
         }
-
+        if (_context.users.Any(u => u.Name == userAdd.Username && u.IsDeleted == 0))
+        {
+            return ResultHelper.Error("用户名已被注册，请换一个！");
+        }
         try
         {
             var password = AesUtilities.Decrypt(userAdd.Password);
