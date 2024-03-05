@@ -4,9 +4,9 @@ using Model.Entitys;
 
 namespace EFCoreMigrations;
 
- class UsersConfig:IEntityTypeConfiguration<users>
+ class UsersConfig:IEntityTypeConfiguration<Users>
 {
-    public void Configure(EntityTypeBuilder<users> builder)
+    public void Configure(EntityTypeBuilder<Users> builder)
     {
         builder.ToTable("users");
     }

@@ -3,7 +3,7 @@ using Model.Common;
 
 namespace Model.Entitys;
 
-public class users : IEntity
+public class Users : IEntity
 {
     /// <summary>
     /// 用户名

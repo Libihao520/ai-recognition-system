@@ -19,7 +19,7 @@ public class ToolController : ControllerBase
     public string InitDateBase()
     {
         //创建初始化值
-        users user = new users()
+        Users user = new Users()
         {
             Name = "lbh",
             Password = "123456",

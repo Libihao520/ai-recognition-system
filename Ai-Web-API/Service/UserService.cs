@@ -86,7 +86,7 @@ public class UserService : IUserService
                 return ResultHelper.Error("验证码错误！");
             }
 
-            users user = new users()
+            Users user = new Users()
             {
                 Name = userAdd.Username,
                 Password = userAdd.Password,

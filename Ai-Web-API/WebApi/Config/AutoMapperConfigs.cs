@@ -10,7 +10,7 @@ public class AutoMapperConfigs : Profile
     {
         //左往右
         //用户
-        CreateMap<users, UserRes>();
+        CreateMap<Users, UserRes>();
         
     }
 }
