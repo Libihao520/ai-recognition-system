@@ -19,6 +19,10 @@ const router = createRouter({
           component: () => import('@/views/sjdp/Sjdp.vue')
         },
         {
+          path: '/exercises/mathematics',
+          component: () => import('@/views/exercises/mathematics.vue')
+        },
+        {
           path: '/user/profile',
           component: () => import('@/views/user/UserProfile.vue')
         },

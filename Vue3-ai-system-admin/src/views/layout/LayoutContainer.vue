@@ -55,6 +55,11 @@ const handleCommand = async (key) => {
           <el-icon><Odometer /></el-icon>
           <span>数据大屏</span>
         </el-menu-item>
+        
+        <el-menu-item index="/exercises/mathematics">
+          <el-icon><Odometer /></el-icon>
+          <span>数学题</span>
+        </el-menu-item>
 
         <el-sub-menu index="/user">
           <template #title>
