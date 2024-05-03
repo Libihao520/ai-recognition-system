@@ -45,7 +45,12 @@ const router = createRouter({
         {
           path: '/gjx/ewm',
           component: () => import('@/views/gjx/ewm.vue')
-        }
+        },
+        // 做题
+        {
+          path: '/exercises/mathematics',
+          component: () => import('@/views/exercises/mathematics.vue')
+        },
       ]
     }
   ]

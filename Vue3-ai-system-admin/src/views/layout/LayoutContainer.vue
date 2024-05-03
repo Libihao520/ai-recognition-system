@@ -11,8 +11,11 @@ import {
   SwitchButton,
   CaretBottom,
   Briefcase,
-  Picture
+  Picture,
+  Collection,
+  Tickets
 } from '@element-plus/icons-vue'
+
 import avatar from '@/assets/default.png'
 import { useUserStore } from '@/stores'
 import { onMounted } from 'vue'
@@ -58,6 +61,19 @@ const handleCommand = async (key) => {
           <span>数据大屏</span>
         </el-menu-item>
 
+        <el-sub-menu index="/exercises">
+          <template #title>
+            <el-icon><Collection /></el-icon>
+            <span>练题系统</span>
+          </template>
+
+          <el-menu-item index="/exercises/mathematics">
+            <el-icon><Tickets /></el-icon>
+            <span>数学题</span>
+          </el-menu-item>
+        </el-sub-menu>
+
+
         <el-menu-item index="/yolo/yolorecognition">
           <el-icon><Cpu /></el-icon>
           <span>模型识别入口</span>
@@ -90,6 +106,7 @@ const handleCommand = async (key) => {
             <span>二维码生成</span>
           </el-menu-item>
         </el-sub-menu>
+
         <el-sub-menu index="/user">
           <template #title>
             <el-icon><UserFilled /></el-icon>
