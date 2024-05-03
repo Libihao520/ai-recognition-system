@@ -22,7 +22,7 @@ public class TestPapers
     /// <summary>
     /// 题目类型
     /// </summary>
-    public string type { get; set; } 
+    public int type { get; set; } 
     
     public string Choice1 { get; set; }
     public string Choice2 { get; set; }
