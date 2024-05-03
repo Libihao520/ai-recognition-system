@@ -10,6 +10,8 @@ public class MyDbContext : DbContext
     public DbSet<Yolotbs> yolotbs { get; set; }
 
     public DbSet<Photos> Photos { get; set; }
+    
+    public DbSet<TestPapers> testpapers { get; set; }
 
     // 注入方式配置
     public MyDbContext(DbContextOptions<MyDbContext> options) : base(options)

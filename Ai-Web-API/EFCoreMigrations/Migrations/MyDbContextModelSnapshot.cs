@@ -34,6 +34,47 @@ namespace EFCoreMigrations.Migrations
                     b.ToTable("Photos");
                 });
 
+            modelBuilder.Entity("Model.Entitys.TestPapers", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Choice1")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Choice2")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Choice3")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Choice4")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Topic")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("TopicNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("answer")
+                        .HasColumnType("int");
+
+                    b.Property<string>("subject")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("id");
+
+                    b.ToTable("testpapers");
+                });
+
             modelBuilder.Entity("Model.Entitys.Users", b =>
                 {
                     b.Property<long>("Id")
