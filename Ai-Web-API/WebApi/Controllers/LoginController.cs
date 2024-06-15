@@ -62,6 +62,10 @@ public class LoginController:ControllerBase
         }
     }
     
+    /// <summary>
+    /// 获取token
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     [Authorize]
     public async Task<ApiResult> userinfo( )
