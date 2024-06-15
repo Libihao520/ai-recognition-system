@@ -42,6 +42,11 @@ public class LoginController:ControllerBase
         return await res;
     }
 
+    /// <summary>
+    /// 注册接口
+    /// </summary>
+    /// <param name="userAdd"></param>
+    /// <returns></returns>
     [HttpPost]
     public async Task<ApiResult> add(UserAdd userAdd)
     {
