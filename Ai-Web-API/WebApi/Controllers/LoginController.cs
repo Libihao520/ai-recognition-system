@@ -18,6 +18,11 @@ public class LoginController:ControllerBase
         _userService = userService;
         _jwtService = jwtService;
     }
+    /// <summary>
+    /// 登录接口
+    /// </summary>
+    /// <param name="userReq"></param>
+    /// <returns></returns>
     [HttpPost]
     public async Task<ApiResult> GetToken(UserReq userReq)
     {
