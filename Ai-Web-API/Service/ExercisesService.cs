@@ -2,6 +2,7 @@ using AutoMapper;
 using EFCoreMigrations;
 using Interface;
 using Model.Dto.TestPapers;
+using Model.Entitys;
 using Model.Other;
 using WebApi.Config;
 
@@ -12,11 +13,12 @@ public class ExercisesService : IExercisesService
 {
     private MyDbContext _context;
     private readonly IMapper _mapper;
-
-    public ExercisesService(MyDbContext context, IMapper mapper)
+    private readonly TestPapers _testPapers;
+    public ExercisesService(MyDbContext context, IMapper mapper,TestPapers testPapers)
     {
         _context = context;
         _mapper = mapper;
+        _testPapers = testPapers;
     }
 
     public async Task<ApiResult> GetmMthematics()
@@ -46,7 +48,7 @@ public class ExercisesService : IExercisesService
             }
             
         }
-
+            
         return ResultHelper.Success("获取成功！", mathematicsRes);
     }
 }
