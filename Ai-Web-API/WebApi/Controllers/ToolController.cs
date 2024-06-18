@@ -61,6 +61,7 @@ public class ToolController : ControllerBase
 
         var papers2 = new TestPapers()
         {
+            type = 2,
             id = 2,
             subject = "地理",
             TopicNumber = 2,
@@ -78,6 +79,7 @@ public class ToolController : ControllerBase
 
         var papers3 = new TestPapers()
         {
+            type = 3,
             id = 3,
             subject = "地理",
             TopicNumber = 3,
