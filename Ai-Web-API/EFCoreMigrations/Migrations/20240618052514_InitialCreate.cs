@@ -41,15 +41,17 @@ namespace EFCoreMigrations.Migrations
                     TopicNumber = table.Column<int>(type: "int", nullable: false),
                     Topic = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Choice1 = table.Column<string>(type: "longtext", nullable: false)
+                    type = table.Column<int>(type: "int", nullable: false),
+                    Choice1 = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Choice2 = table.Column<string>(type: "longtext", nullable: false)
+                    Choice2 = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Choice3 = table.Column<string>(type: "longtext", nullable: false)
+                    Choice3 = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Choice4 = table.Column<string>(type: "longtext", nullable: false)
+                    Choice4 = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    answer = table.Column<int>(type: "int", nullable: false)
+                    answer = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {

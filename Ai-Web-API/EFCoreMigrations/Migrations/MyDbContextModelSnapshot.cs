@@ -41,19 +41,15 @@ namespace EFCoreMigrations.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Choice1")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Choice2")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Choice3")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Choice4")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Topic")
@@ -63,16 +59,15 @@ namespace EFCoreMigrations.Migrations
                     b.Property<int>("TopicNumber")
                         .HasColumnType("int");
 
-                    b.Property<int>("answer")
-                        .HasColumnType("int");
+                    b.Property<string>("answer")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("subject")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("type")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<int>("type")
+                        .HasColumnType("int");
 
                     b.HasKey("id");
 

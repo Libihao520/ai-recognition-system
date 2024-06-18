@@ -74,6 +74,8 @@ public class ToolController : ControllerBase
 
         #endregion
 
+        #region 题型三 : 判断题
+
         var papers3 = new TestPapers()
         {
             id = 3,
@@ -84,6 +86,8 @@ public class ToolController : ControllerBase
             Choice2 = "×。",
             answer = new List<int>{1}
         };
+
+        #endregion
 
 
         // var yolotbs = new Yolotbs()
@@ -99,10 +103,20 @@ public class ToolController : ControllerBase
         //     CreateUserId = 0,
         //     IsDeleted = 0
         // };
+
+        #region 添加到数据库
+
         _context.testpapers.AddRange(new List<TestPapers>{papers,papers2,papers3});
         _context.Users.Add(user);
         // _context.yolotbs.Add(yolotbs);
+
+        #endregion
+
+        #region 保存
+
         _context.SaveChanges();
+
+        #endregion
         return "ok";
     }
 }

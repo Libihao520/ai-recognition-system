@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCoreMigrations.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20240503095922_InitialCreate")]
+    [Migration("20240618052514_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -44,19 +44,15 @@ namespace EFCoreMigrations.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Choice1")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Choice2")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Choice3")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Choice4")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Topic")
@@ -66,12 +62,15 @@ namespace EFCoreMigrations.Migrations
                     b.Property<int>("TopicNumber")
                         .HasColumnType("int");
 
-                    b.Property<int>("answer")
-                        .HasColumnType("int");
+                    b.Property<string>("answer")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("subject")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<int>("type")
+                        .HasColumnType("int");
 
                     b.HasKey("id");
 
