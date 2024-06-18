@@ -99,8 +99,7 @@ public class ToolController : ControllerBase
         //     CreateUserId = 0,
         //     IsDeleted = 0
         // };
-        _context.testpapers.Add(papers);
-        
+        _context.testpapers.AddRange(new List<TestPapers>{papers,papers2,papers3});
         _context.Users.Add(user);
         // _context.yolotbs.Add(yolotbs);
         _context.SaveChanges();
