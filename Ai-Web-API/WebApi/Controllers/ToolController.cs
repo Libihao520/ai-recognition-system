@@ -18,7 +18,8 @@ public class ToolController : ControllerBase
     [HttpGet]
     public string InitDateBase()
     {
-        //创建初始化值
+        #region 创建初始化值
+
         Users user = new Users()
         {
             Name = "lbh",
@@ -35,6 +36,11 @@ public class ToolController : ControllerBase
             CreateUserId = 1,
             IsDeleted = 0
         };
+
+        #endregion
+
+        #region 题型一 ：单选
+
         var papers = new TestPapers()
         {
             id = 1,
@@ -46,9 +52,40 @@ public class ToolController : ControllerBase
             Choice2 = "A:12",
             Choice3 = "A:11",
             Choice4 = "A:14",
-            answer = 1
-            
+            answer = new List<int>{1}
         };
+
+        #endregion
+
+        #region 题型二 ：多选
+
+        var papers2 = new TestPapers()
+        {
+            id = 2,
+            subject = "地理",
+            TopicNumber = 2,
+            Topic = "以下哪些选项是关于地球的正确陈述？",
+            Choice1 = "地球是太阳系中唯一已知存在生命的行星。",
+            Choice2 = "地球的自转周期约为24小时。",
+            Choice3 = "地球的公转轨道是一个完美的圆形。",
+            Choice4 = "地球的大气层主要由氮气和氧气组成。",
+            answer = new List<int>{1,2,4}
+        };
+
+        #endregion
+
+        var papers3 = new TestPapers()
+        {
+            id = 3,
+            subject = "地理",
+            TopicNumber = 3,
+            Topic = "地球是太阳系中最大的行星。 ( )",
+            Choice1 = "√",
+            Choice2 = "×。",
+            answer = new List<int>{1}
+        };
+
+
         // var yolotbs = new Yolotbs()
         // {
         //     Cls = "皮卡丘",
