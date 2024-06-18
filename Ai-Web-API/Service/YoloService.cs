@@ -106,4 +106,45 @@ public class YoloService : IYoloService
         };
         return yoloSjdpRes;
     }
+
+    #region 添加
+
+    public async Task<Yolotbs> AddAsync(Yolotbs yolotbs)
+    {
+        _context.yolotbs.Add(yolotbs);
+        await _context.SaveChangesAsync();
+        return yolotbs;
+    }
+
+    #endregion 
+
+    #region 删除
+
+    public async Task DeleteAsync(int id)
+    {
+        // 根据id查找yoloTb对象
+        var yoloTb = await _context.yolotbs.FindAsync(id);
+        // 不为空则执行删除并且保存到数据库中
+        if (yoloTb != null)
+        {
+            _context.yolotbs.Remove(yoloTb);
+            await _context.SaveChangesAsync();
+        }
+    }
+
+    #endregion
+
+    #region 查询
+
+    public async Task<Yolotbs?> GetByIdAsync(int id)
+    {
+        var findAsync = _context.yolotbs.FindAsync(id);
+        return await findAsync;
+    }
+
+    #endregion
+    
+    
+    
+    
 }
