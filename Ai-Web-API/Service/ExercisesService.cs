@@ -13,12 +13,10 @@ public class ExercisesService : IExercisesService
 {
     private MyDbContext _context;
     private readonly IMapper _mapper;
-    private readonly TestPapers _testPapers;
-    public ExercisesService(MyDbContext context, IMapper mapper,TestPapers testPapers)
+    public ExercisesService(MyDbContext context, IMapper mapper)
     {
         _context = context;
         _mapper = mapper;
-        _testPapers = testPapers;
     }
 
     public async Task<ApiResult> GetmMthematics()
