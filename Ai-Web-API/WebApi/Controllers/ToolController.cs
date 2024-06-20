@@ -47,7 +47,7 @@ public class ToolController : ControllerBase
             subject = "数学",
             TopicNumber = 1,
             Topic = "计算表达式 (3×5)+(4÷2)-(6-2) 的结果，选择正确的选项",
-            type = 1,
+            type = 0,
             Choice1 = "A:13",
             Choice2 = "A:12",
             Choice3 = "A:11",
@@ -61,9 +61,9 @@ public class ToolController : ControllerBase
 
         var papers2 = new TestPapers()
         {
-            type = 2,
+            type = 1,
             id = 2,
-            subject = "地理",
+            subject = "数学",
             TopicNumber = 2,
             Topic = "以下哪些选项是关于地球的正确陈述？",
             Choice1 = "地球是太阳系中唯一已知存在生命的行星。",
@@ -79,9 +79,9 @@ public class ToolController : ControllerBase
 
         var papers3 = new TestPapers()
         {
-            type = 3,
+            type = 2,
             id = 3,
-            subject = "地理",
+            subject = "数学",
             TopicNumber = 3,
             Topic = "地球是太阳系中最大的行星。 ( )",
             Choice1 = "√",
