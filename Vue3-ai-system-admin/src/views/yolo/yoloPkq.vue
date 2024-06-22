@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { GetPkqTbService } from '../../api/yolo'
+import { GetPkqTbService, DeletedService } from '../../api/yolo'
 import { Edit, Delete } from '@element-plus/icons-vue'
 import { formatTime } from '@/utils/format.js'
 import yoloEdit from './yoloEdit.vue'
@@ -27,8 +27,10 @@ const onEditChannel = (row) => {
   yoloEditRef.value.open(row)
 }
 //删除逻辑
-const onDelChannel = (row, $index) => {
-  console.log(row, $index)
+const onDelChannel = async (row, $index) => {
+  console.log(row.id)
+  const res = await DeletedService(row.id)
+  getPkqtbList()
 }
 
 //添加或者编辑成功回调
@@ -44,11 +46,7 @@ const onSuccess = (type) => {
 </script>
 <template>
   <page-containel title="皮卡丘识别详情"
-    ><template #extra
-      ><el-button type="primary" @click="onAddTblist"
-        >测试按钮</el-button
-      ></template
-    >
+    ><template #extra><el-button type="primary" @click="onAddTblist">测试按钮</el-button></template>
     <!-- 表单数据 -->
     <el-table v-loading="loading" :data="channelList" style="width: 100%">
       <el-table-column type="index" label="序号" width="100"></el-table-column>
