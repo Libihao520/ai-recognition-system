@@ -36,15 +36,13 @@ const onUpdateAvatar = async () => {
 </script>
 <template>
   <page-container title="AI识别">
-    <el-form inline>
-      <el-form-item label="选择模型：">
+      <el-form-item class="select" label="选择模型：">
         <el-select v-model="name">
           <el-option label="皮卡丘" value="皮卡丘"></el-option>
           <el-option label="车牌识别（暂未开放）" value="车牌识别"></el-option>
           <el-option label="动物识别（暂未开放）" value="动物识别"></el-option>
         </el-select>
       </el-form-item>
-    </el-form>
     <el-form-item class="sbjg" v-if="name != '皮卡丘'" label="识别结果：">
       <el-input
         v-model="input1"
@@ -87,6 +85,9 @@ const onUpdateAvatar = async () => {
   .input {
     width: 208px;
   }
+}
+.select {
+    width: 300px;
 }
 .avatar-uploader {
   :deep() {
