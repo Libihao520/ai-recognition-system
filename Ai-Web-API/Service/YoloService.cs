@@ -5,11 +5,13 @@ using Microsoft.EntityFrameworkCore;
 using Model.Dto.photo;
 using Model.Dto.Yolo;
 using Model.Entitys;
+using Model.Other;
 using RestSharp;
 using RestSharp.Serializers.NewtonsoftJson;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.PixelFormats;
+using WebApi.Config;
 using YoloDotNet;
 using YoloDotNet.Extensions;
 
@@ -31,7 +33,7 @@ public class YoloService : IYoloService
 
     public async Task<List<YoloPkqRes>> getpkqTb()
     {
-        var yolotb = await _context.yolotbs.ToListAsync();
+        var yolotb = await _context.yolotbs.Where(p=>p.IsDeleted ==0).ToListAsync();
         var yoloPkqResList = _mapper.Map<List<YoloPkqRes>>(yolotb);
         return yoloPkqResList;
     }
@@ -116,19 +118,28 @@ public class YoloService : IYoloService
         return yolotbs;
     }
 
-    #endregion 
+    #endregion
 
     #region 删除
 
-    public async Task DeleteAsync(int id)
+    public async Task<ApiResult> DeleteAsync(long id)
     {
-        // 根据id查找yoloTb对象
-        var yoloTb = await _context.yolotbs.FindAsync(id);
-        // 不为空则执行删除并且保存到数据库中
-        if (yoloTb != null)
+        try
         {
-            _context.yolotbs.Remove(yoloTb);
-            await _context.SaveChangesAsync();
+            // 根据id查找yoloTb对象
+            var yoloTb = await _context.yolotbs.FindAsync(id);
+            // 不为空则执行软删除并且保存到数据库中
+            if (yoloTb != null)
+            {
+                yoloTb.IsDeleted = 1;
+                await _context.SaveChangesAsync();
+            }
+
+            return ResultHelper.Success("请求成功！", "数据已删除");
+        }
+        catch (Exception e)
+        {
+            return ResultHelper.Error("yolo数据删除失败");
         }
     }
 
