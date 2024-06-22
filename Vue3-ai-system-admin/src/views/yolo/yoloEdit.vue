@@ -72,7 +72,10 @@ const open = async (row) => {
     imgUrl.value = res.data.data.photo
     console.log(formModel)
   } else {
-    console.log('添加')
+    isAdd.value = true
+    formModel.value = {
+    ...defaultForm
+  }
   }
 }
 
