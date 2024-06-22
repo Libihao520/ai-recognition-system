@@ -21,3 +21,7 @@ export const getPkqEditTbService = (id) =>
 
 //yolo数据大屏获取数据
 export const getYoloSjdpService = () => request.get('/yolo/Getsjdp')
+
+//删除
+export const DeletedService = (id) =>
+  request.delete('/yolo/Deleted', { params: { id } })
