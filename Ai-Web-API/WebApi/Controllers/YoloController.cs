@@ -35,9 +35,9 @@ public class YoloController : ControllerBase
     /// <param name="po"></param>
     /// <returns></returns>
     [HttpPut]
-    public async Task<ApiResult> PutPhoto(PhotoAdd po,CancellationToken cancellationToken)
+    public async Task<ApiResult> PutPhoto(PhotoAdd po, CancellationToken cancellationToken)
     {
-        return ResultHelper.Success("识别成功！", await _yoloService.PutPhoto(po,cancellationToken));
+        return ResultHelper.Success("识别成功！", await _yoloService.PutPhoto(po, cancellationToken));
     }
 
     /// <summary>
@@ -51,10 +51,24 @@ public class YoloController : ControllerBase
         return ResultHelper.Success("获取成功！", await _yoloService.GetPkqEdtTb(id));
     }
 
-
+    /// <summary>
+    /// 获取数据大屏数据
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     public async Task<ApiResult> Getsjdp()
     {
         return ResultHelper.Success("获取成功！", await _yoloService.Getsjdp());
+    }
+
+    /// <summary>
+    /// 根据id删除数据
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpDelete]
+    public async Task<ApiResult> Deleted(long id)
+    {
+        return await _yoloService.DeleteAsync(id);
     }
 }

@@ -1,5 +1,6 @@
 using Model.Dto.photo;
 using Model.Dto.Yolo;
+using Model.Other;
 
 namespace Interface;
 
@@ -30,4 +31,11 @@ public interface IYoloService
     /// </summary>
     /// <returns></returns>
     Task<YoloSjdpRes> Getsjdp();
+
+    /// <summary>
+    /// 根据id删除数据
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    Task<ApiResult> DeleteAsync(long id);
 }
