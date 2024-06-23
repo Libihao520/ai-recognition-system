@@ -6,11 +6,15 @@ import { formatTime } from '@/utils/format.js'
 import yoloEdit from './yoloEdit.vue'
 
 const channelList = ref([])
+const selectcondition = ref({
+  clsid: '0',
+  isaudit: '0'
+})
 //转菊花
 const loading = ref(false)
 const getPkqtbList = async () => {
   loading.value = true
-  const res = await GetPkqTbService()
+  const res = await GetPkqTbService(selectcondition.value)
   channelList.value = res.data.data
   loading.value = false
 }
@@ -32,6 +36,13 @@ const onDelChannel = async (row, $index) => {
   const res = await DeletedService(row.id)
   getPkqtbList()
 }
+//重置搜索框
+const Resetsearchbox = () => {
+  selectcondition.value = {
+    clsid: '0',
+    isaudit: '0'
+  }
+}
 
 //添加或者编辑成功回调
 const onSuccess = (type) => {
@@ -49,21 +60,23 @@ const onSuccess = (type) => {
     ><el-form inline>
       <!-- 类别 -->
       <el-form-item label="类别:">
-        <el-select class="select">
+        <el-select class="select" v-model="selectcondition.clsid">
+          <el-option label="全部" value="0"></el-option>
           <el-option label="皮卡丘" value="1"></el-option>
           <el-option label="动物识别" value="2"></el-option>
         </el-select>
       </el-form-item>
       <!-- 是否审核 -->
       <el-form-item label="审核情况:">
-        <el-select class="select">
-          <el-option label="已审核" value="true"></el-option>
-          <el-option label="未审核" value="false"></el-option>
+        <el-select class="select" v-model="selectcondition.isaudit">
+          <el-option label="全部" value="0"></el-option>
+          <el-option label="已审核" value="1"></el-option>
+          <el-option label="未审核" value="2"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">搜索</el-button>
-        <el-button>重置</el-button>
+        <el-button type="primary" @click="getPkqtbList">搜索</el-button>
+        <el-button @click="Resetsearchbox">重置</el-button>
       </el-form-item>
     </el-form>
     <template #extra><el-button type="primary" @click="onAddTblist">测试按钮</el-button></template>
