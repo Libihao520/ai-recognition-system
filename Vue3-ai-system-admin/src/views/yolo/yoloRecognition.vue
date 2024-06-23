@@ -35,7 +35,7 @@ const onUpdateAvatar = async () => {
 }
 </script>
 <template>
-  <page-container title="AI识别">
+  <page-containel title="AI识别">
       <el-form-item class="select" label="选择模型：">
         <el-select v-model="name">
           <el-option label="皮卡丘" value="皮卡丘"></el-option>
@@ -78,7 +78,7 @@ const onUpdateAvatar = async () => {
       v-loading="loading"
       >上传图片</el-button
     >
-  </page-container>
+  </page-containel>
 </template>
 <style lang="scss" scoped>
 .sbjg {
