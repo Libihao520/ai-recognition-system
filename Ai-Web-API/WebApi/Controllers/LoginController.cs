@@ -63,7 +63,7 @@ public class LoginController:ControllerBase
     }
     
     /// <summary>
-    /// 获取token
+    /// 解析token
     /// </summary>
     /// <returns></returns>
     [HttpGet]
