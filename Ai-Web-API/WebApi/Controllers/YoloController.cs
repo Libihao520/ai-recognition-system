@@ -25,7 +25,7 @@ public class YoloController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    public async Task<ApiResult> yolopkq([FromQuery] YoloPkqReq  req)
+    public async Task<ApiResult> yolopkq([FromQuery] YoloDetectionQueryReq  req)
     {
         return ResultHelper.Success("获取成功！", await _yoloService.getpkqTb(req));
     }
@@ -71,5 +71,16 @@ public class YoloController : ControllerBase
     public async Task<ApiResult> Deleted(long id)
     {
         return await _yoloService.DeleteAsync(id);
+    }
+
+    /// <summary>
+    /// 手动新增数据
+    /// </summary>
+    /// <param name="req"></param>
+    /// <returns></returns>
+    [HttpPost]
+    public async Task<ApiResult> PutDataTb([FromBody] YoloDetectionPutReq req)
+    {
+        return await _yoloService.AddDataTb(req);
     }
 }

@@ -10,7 +10,7 @@ public interface IYoloService
     /// 获取表单
     /// </summary>
     /// <returns></returns>
-    Task<List<YoloPkqRes>> getpkqTb(YoloPkqReq req);
+    Task<List<YoloPkqRes>> getpkqTb(YoloDetectionQueryReq req);
 
     /// <summary>
     /// 上传照片识别
@@ -38,4 +38,11 @@ public interface IYoloService
     /// <param name="id"></param>
     /// <returns></returns>
     Task<ApiResult> DeleteAsync(long id);
+
+    /// <summary>
+    /// 手动新增加数据
+    /// </summary>
+    /// <param name="req"></param>
+    /// <returns></returns>
+    Task<ApiResult> AddDataTb(YoloDetectionPutReq req);
 }

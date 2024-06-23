@@ -35,7 +35,7 @@ public class YoloService : IYoloService
     /// 获取数据
     /// </summary>
     /// <returns></returns>
-    public async Task<List<YoloPkqRes>> getpkqTb(YoloPkqReq req)
+    public async Task<List<YoloPkqRes>> getpkqTb(YoloDetectionQueryReq req)
     {
         var yolotb = await _context.yolotbs.Where(p => p.IsDeleted == 0).ToListAsync();
         if (req.clsName != "全部")
@@ -125,11 +125,12 @@ public class YoloService : IYoloService
 
     #region 添加
 
-    public async Task<Yolotbs> AddAsync(Yolotbs yolotbs)
+    public async Task<ApiResult> AddDataTb(YoloDetectionPutReq req)
     {
-        _context.yolotbs.Add(yolotbs);
+        var yoloPkqResList = _mapper.Map<Yolotbs>(req);
+        _context.yolotbs.Add(yoloPkqResList);
         await _context.SaveChangesAsync();
-        return yolotbs;
+        return ResultHelper.Success("请求成功", "目标监测数据手动添加成功！");
     }
 
     #endregion
