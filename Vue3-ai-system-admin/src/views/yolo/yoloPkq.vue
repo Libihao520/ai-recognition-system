@@ -46,7 +46,27 @@ const onSuccess = (type) => {
 </script>
 <template>
   <page-containel title="皮卡丘识别详情"
-    ><template #extra><el-button type="primary" @click="onAddTblist">测试按钮</el-button></template>
+    ><el-form inline>
+      <!-- 类别 -->
+      <el-form-item label="类别:">
+        <el-select class="select">
+          <el-option label="皮卡丘" value="1"></el-option>
+          <el-option label="动物识别" value="2"></el-option>
+        </el-select>
+      </el-form-item>
+      <!-- 是否审核 -->
+      <el-form-item label="审核情况:">
+        <el-select class="select">
+          <el-option label="已审核" value="true"></el-option>
+          <el-option label="未审核" value="false"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary">搜索</el-button>
+        <el-button>重置</el-button>
+      </el-form-item>
+    </el-form>
+    <template #extra><el-button type="primary" @click="onAddTblist">测试按钮</el-button></template>
     <!-- 表单数据 -->
     <el-table v-loading="loading" :data="channelList" style="width: 100%">
       <el-table-column type="index" label="序号" width="100"></el-table-column>
@@ -57,7 +77,11 @@ const onSuccess = (type) => {
           {{ formatTime(row.createDate) }}
         </template>
       </el-table-column>
-      <el-table-column prop="isManualReview" label="审核"></el-table-column>
+      <el-table-column prop="isManualReview" label="审核">
+        <template #default="{ row }">
+          {{ row.isManualReview == true ? '已审核' : '未审核' }}</template
+        >
+      </el-table-column>
       <el-table-column label="操作" width="150">
         <!-- row就是channelList的一项，$index是下标 -->
         <template #default="{ row, $index }">
@@ -85,4 +109,8 @@ const onSuccess = (type) => {
     <yolo-edit ref="yoloEditRef" @success="onSuccess"></yolo-edit>
   </page-containel>
 </template>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.select {
+  width: 200px;
+}
+</style>
