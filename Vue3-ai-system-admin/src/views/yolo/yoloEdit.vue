@@ -16,7 +16,7 @@ const defaultForm = {
   sbjgCount: '',
   createDate: '',
   photo: '',
-  isManualReview: '' // TODO
+  isManualReview: true // TODO
 }
 
 //准备数据
@@ -26,9 +26,15 @@ const formModel = ref({
 //图片上传相关逻辑
 const imgUrl = ref('')
 const onUploadFile = (uploadFile) => {
-  imgUrl.value = URL.createObjectURL(uploadFile.raw)
-  //将上传的图片保存到formModel，后面提交
-  formModel.value.photo = uploadFile.raw
+  const reader = new FileReader()
+  // 图片转base64
+  reader.readAsDataURL(uploadFile.raw)
+  reader.onload = () => {
+    // 基于 FileReader 读取图片做预览
+    imgUrl.value = reader.result
+    //将上传的图片保存到formModel，后面提交
+    formModel.value.photo = reader.result
+  }
 }
 //提交
 const emit = defineEmits(['sucess'])
