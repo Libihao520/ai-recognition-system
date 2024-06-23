@@ -74,8 +74,8 @@ const open = async (row) => {
   } else {
     isAdd.value = true
     formModel.value = {
-    ...defaultForm
-  }
+      ...defaultForm
+    }
   }
 }
 
@@ -91,44 +91,45 @@ defineExpose({
     size="50%"
   >
     <!-- l类别框 -->
-    <el-form
-      :model="formModel"
-      ref="formRef"
-      label-width="100px"
-      v-loading="loading"
-    >
-      <el-form-item label="类别" prop="title">
-        <el-input v-model="formModel.cls" placeholder="请输入类别"></el-input>
+    <el-form :model="formModel" ref="formRef" label-width="100px" v-loading="loading">
+      <el-form-item label="类别:" prop="title">
+        <el-input class="inputcss" v-model="formModel.cls" placeholder="请输入类别"></el-input>
       </el-form-item>
-      <el-form-item label="数量" prop="title">
+      <el-form-item label="数量:" prop="title">
         <el-input
+          class="inputcss"
           v-model="formModel.sbjgCount"
           placeholder="请输入数量"
         ></el-input>
       </el-form-item>
 
-      <el-form-item label="审核" prop="title">
-        <el-input
+      <el-form-item label="审核:" prop="title">
+        <!-- <el-input
           v-model="formModel.isManualReview"
           placeholder="审核状态"
-        ></el-input>
+        ></el-input> -->
+        <el-switch
+          v-model="formModel.isManualReview"
+          class="ml-2"
+          inline-prompt
+          style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
+          active-text="已审核"
+          inactive-text="未审核"
+        />
       </el-form-item>
 
-      <el-form-item>
-        <div class="block">
-          <span class="demonstration">时间</span>
-          <el-date-picker
-            v-model="formModel.createDate"
-            type="date"
-            placeholder="Pick a day"
-            :disabled-date="disabledDate"
-            :shortcuts="shortcuts"
-            :size="size"
-          />
-        </div>
+      <el-form-item label="时间:">
+        <el-date-picker
+          v-model="formModel.createDate"
+          type="date"
+          placeholder="Pick a day"
+          :disabled-date="disabledDate"
+          :shortcuts="shortcuts"
+          :size="size"
+        />
       </el-form-item>
       <!-- 图片 -->
-      <el-form-item label="识别图片" prop="photo">
+      <el-form-item label="识别图片:" prop="photo">
         <el-upload
           class="avatar-uploader"
           :auto-upload="false"
@@ -140,13 +141,18 @@ defineExpose({
         </el-upload>
       </el-form-item>
       <el-form-item>
-        <el-button @click="onSave('已保存')" type="primary">保存</el-button>
+        <el-button @click="onSave('已保存')" type="primary">{{
+          isAdd ? '提交' : '保存'
+        }}</el-button>
         <el-button @click="onSave('取消')" type="info">取消</el-button>
       </el-form-item>
     </el-form>
   </el-drawer>
 </template>
 <style lang="scss" scoped>
+.inputcss {
+  width: 220px;
+}
 .avatar-uploader {
   :deep() {
     .avatar {
