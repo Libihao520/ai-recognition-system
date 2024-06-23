@@ -2,6 +2,7 @@ using Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.Dto.photo;
+using Model.Dto.Yolo;
 using Model.Other;
 using WebApi.Config;
 
@@ -24,9 +25,9 @@ public class YoloController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    public async Task<ApiResult> yolopkq()
+    public async Task<ApiResult> yolopkq([FromQuery] YoloPkqReq  req)
     {
-        return ResultHelper.Success("获取成功！", await _yoloService.getpkqTb());
+        return ResultHelper.Success("获取成功！", await _yoloService.getpkqTb(req));
     }
 
     /// <summary>
