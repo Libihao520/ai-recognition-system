@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 //获取pkq表单数据
-export const GetPkqTbService = () => request.get('/yolo/yolopkq')
+export const GetPkqTbService = ({ clsid, isaudit }) => request.get('/yolo/yolopkq', { params: { clsid, isaudit } })
 
 //上传照片识别
 export const PutPhotoService = (photo, name) => {
