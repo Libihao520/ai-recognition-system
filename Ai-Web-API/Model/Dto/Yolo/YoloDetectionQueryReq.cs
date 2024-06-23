@@ -1,6 +1,6 @@
 namespace Model.Dto.Yolo;
 
-public class YoloPkqReq
+public class YoloDetectionQueryReq
 {
     /// <summary>
     /// 类别
