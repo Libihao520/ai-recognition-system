@@ -10,14 +10,14 @@ public interface IYoloService
     /// 获取表单
     /// </summary>
     /// <returns></returns>
-    Task<List<YoloPkqRes>> getpkqTb();
+    Task<List<YoloPkqRes>> getpkqTb(YoloPkqReq req);
 
     /// <summary>
     /// 上传照片识别
     /// </summary>
     /// <param name="po"></param>
     /// <returns></returns>
-    Task<string> PutPhoto(PhotoAdd po,CancellationToken cancellationToken);
+    Task<string> PutPhoto(PhotoAdd po, CancellationToken cancellationToken);
 
     /// <summary>
     /// 获取表单

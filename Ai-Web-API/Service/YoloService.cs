@@ -31,9 +31,23 @@ public class YoloService : IYoloService
         _mapper = mapper;
     }
 
-    public async Task<List<YoloPkqRes>> getpkqTb()
+    /// <summary>
+    /// 获取数据
+    /// </summary>
+    /// <returns></returns>
+    public async Task<List<YoloPkqRes>> getpkqTb(YoloPkqReq req)
     {
-        var yolotb = await _context.yolotbs.Where(p=>p.IsDeleted ==0).ToListAsync();
+        var yolotb = await _context.yolotbs.Where(p => p.IsDeleted == 0).ToListAsync();
+        if (req.clsName != "全部")
+        {
+            yolotb = yolotb.Where(p => p.Cls == req.clsName).ToList();
+        }
+
+        if (req.isaudit != 0)
+        {
+            yolotb = yolotb.Where(p => p.IsManualReview == (req.isaudit == 1 ? true : false)).ToList();
+        }
+
         var yoloPkqResList = _mapper.Map<List<YoloPkqRes>>(yolotb);
         return yoloPkqResList;
     }
@@ -154,8 +168,4 @@ public class YoloService : IYoloService
     }
 
     #endregion
-    
-    
-    
-    
 }
