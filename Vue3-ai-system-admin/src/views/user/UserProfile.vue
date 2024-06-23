@@ -50,7 +50,7 @@ const submitForm = async () => {
 }
 </script>
 <template>
-  <page-container title="基本资料">
+  <page-containel title="基本资料">
     <!-- 表单部分 -->
     <el-form ref="formRef" :model="form" :rules="rules" label-width="100px">
       <el-form-item label="用户昵称" prop="nickname">
@@ -63,5 +63,5 @@ const submitForm = async () => {
         <el-button type="primary" @click="submitForm">提交修改</el-button>
       </el-form-item>
     </el-form>
-  </page-container>
+  </page-containel>
 </template>

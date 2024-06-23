@@ -8,7 +8,7 @@ defineProps({
 })
 </script>
 <template>
-  <el-card class="page-container">
+  <el-card class="page-containel">
     <template #header>
       <div class="header">
         <span>{{ title }}</span>
@@ -22,7 +22,7 @@ defineProps({
   </el-card>
 </template>
 <style lang="scss" scoped>
-.page-container {
+.page-containel {
   min-height: 100%;
   box-sizing: border-box;
   .header {
