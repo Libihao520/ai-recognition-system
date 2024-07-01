@@ -8,6 +8,7 @@ using Model.Entitys;
 using Model.Other;
 using RestSharp;
 using RestSharp.Serializers.NewtonsoftJson;
+using Service.Common;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.PixelFormats;
@@ -127,8 +128,21 @@ public class YoloService : IYoloService
 
     public async Task<ApiResult> AddDataTb(YoloDetectionPutReq req)
     {
-        var yoloPkqResList = _mapper.Map<Yolotbs>(req);
-        _context.yolotbs.Add(yoloPkqResList);
+        var yoloRes= _mapper.Map<Yolotbs>(req);
+        
+        var generateId = TimeBasedIdGenerator.GenerateId();
+        yoloRes.Id = generateId;
+        
+        var photId = TimeBasedIdGenerator.GenerateId();
+        yoloRes.PhotosId = photId;
+        var photos = new Photos()
+        {
+            PhotosId = photId,
+            Photobase64 = req.Photo
+        };
+        _context.yolotbs.Add(yoloRes);
+        _context.Photos.Add(photos);
+        
         await _context.SaveChangesAsync();
         return ResultHelper.Success("请求成功", "目标监测数据手动添加成功！");
     }
