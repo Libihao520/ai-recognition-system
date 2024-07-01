@@ -13,7 +13,7 @@ const isAdd = ref(true)
 const defaultForm = {
   id: '',
   cls: '',
-  sbjgCount: '',
+  sbjgCount: 0,
   createDate: '',
   photo: '',
   isManualReview: true // TODO
@@ -51,7 +51,7 @@ const onSave = async (state) => {
       console.log('编辑保存操作')
     } else {
       console.log('添加保存操作')
-      await PubListPkqTbService(fd)
+      await PubListPkqTbService(formModel.value)
       ElMessage.success('手动添加数据成功')
       visibleDrawer.value = false
       //通知
@@ -85,6 +85,11 @@ const open = async (row) => {
   }
 }
 
+// 处理输入框失去焦点事件，确保 sbjgCount 是整数
+function handleInputBlur() {
+  // 强制将 sbjgCount 转换为整数
+  formModel.value.sbjgCount = Math.floor(formModel.value.sbjgCount)
+}
 defineExpose({
   open
 })
@@ -103,9 +108,11 @@ defineExpose({
       </el-form-item>
       <el-form-item label="数量:" prop="title">
         <el-input
+          type="number"
           class="inputcss"
           v-model="formModel.sbjgCount"
           placeholder="请输入数量"
+           @blur="handleInputBlur"  
         ></el-input>
       </el-form-item>
 

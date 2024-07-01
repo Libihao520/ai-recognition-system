@@ -11,7 +11,7 @@ export const PutPhotoService = (photo, name) => {
 //皮卡丘表单手动添加
 //data需要一个formData格式的对象
 export const PubListPkqTbService = (data) =>
-  request.post('/yolo/PutDataTb', data)
+  request.put('/yolo/PutDataTb', data)
 
 //获取图片，基于id
 export const getPkqEditTbService = (id) =>
