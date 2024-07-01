@@ -78,7 +78,7 @@ public class YoloController : ControllerBase
     /// </summary>
     /// <param name="req"></param>
     /// <returns></returns>
-    [HttpPost]
+    [HttpPut]
     public async Task<ApiResult> PutDataTb([FromBody] YoloDetectionPutReq req)
     {
         return await _yoloService.AddDataTb(req);

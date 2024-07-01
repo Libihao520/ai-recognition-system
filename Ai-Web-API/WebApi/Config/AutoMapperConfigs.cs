@@ -15,6 +15,9 @@ public class AutoMapperConfigs : Profile
         CreateMap<Users, UserRes>();
         //yolo
         CreateMap<Yolotbs, YoloPkqRes>();
+
+        CreateMap<YoloDetectionPutReq, Yolotbs>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore());
         
         CreateMap<Yolotbs, YoloPkqEditRes>();
 
