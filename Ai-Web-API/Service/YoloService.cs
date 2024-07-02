@@ -1,7 +1,9 @@
 using AutoMapper;
 using EFCoreMigrations;
 using Interface;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic.CompilerServices;
 using Model.Dto.photo;
 using Model.Dto.Yolo;
 using Model.Entitys;
@@ -128,9 +130,26 @@ public class YoloService : IYoloService
 
     public async Task<ApiResult> AddDataTb(YoloDetectionPutReq req)
     {
+        if (string.IsNullOrEmpty(req.Id))
+        {
+            return ResultHelper.Error("Id不为空");
+        } 
+        if (string.IsNullOrEmpty(req.Cls))
+        {
+            return ResultHelper.Error("数据删除失败");
+        }
+        if (req.sbjgCount < 0)
+        {
+            return ResultHelper.Error("识别的数据不为空");
+        }
+        if (string.IsNullOrEmpty(req.Photo))
+        {
+            return ResultHelper.Error("照片不为空");
+        }
         // TODO 在转化之前先对数据进行校验，如是否为空，是否类型异常，如果数据有问题则抛异常给前端，并写清楚问题原因
+        
         var yoloRes = _mapper.Map<Yolotbs>(req);
-
+      
         var generateId = TimeBasedIdGenerator.GenerateId();
         yoloRes.Id = generateId;
         var photId = TimeBasedIdGenerator.GenerateId();
