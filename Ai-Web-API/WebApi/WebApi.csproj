@@ -25,4 +25,10 @@
 		<ProjectReference Include="..\Model\Model.csproj" />
 		<ProjectReference Include="..\Service\Service.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="best.onnx">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 </Project>

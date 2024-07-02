@@ -20,21 +20,24 @@ public class ToolController : ControllerBase
     {
         #region 创建初始化值
 
-        Users user = new Users()
+        var users = new List<Users>()
         {
-            Name = "lbh",
-            Password = "123456",
-            CreateDate = DateTime.Now,
-            CreateUserId = 0,
-            IsDeleted = 0
-        };
-        var user2 = new Users()
-        {
-            Name = "yhj",
-            Password = "1234567",
-            CreateDate = DateTime.Today,
-            CreateUserId = 1,
-            IsDeleted = 0
+            new Users
+            {
+                Name = "lbh",
+                Password = "123456",
+                CreateDate = DateTime.Now,
+                CreateUserId = 0,
+                IsDeleted = 0
+            },
+            new Users
+            {
+                Name = "yhj",
+                Password = "1234567",
+                CreateDate = DateTime.Now,
+                CreateUserId = 1,
+                IsDeleted = 0
+            }
         };
 
         #endregion
@@ -109,7 +112,8 @@ public class ToolController : ControllerBase
         #region 添加到数据库
 
         _context.testpapers.AddRange(new List<TestPapers>{papers,papers2,papers3});
-        _context.Users.Add(user);
+        _context.Users.AddRange(users);
+        //_context.Users.AddRange(new[] { user1, user2 });
         // _context.yolotbs.Add(yolotbs);
 
         #endregion
