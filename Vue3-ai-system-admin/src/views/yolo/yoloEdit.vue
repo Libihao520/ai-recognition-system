@@ -11,7 +11,7 @@ const isAdd = ref(true)
 
 //默认表单数据
 const defaultForm = {
-  id: '',
+  id: null,
   cls: '',
   sbjgCount: 0,
   createDate: '',
@@ -49,12 +49,16 @@ const onSave = async (state) => {
     //有id是编辑操作
     if (formModel.value.id) {
       console.log('编辑保存操作')
+      await PubListPkqTbService(formModel.value)
+      visibleDrawer.value = false
+      // 回调
+      emit('success', 'upd')
     } else {
       console.log('添加保存操作')
       await PubListPkqTbService(formModel.value)
       ElMessage.success('手动添加数据成功')
       visibleDrawer.value = false
-      //通知
+      // 回调
       emit('success', 'add')
     }
   }
@@ -112,7 +116,7 @@ defineExpose({
           class="inputcss"
           v-model="formModel.sbjgCount"
           placeholder="请输入数量"
-           @blur="handleInputBlur"  
+          @blur="handleInputBlur"
         ></el-input>
       </el-form-item>
 
