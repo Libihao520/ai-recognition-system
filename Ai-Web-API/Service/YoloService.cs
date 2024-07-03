@@ -3,6 +3,7 @@ using EFCoreMigrations;
 using Interface;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Net.Http.Headers;
 using Microsoft.VisualBasic.CompilerServices;
 using Model.Dto.photo;
 using Model.Dto.Yolo;
@@ -130,38 +131,44 @@ public class YoloService : IYoloService
 
     public async Task<ApiResult> AddDataTb(YoloDetectionPutReq req)
     {
+        // ID为空的时候添加修改数据-----IsNullOrEmpty为空
         if (string.IsNullOrEmpty(req.Id))
         {
-            return ResultHelper.Error("Id不为空");
-        } 
-        if (string.IsNullOrEmpty(req.Cls))
-        {
-            return ResultHelper.Error("数据删除失败");
-        }
-        if (req.sbjgCount < 0)
-        {
-            return ResultHelper.Error("识别的数据不为空");
-        }
-        if (string.IsNullOrEmpty(req.Photo))
-        {
-            return ResultHelper.Error("照片不为空");
-        }
-        // TODO 在转化之前先对数据进行校验，如是否为空，是否类型异常，如果数据有问题则抛异常给前端，并写清楚问题原因
-        
-        var yoloRes = _mapper.Map<Yolotbs>(req);
-      
-        var generateId = TimeBasedIdGenerator.GenerateId();
-        yoloRes.Id = generateId;
-        var photId = TimeBasedIdGenerator.GenerateId();
-        yoloRes.PhotosId = photId;
-        var photos = new Photos()
-        {
-            PhotosId = photId,
-            Photobase64 = req.Photo
-        };
-        _context.yolotbs.Add(yoloRes);
-        _context.Photos.Add(photos);
+            if (string.IsNullOrEmpty(req.Cls))
+            {
+                return ResultHelper.Error("数据删除失败");
+            }
 
+            if (req.sbjgCount < 0)
+            {
+                return ResultHelper.Error("识别的数据不为空");
+            }
+
+            if (string.IsNullOrEmpty(req.Photo))
+            {
+                return ResultHelper.Error("照片不为空");
+            }
+
+            // TODO 在转化之前先对数据进行校验，如是否为空，是否类型异常，如果数据有问题则抛异常给前端，并写清楚问题原因
+            var yoloRes = _mapper.Map<Yolotbs>(req);
+
+            var generateId = TimeBasedIdGenerator.GenerateId();
+            yoloRes.Id = generateId;
+            var photId = TimeBasedIdGenerator.GenerateId();
+            yoloRes.PhotosId = photId;
+            var photos = new Photos()
+            {
+                PhotosId = photId,
+                Photobase64 = req.Photo
+            };
+            _context.yolotbs.Add(yoloRes);
+            _context.Photos.Add(photos);
+        }
+        // 否则更新
+        else
+        {
+            return await UpdateDateTb(req);
+        }
         await _context.SaveChangesAsync();
         return ResultHelper.Success("请求成功", "目标监测数据手动添加成功！");
     }
@@ -193,6 +200,16 @@ public class YoloService : IYoloService
 
     #endregion
 
+    public async Task<ApiResult> UpdateDateTb(YoloDetectionPutReq req)
+    {
+        var findAsync = await _context.yolotbs.FindAsync(req.Id);
+        if (findAsync==null)
+        {
+            return ResultHelper.Error("没有找到ID,需添加而不是更新");
+        }
+        
+    }
+    
     #region 查询
 
     public async Task<Yolotbs?> GetByIdAsync(int id)
