@@ -17,7 +17,8 @@ public class AutoMapperConfigs : Profile
         CreateMap<Yolotbs, YoloPkqRes>();
 
         CreateMap<YoloDetectionPutReq, Yolotbs>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore());
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.PhotosId, opt => opt.Ignore());
         
         CreateMap<Yolotbs, YoloPkqEditRes>();
 

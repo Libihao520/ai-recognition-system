@@ -5,7 +5,7 @@ public class YoloDetectionPutReq
     /// <summary>
     /// 主键
     /// </summary>
-    public string Id { get; set; }
+    public long? Id { get; set; }
 
     /// <summary>
     /// 类别
