@@ -131,9 +131,10 @@ public class YoloService : IYoloService
 
     public async Task<ApiResult> AddDataTb(YoloDetectionPutReq req)
     {
-        // ID为空的时候添加修改数据-----IsNullOrEmpty为空
-        if (string.IsNullOrEmpty(req.Id))
+        // ID为空时新增，ID存在时更新数据
+        if (req.Id == null)
         {
+            //数据校验
             if (string.IsNullOrEmpty(req.Cls))
             {
                 return ResultHelper.Error("类别不可为空!");
@@ -148,10 +149,9 @@ public class YoloService : IYoloService
             {
                 return ResultHelper.Error("照片不可为空!");
             }
-
-            // TODO 在转化之前先对数据进行校验，如是否为空，是否类型异常，如果数据有问题则抛异常给前端，并写清楚问题原因
+            
+            //将参数映射入实体类
             var yoloRes = _mapper.Map<Yolotbs>(req);
-
             var generateId = TimeBasedIdGenerator.GenerateId();
             yoloRes.Id = generateId;
             var photId = TimeBasedIdGenerator.GenerateId();
@@ -167,10 +167,44 @@ public class YoloService : IYoloService
         // 否则更新
         else
         {
-            return await UpdateDateTb(req);
+            var findAsync = await _context.yolotbs.FindAsync(req.Id);
+            if (findAsync != null)
+            {
+                if (findAsync.PhotosId != null)
+                {
+                var photos = await _context.Photos.FindAsync(findAsync.PhotosId);
+                photos.Photobase64 = req.Photo;
+                    
+                }
+                else
+                {
+                    var photId = TimeBasedIdGenerator.GenerateId();
+                    findAsync.PhotosId = photId;
+                    var photos = new Photos()
+                    {
+                        PhotosId = photId,
+                        Photobase64 = req.Photo
+                    };
+                    _context.Photos.Add(photos);
+                }
+                _mapper.Map(req, findAsync);
+            }
+            else
+            {
+                return ResultHelper.Error("更新失败，数据不存在!");
+            }
         }
-        await _context.SaveChangesAsync();
-        return ResultHelper.Success("请求成功", "目标监测数据手动添加成功！");
+
+        try
+        {
+            await _context.SaveChangesAsync();
+            return ResultHelper.Success("请求成功", "目标监测数据添加或修改成功！");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return ResultHelper.Error("系统异常!");
+        }
     }
 
     #endregion
@@ -200,17 +234,7 @@ public class YoloService : IYoloService
 
     #endregion
 
-    public async Task<ApiResult> UpdateDateTb(YoloDetectionPutReq req)
-    {
-        var findAsync = await _context.yolotbs.FindAsync(req.Id);
-        if (findAsync==null)
-        {
-            return ResultHelper.Error("没有找到ID,需添加而不是更新");
-        }
 
-        return null;
-    }
-    
     #region 查询
 
     public async Task<Yolotbs?> GetByIdAsync(int id)
