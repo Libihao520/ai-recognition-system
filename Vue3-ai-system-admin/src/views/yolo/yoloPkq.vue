@@ -80,7 +80,7 @@ const onSuccess = (type) => {
         <el-button @click="Resetsearchbox">重置</el-button>
       </el-form-item>
     </el-form>
-    <template #extra><el-button type="primary" @click="onAddTblist">测试按钮</el-button></template>
+    <template #extra><el-button type="primary" @click="onAddTblist">人工新增</el-button></template>
     <!-- 表单数据 -->
     <el-table v-loading="loading" :data="channelList" style="width: 100%">
       <el-table-column type="index" label="序号" width="100"></el-table-column>
