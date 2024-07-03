@@ -56,7 +56,7 @@ const onSuccess = (type) => {
 }
 </script>
 <template>
-  <page-containel title="皮卡丘识别详情"
+  <page-containel title="目标监测识别详情"
     ><el-form inline>
       <!-- 类别 -->
       <el-form-item label="类别:">
