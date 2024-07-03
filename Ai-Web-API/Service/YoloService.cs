@@ -136,17 +136,17 @@ public class YoloService : IYoloService
         {
             if (string.IsNullOrEmpty(req.Cls))
             {
-                return ResultHelper.Error("数据删除失败");
+                return ResultHelper.Error("类别不可为空!");
             }
 
             if (req.sbjgCount < 0)
             {
-                return ResultHelper.Error("识别的数据不为空");
+                return ResultHelper.Error("数量不可为空!");
             }
 
             if (string.IsNullOrEmpty(req.Photo))
             {
-                return ResultHelper.Error("照片不为空");
+                return ResultHelper.Error("照片不可为空!");
             }
 
             // TODO 在转化之前先对数据进行校验，如是否为空，是否类型异常，如果数据有问题则抛异常给前端，并写清楚问题原因
@@ -207,7 +207,8 @@ public class YoloService : IYoloService
         {
             return ResultHelper.Error("没有找到ID,需添加而不是更新");
         }
-        
+
+        return null;
     }
     
     #region 查询
