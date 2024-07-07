@@ -39,21 +39,30 @@ public class YoloService : IYoloService
     /// 获取数据
     /// </summary>
     /// <returns></returns>
-    public async Task<List<YoloPkqRes>> getpkqTb(YoloDetectionQueryReq req)
+    public async Task<ApiResult> getpkqTb(YoloDetectionQueryReq req)
     {
-        var yolotb = await _context.yolotbs.Where(p => p.IsDeleted == 0).ToListAsync();
+        IQueryable<Yolotbs> yolotb = _context.yolotbs.Where(p => p.IsDeleted == 0);
+        //筛选条件
         if (req.clsName != "全部")
         {
-            yolotb = yolotb.Where(p => p.Cls == req.clsName).ToList();
+            yolotb = yolotb.Where(p => p.Cls == req.clsName);
         }
 
         if (req.isaudit != 0)
         {
-            yolotb = yolotb.Where(p => p.IsManualReview == (req.isaudit == 1 ? true : false)).ToList();
+            yolotb = yolotb.Where(p => p.IsManualReview == (req.isaudit == 1 ? true : false));
         }
 
-        var yoloPkqResList = _mapper.Map<List<YoloPkqRes>>(yolotb);
-        return yoloPkqResList;
+        var total = await yolotb.CountAsync();
+
+        var paginatedResult = await yolotb
+            .Skip((req.pagenum - 1) * req.pagesize) // 跳过前面的记录  
+            .Take(req.pagesize) // 取接下来的指定数量的记录  
+            .ToListAsync(); // 转换为列表  
+
+        var yoloPkqResList = _mapper.Map<List<YoloPkqRes>>(paginatedResult);
+
+        return ResultHelper.Success("获取成功！", yoloPkqResList, total);
     }
 
     public async Task<string> PutPhoto(PhotoAdd po, CancellationToken cancellationToken)
@@ -149,7 +158,7 @@ public class YoloService : IYoloService
             {
                 return ResultHelper.Error("照片不可为空!");
             }
-            
+
             //将参数映射入实体类
             var yoloRes = _mapper.Map<Yolotbs>(req);
             var generateId = TimeBasedIdGenerator.GenerateId();
@@ -172,9 +181,8 @@ public class YoloService : IYoloService
             {
                 if (findAsync.PhotosId != null)
                 {
-                var photos = await _context.Photos.FindAsync(findAsync.PhotosId);
-                photos.Photobase64 = req.Photo;
-                    
+                    var photos = await _context.Photos.FindAsync(findAsync.PhotosId);
+                    photos.Photobase64 = req.Photo;
                 }
                 else
                 {
@@ -187,6 +195,7 @@ public class YoloService : IYoloService
                     };
                     _context.Photos.Add(photos);
                 }
+
                 _mapper.Map(req, findAsync);
             }
             else
