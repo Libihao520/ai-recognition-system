@@ -25,9 +25,9 @@ public class YoloController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    public async Task<ApiResult> yolopkq([FromQuery] YoloDetectionQueryReq  req)
+    public async Task<ApiResult> yolopkq([FromQuery] YoloDetectionQueryReq req)
     {
-        return ResultHelper.Success("获取成功！", await _yoloService.getpkqTb(req));
+        return await _yoloService.getpkqTb(req);
     }
 
     /// <summary>

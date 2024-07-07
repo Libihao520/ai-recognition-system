@@ -10,7 +10,7 @@ public interface IYoloService
     /// 获取表单
     /// </summary>
     /// <returns></returns>
-    Task<List<YoloPkqRes>> getpkqTb(YoloDetectionQueryReq req);
+    Task<ApiResult> getpkqTb(YoloDetectionQueryReq req);
 
     /// <summary>
     /// 上传照片识别
