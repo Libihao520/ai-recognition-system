@@ -6,16 +6,21 @@ import { formatTime } from '@/utils/format.js'
 import yoloEdit from './yoloEdit.vue'
 
 const channelList = ref([])
+const total = ref(0) //总条数
 const selectcondition = ref({
+  pagenum: 1, //当前页
+  pagesize: 5, //每页条数
   clsName: '全部',
   isaudit: '0'
 })
 //转菊花
 const loading = ref(false)
+//获取文章列表
 const getPkqtbList = async () => {
   loading.value = true
   const res = await GetPkqTbService(selectcondition.value)
   channelList.value = res.data.data
+  total.value = res.data.total
   loading.value = false
 }
 getPkqtbList()
@@ -53,6 +58,19 @@ const onSuccess = (type) => {
     //编辑直接渲染当前页
     getPkqtbList()
   }
+}
+
+//处理分页逻辑
+//每页条数
+const onSizeChange = (size) => {
+  selectcondition.value.pagenum = 1
+  selectcondition.value.pagesize = size
+  getPkqtbList()
+}
+//页码
+const onCurrentChange = (page) => {
+  selectcondition.value.pagenum = page
+  getPkqtbList()
 }
 </script>
 <template>
@@ -118,6 +136,18 @@ const onSuccess = (type) => {
       </el-table-column>
     </el-table>
 
+    <!-- 分页部分 -->
+    <el-pagination
+      v-model:current-page="selectcondition.pagenum"
+      v-model:page-size="selectcondition.pagesize"
+      :page-sizes="[5, 10, 15, 20]"
+      :background="true"
+      layout="jumper,total, sizes, prev, pager, next "
+      :total="total"
+      @size-change="onSizeChange"
+      @current-change="onCurrentChange"
+      style="margin-top: 20px; justify-content: flex-end"
+    />
     <!-- 添加编辑抽屉 -->
     <!-- //success监听 -->
     <yolo-edit ref="yoloEditRef" @success="onSuccess"></yolo-edit>
