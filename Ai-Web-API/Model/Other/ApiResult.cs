@@ -19,4 +19,9 @@ public class ApiResult
     /// 响应数据
     /// </summary>
     public object data { get; set; }
+
+    /// <summary>
+    /// 数据总条数
+    /// </summary>
+    public int? total { get; set; }
 }
