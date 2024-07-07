@@ -33,16 +33,20 @@ const onUpdateAvatar = async () => {
   }
   loading.value = false
 }
+
+function clearImage() {
+  imgUrl.value = ''
+}
 </script>
 <template>
   <page-containel title="AI识别">
-      <el-form-item class="select" label="选择模型：">
-        <el-select v-model="name">
-          <el-option label="皮卡丘" value="皮卡丘"></el-option>
-          <el-option label="车牌识别（暂未开放）" value="车牌识别"></el-option>
-          <el-option label="动物识别（暂未开放）" value="动物识别"></el-option>
-        </el-select>
-      </el-form-item>
+    <el-form-item class="select" label="选择模型：">
+      <el-select v-model="name">
+        <el-option label="皮卡丘" value="皮卡丘"></el-option>
+        <el-option label="车牌识别（暂未开放）" value="车牌识别"></el-option>
+        <el-option label="动物识别（暂未开放）" value="动物识别"></el-option>
+      </el-select>
+    </el-form-item>
     <el-form-item class="sbjg" v-if="name != '皮卡丘'" label="识别结果：">
       <el-input
         v-model="input1"
@@ -58,10 +62,23 @@ const onUpdateAvatar = async () => {
       :show-file-list="false"
       :on-change="onSelectFile"
     >
-      <img v-if="imgUrl" :src="imgUrl" class="avatar" />
-      <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+      <el-icon v-if="!imgUrl" class="avatar-uploader-icon"><Plus /></el-icon>
     </el-upload>
-
+    <!-- 当图片存在时，使用缩略图形式显示 -->
+    <div class="image-container">
+      <el-image
+        style="width: 300px; height: 300px"
+        v-if="imgUrl"
+        :src="imgUrl"
+        :zoom-rate="1.2"
+        :max-scale="7"
+        :min-scale="0.2"
+        :preview-src-list="[imgUrl]"
+        :initial-index="0"
+        fit="cover"
+      />
+      <span v-if="imgUrl" class="close-btn" @click="clearImage">×</span>
+    </div>
     <br />
     <el-button
       @click="uploadRef.$el.querySelector('input').click()"
@@ -81,13 +98,34 @@ const onUpdateAvatar = async () => {
   </page-containel>
 </template>
 <style lang="scss" scoped>
+.image-container {
+  position: relative;
+  display: inline-block;
+
+  .close-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    line-height: 1;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.7); // 鼠标悬停时改变背景色
+    }
+  }
+}
 .sbjg {
   .input {
     width: 208px;
   }
 }
 .select {
-    width: 300px;
+  width: 300px;
 }
 .avatar-uploader {
   :deep() {
