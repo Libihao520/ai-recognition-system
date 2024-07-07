@@ -89,6 +89,10 @@ const open = async (row) => {
   }
 }
 
+function clearImage() {
+  imgUrl.value = ''
+}
+
 // 处理输入框失去焦点事件，确保 sbjgCount 是整数
 function handleInputBlur() {
   // 强制将 sbjgCount 转换为整数
@@ -153,9 +157,24 @@ defineExpose({
           :show-file-list="false"
           :on-change="onUploadFile"
         >
-          <img v-if="imgUrl" :src="imgUrl" class="avatar" />
-          <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+          <!-- <img v-if="imgUrl" :src="imgUrl" class="avatar" /> -->
+          <el-icon v-if="!imgUrl" class="avatar-uploader-icon"><Plus /></el-icon>
         </el-upload>
+        <!-- 当图片存在时，使用缩略图形式显示 -->
+        <div class="image-container">
+          <el-image
+            style="width: 300px; height: 300px"
+            v-if="imgUrl"
+            :src="imgUrl"
+            :zoom-rate="1.2"
+            :max-scale="7"
+            :min-scale="0.2"
+            :preview-src-list="[imgUrl]"
+            :initial-index="0"
+            fit="cover"
+          />
+          <span v-if="imgUrl" class="close-btn" @click="clearImage">×</span>
+        </div>
       </el-form-item>
       <el-form-item>
         <el-button @click="onSave('已保存')" type="primary">{{
@@ -167,6 +186,27 @@ defineExpose({
   </el-drawer>
 </template>
 <style lang="scss" scoped>
+.image-container {
+  position: relative;
+  display: inline-block;
+
+  .close-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    line-height: 1;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.7); // 鼠标悬停时改变背景色
+    }
+  }
+}
 .inputcss {
   width: 220px;
 }
