@@ -132,6 +132,7 @@ const handleCommand = async (key) => {
       <el-header>
         <div>
           用户昵称：<strong>{{ userStore.user.name || 默认值 }}</strong>
+          用户角色：<strong>{{ userStore.user.role || 默认值 }}</strong>
         </div>
         <el-dropdown placement="bottom-end" @command="handleCommand">
           <span class="el-dropdown__box">
