@@ -3,21 +3,25 @@ using Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.Dto.User;
+using Model.Enum;
 using Model.Other;
 using WebApi.Config;
 
 namespace WebApi.Controllers;
+
 [Route("api/[controller]/[action]")]
 [ApiController]
-public class LoginController:ControllerBase
+public class LoginController : ControllerBase
 {
     private IUserService _userService;
     private ICustomJWTService _jwtService;
+
     public LoginController(IUserService userService, ICustomJWTService jwtService)
     {
         _userService = userService;
         _jwtService = jwtService;
     }
+
     /// <summary>
     /// 登录接口
     /// </summary>
@@ -32,12 +36,14 @@ public class LoginController:ControllerBase
             {
                 return ResultHelper.Error("参数不能为空");
             }
+
             UserRes user = _userService.GetUser(userReq.username, userReq.Password);
             if (string.IsNullOrEmpty(user.Name))
             {
                 return ResultHelper.Error("账号不存在，用户名或密码错误！");
             }
-            return ResultHelper.Success("登录成功！",_jwtService.GetToken(user));
+
+            return ResultHelper.Success("登录成功！", _jwtService.GetToken(user));
         });
         return await res;
     }
@@ -53,22 +59,21 @@ public class LoginController:ControllerBase
         var res = await _userService.add(userAdd);
         if (res == "注册成功")
         {
-        return ResultHelper.Success("添加成功！",$"添加成功：{userAdd.username}");
-            
+            return ResultHelper.Success("添加成功！", $"添加成功：{userAdd.username}");
         }
         else
         {
             return ResultHelper.Error("用户已存在");
         }
     }
-    
+
     /// <summary>
     /// 解析token
     /// </summary>
     /// <returns></returns>
     [HttpGet]
     [Authorize]
-    public async Task<ApiResult> userinfo( )
+    public async Task<ApiResult> userinfo()
     {
         //解析token
         string token = Request.Headers["Authorization"];
@@ -76,13 +81,16 @@ public class LoginController:ControllerBase
         {
             token = token.Substring("Bearer ".Length);
         }
+
         var handler = new JwtSecurityTokenHandler();
         var jwtToken = handler.ReadJwtToken(token);
         var nameClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "Name").Value;
+        var roleClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "RoleName").Value;
         var userRes = new UserRes()
         {
-            Name = nameClaim
+            Name = nameClaim,
+            Role = roleClaim.ToString() == AuthorizeRoleName.Administrator.ToString() ? "管理员" : "普通用户"
         };
-        return ResultHelper.Success("成功！",userRes);
+        return ResultHelper.Success("成功！", userRes);
     }
 }
