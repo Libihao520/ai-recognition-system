@@ -27,6 +27,7 @@ public class CustomJWTService : ICustomJWTService
         {
             new Claim("Id", user.Id.ToString()),
             new Claim("Name", user.Name),
+            new Claim("RoleName",user.Role.ToString()),
         };
 
         //需要加密：需要加密key:

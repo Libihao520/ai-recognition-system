@@ -43,5 +43,5 @@ public class UserRes
     /// <summary>
     /// 用户角色
     /// </summary>
-    public AuthorizeRoleName Role { get; set; } = AuthorizeRoleName.Ordinary;
+    public string Role { get; set; } 
 }
