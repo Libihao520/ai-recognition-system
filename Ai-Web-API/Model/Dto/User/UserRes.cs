@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Model.Enum;
 
 namespace Model.Dto.User;
 
@@ -38,4 +39,9 @@ public class UserRes
     /// </summary>
     [Required]
     public string Password { get; set; }
+
+    /// <summary>
+    /// 用户角色
+    /// </summary>
+    public AuthorizeRoleName Role { get; set; } = AuthorizeRoleName.Ordinary;
 }
