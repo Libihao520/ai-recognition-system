@@ -12,10 +12,18 @@ public interface IUserService
     /// <param name="passWord"></param>
     /// <returns></returns>
     UserRes GetUser(string userName, string passWord);
+
     /// <summary>
     /// 添加用户
     /// </summary>
     /// <param name="userAdd"></param>
     /// <returns></returns>
-   Task<string>  add(UserAdd userAdd);
+    Task<ApiResult> Add(UserAdd userAdd);
+
+    /// <summary>
+    /// 发送邮箱验证码
+    /// </summary>
+    /// <param name="email"></param>
+    /// <returns></returns>
+    Task<ApiResult> SendVerificationCode(string email);
 }
