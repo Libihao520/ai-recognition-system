@@ -56,15 +56,7 @@ public class LoginController : ControllerBase
     [HttpPost]
     public async Task<ApiResult> add(UserAdd userAdd)
     {
-        var res = await _userService.add(userAdd);
-        if (res == "注册成功")
-        {
-            return ResultHelper.Success("添加成功！", $"添加成功：{userAdd.username}");
-        }
-        else
-        {
-            return ResultHelper.Error("用户已存在");
-        }
+        return  await _userService.Add(userAdd);
     }
 
     /// <summary>
@@ -92,5 +84,15 @@ public class LoginController : ControllerBase
             Role = roleClaim.ToString() == AuthorizeRoleName.Administrator.ToString() ? "管理员" : "普通用户"
         };
         return ResultHelper.Success("成功！", userRes);
+    }
+
+    /// <summary>
+    /// 给邮箱发送验证码
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public async Task<ApiResult> SendVerificationCode([FromQuery] string email)
+    {
+        return await _userService.SendVerificationCode(email);
     }
 }

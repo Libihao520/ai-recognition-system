@@ -4,8 +4,6 @@ namespace Model.Dto.User;
 
 public class UserAdd
 {
-
-
     /// <summary>
     /// 用户名
     /// </summary>
@@ -17,9 +15,22 @@ public class UserAdd
     /// </summary>
     [Required]
     public string Password { get; set; }
+
     /// <summary>
     /// 确认密码
     /// </summary>
     [Required]
     public string rePassword { get; set; }
+
+    /// <summary>
+    /// 邮箱
+    /// </summary>
+    [Required]
+    public string? Email { get; set; }
+
+    /// <summary>
+    /// 验证码
+    /// </summary>
+    [Required]
+    public string? Authcode { get; set; }
 }
