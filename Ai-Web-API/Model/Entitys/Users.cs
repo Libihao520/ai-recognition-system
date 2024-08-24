@@ -17,9 +17,15 @@ public class Users : IEntity
     /// </summary>
     [Required]
     public string Password { get; set; }
-    
+
     /// <summary>
     /// 用户角色
     /// </summary>
     public AuthorizeRoleName Role { get; set; } = AuthorizeRoleName.Ordinary;
+
+    /// <summary>
+    /// 邮箱
+    /// </summary>
+    [Required]
+    public string Email { get; set; }
 }
