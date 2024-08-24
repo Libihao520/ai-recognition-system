@@ -73,7 +73,6 @@ const handleCommand = async (key) => {
           </el-menu-item>
         </el-sub-menu>
 
-
         <el-menu-item index="/yolo/yolorecognition">
           <el-icon><Cpu /></el-icon>
           <span>模型识别入口</span>
@@ -89,7 +88,7 @@ const handleCommand = async (key) => {
             <el-icon><List /></el-icon>
             <span>目标监测记录</span>
           </el-menu-item>
-<!-- 
+          <!-- 
           <el-menu-item index="/yolo/yolocar">
             <el-icon><List /></el-icon>
             <span>车辆表单</span>
@@ -121,7 +120,7 @@ const handleCommand = async (key) => {
             <el-icon><Crop /></el-icon>
             <span>更换头像</span>
           </el-menu-item>
-          <el-menu-item index="/user/MyBlog"  v-if="userStore.user.role === '管理员'">
+          <el-menu-item index="/user/MyBlog" v-if="userStore.user.role === '管理员'">
             <el-icon><EditPen /></el-icon>
             <span>我的博客</span>
           </el-menu-item>
@@ -131,8 +130,9 @@ const handleCommand = async (key) => {
     <el-container>
       <el-header>
         <div>
-          用户昵称：<strong>{{ userStore.user.name || '默认值' }}</strong>
-          用户角色：<strong>{{ userStore.user.role || '默认值' }}</strong>
+          用户昵称：<strong>{{ userStore.user.name || '默认值' }}</strong> 用户角色：<strong>{{
+            userStore.user.role || '默认值'
+          }}</strong>
         </div>
         <el-dropdown placement="bottom-end" @command="handleCommand">
           <span class="el-dropdown__box">
@@ -143,18 +143,10 @@ const handleCommand = async (key) => {
           <!-- 折叠下拉部分 -->
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item command="profile" :icon="User"
-                >基本资料</el-dropdown-item
-              >
-              <el-dropdown-item command="avatar" :icon="Crop"
-                >更换头像</el-dropdown-item
-              >
-              <el-dropdown-item command="MyBlog" :icon="EditPen"
-                >我的博客</el-dropdown-item
-              >
-              <el-dropdown-item command="logout" :icon="SwitchButton"
-                >退出登录</el-dropdown-item
-              >
+              <el-dropdown-item command="profile" :icon="User">基本资料</el-dropdown-item>
+              <el-dropdown-item command="avatar" :icon="Crop">更换头像</el-dropdown-item>
+              <el-dropdown-item command="MyBlog" :icon="EditPen">我的博客</el-dropdown-item>
+              <el-dropdown-item command="logout" :icon="SwitchButton">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
