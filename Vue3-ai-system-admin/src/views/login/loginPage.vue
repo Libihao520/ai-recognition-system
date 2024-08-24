@@ -1,9 +1,10 @@
 <script setup>
-import { userRegisterService, userLoginService } from '@/api/user.js'
-import { User, Lock } from '@element-plus/icons-vue'
+import { userRegisterService, userLoginService, SendVerificationCode } from '@/api/user.js'
+import { User, Lock, Message, EditPen } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
 import { useUserStore } from '@/stores'
 import { useRouter } from 'vue-router'
+import { encrypt } from '@/utils/util'
 
 const isRegister = ref(false)
 const form = ref()
@@ -12,23 +13,52 @@ const userStore = useUserStore()
 const router = useRouter()
 const login = async () => {
   await form.value.validate()
-  const res = await userLoginService(formModel.value)
+  const res = await userLoginService({
+    username: formModel.value.username,
+    password: encrypt(formModel.value.password)
+  })
   console.log(res)
   userStore.setToken(res.data.data)
   ElMessage.success('登录成功')
   router.push('/')
+}
+const forgetThePassword = async () => {
+  await ElMessageBox.confirm('我也不知道你密码，再好好想想吧！', '温馨提示', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+}
+//TODO发送验证码
+const sendAuthCode = async () => {
+  if (formModel.value.email === null) {
+    ElMessage.warning('请先输入邮箱！')
+    return
+  }
+  const res = await SendVerificationCode(encrypt(formModel.value.email))
+
+  console.log(res.data.code)
+  ElMessage.success(res.data.data)
 }
 //注册提交
 const register = async () => {
   //注册成功之前，先进行校验
   await form.value.validate()
   console.log('开始注册')
-  await userRegisterService(formModel.value)
+  await userRegisterService({
+    username: formModel.value.username,
+    password: encrypt(formModel.value.password),
+    repassword: encrypt(formModel.value.repassword),
+    email: encrypt(formModel.value.email),
+    authcode: formModel.value.authcode
+  })
   ElMessage.success('注册成功')
   isRegister.value = false
 }
 //用于提交的from数据对象
 const formModel = ref({
+  authcode: '',
+  email: '',
   username: '',
   password: '',
   repassword: ''
@@ -64,11 +94,15 @@ const rules = {
       },
       trigger: 'blur'
     }
-  ]
+  ],
+  email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }],
+  authcode: [{ required: true, message: '请输入验证码', trigger: 'blur' }]
 }
 //切换的时候，重置表单内容
 watch(isRegister, () => {
   formModel.value = {
+    authcode: '',
+    email: '',
     username: '',
     password: '',
     repassword: ''
@@ -116,31 +150,36 @@ watch(isRegister, () => {
             placeholder="请输入再次密码"
           ></el-input>
         </el-form-item>
+        <el-form-item prop="email">
+          <div class="input-with-button">
+            <el-input
+              v-model="formModel.email"
+              :prefix-icon="Message"
+              placeholder="请输入您的邮箱地址"
+            ></el-input>
+            <el-button @click="sendAuthCode" type="success">发送验证码</el-button>
+          </div>
+        </el-form-item>
+
+        <el-form-item prop="authcode">
+          <el-input
+            v-model="formModel.authcode"
+            :prefix-icon="EditPen"
+            type="password"
+            placeholder="请输入邮箱收到的验证码！"
+          ></el-input>
+        </el-form-item>
         <el-form-item>
-          <el-button
-            @click="register"
-            class="button"
-            type="primary"
-            auto-insert-space
-          >
+          <el-button @click="register" class="button" type="primary" auto-insert-space>
             注册
           </el-button>
         </el-form-item>
         <el-form-item class="flex">
-          <el-link type="info" :underline="false" @click="isRegister = false">
-            ← 返回
-          </el-link>
+          <el-link type="info" :underline="false" @click="isRegister = false"> ← 返回 </el-link>
         </el-form-item>
       </el-form>
       <!-- 登录表单 -->
-      <el-form
-        :model="formModel"
-        :rules="rules"
-        ref="form"
-        size="large"
-        autocomplete="off"
-        v-else
-      >
+      <el-form :model="formModel" :rules="rules" ref="form" size="large" autocomplete="off" v-else>
         <el-form-item>
           <h1>登录</h1>
         </el-form-item>
@@ -164,22 +203,16 @@ watch(isRegister, () => {
         <el-form-item class="flex">
           <div class="flex">
             <el-checkbox>记住我</el-checkbox>
-            <el-link type="primary" :underline="false">忘记密码？</el-link>
+            <el-link @click="forgetThePassword" type="primary" :underline="false"
+              >忘记密码？</el-link
+            >
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button
-            @click="login"
-            class="button"
-            type="primary"
-            auto-insert-space
-            >登录</el-button
-          >
+          <el-button @click="login" class="button" type="primary" auto-insert-space>登录</el-button>
         </el-form-item>
         <el-form-item class="flex">
-          <el-link type="info" :underline="false" @click="isRegister = true">
-            注册 →
-          </el-link>
+          <el-link type="info" :underline="false" @click="isRegister = true"> 注册 → </el-link>
         </el-form-item>
       </el-form>
     </el-col>
@@ -187,12 +220,16 @@ watch(isRegister, () => {
 </template>
 
 <style lang="scss" scoped>
+.input-with-button {
+  display: flex; /* 使用flex布局 */
+  align-items: center; /* 垂直居中对齐 */
+  width: 100%;
+}
 .login-page {
   height: 100vh;
   background-color: #fff;
   .bg {
-    background:
-      url('@/assets/login.png') no-repeat 50% center / 900px auto,
+    background: url('@/assets/login.png') no-repeat 50% center / 900px auto,
       url('@/assets/login-bg.svg') no-repeat center / cover;
     border-radius: 0 20px 20px 0;
   }
