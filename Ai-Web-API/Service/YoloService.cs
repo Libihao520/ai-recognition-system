@@ -161,9 +161,9 @@ public class YoloService : IYoloService
 
             //将参数映射入实体类
             var yoloRes = _mapper.Map<Yolotbs>(req);
-            var generateId = TimeBasedIdGenerator.GenerateId();
+            var generateId = TimeBasedIdGeneratorUtil.GenerateId();
             yoloRes.Id = generateId;
-            var photId = TimeBasedIdGenerator.GenerateId();
+            var photId = TimeBasedIdGeneratorUtil.GenerateId();
             yoloRes.PhotosId = photId;
             var photos = new Photos()
             {
@@ -186,7 +186,7 @@ public class YoloService : IYoloService
                 }
                 else
                 {
-                    var photId = TimeBasedIdGenerator.GenerateId();
+                    var photId = TimeBasedIdGeneratorUtil.GenerateId();
                     findAsync.PhotosId = photId;
                     var photos = new Photos()
                     {

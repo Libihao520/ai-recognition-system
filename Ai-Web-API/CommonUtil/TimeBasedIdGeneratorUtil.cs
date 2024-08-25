@@ -1,6 +1,6 @@
 namespace Service.Common;
 
-public class TimeBasedIdGenerator  
+public class TimeBasedIdGeneratorUtil  
 {  
     public static int GenerateId()  
     {  
