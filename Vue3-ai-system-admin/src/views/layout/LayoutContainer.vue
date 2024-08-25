@@ -124,6 +124,10 @@ const handleCommand = async (key) => {
             <el-icon><EditPen /></el-icon>
             <span>我的博客</span>
           </el-menu-item>
+          <el-menu-item index="/user/RoleManagement">
+            <el-icon><EditPen /></el-icon>
+            <span>用户管理</span>
+          </el-menu-item>
         </el-sub-menu>
       </el-menu>
     </el-aside>

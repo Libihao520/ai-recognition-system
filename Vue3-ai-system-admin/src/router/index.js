@@ -43,6 +43,10 @@ const router = createRouter({
           component: () => import('@/views/user/MyBlog.vue')
         },
         {
+          path: '/user/RoleManagement',
+          component: () => import('@/views/user/UserRoleManagement.vue')
+        },
+        {
           path: '/gjx/ewm',
           component: () => import('@/views/gjx/ewm.vue')
         },
