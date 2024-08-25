@@ -43,10 +43,8 @@ const onDelChannel = async (row, $index) => {
 }
 //重置搜索框
 const Resetsearchbox = () => {
-  selectcondition.value = {
-    clsName: '全部',
-    isaudit: '0'
-  }
+  selectcondition.value.clsName = '全部'
+  selectcondition.value.isaudit = '0'
 }
 
 //添加或者编辑成功回调
