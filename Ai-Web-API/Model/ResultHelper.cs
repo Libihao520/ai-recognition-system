@@ -1,6 +1,6 @@
 using Model.Other;
 
-namespace WebApi.Config;
+namespace Model;
 
 public class ResultHelper
 {

@@ -1,6 +1,6 @@
 using System.Net.Mail;
 
-namespace Service.Utils;
+namespace CommonUtil;
 
 /// <summary>
 /// 邮件发送工具类

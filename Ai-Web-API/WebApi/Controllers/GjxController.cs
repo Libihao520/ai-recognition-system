@@ -1,5 +1,6 @@
 using Interface;
 using Microsoft.AspNetCore.Mvc;
+using Model;
 using Model.Other;
 using WebApi.Config;
 

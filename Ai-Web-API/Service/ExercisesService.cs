@@ -1,10 +1,10 @@
 using AutoMapper;
 using EFCoreMigrations;
 using Interface;
+using Model;
 using Model.Dto.TestPapers;
 using Model.Entitys;
 using Model.Other;
-using WebApi.Config;
 
 namespace Service;
 

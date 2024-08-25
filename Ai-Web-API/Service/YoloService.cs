@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
 using Microsoft.VisualBasic.CompilerServices;
+using Model;
 using Model.Dto.photo;
 using Model.Dto.Yolo;
 using Model.Entitys;
@@ -15,7 +16,6 @@ using Service.Common;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.PixelFormats;
-using WebApi.Config;
 using YoloDotNet;
 using YoloDotNet.Extensions;
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace Service.Utils.RedisUtil;
+namespace CommonUtil.RedisUtil;
 
 public class CacheManager
 {
