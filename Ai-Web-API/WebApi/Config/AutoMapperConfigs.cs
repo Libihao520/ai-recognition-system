@@ -1,4 +1,5 @@
 using AutoMapper;
+using Model.Dto.Role;
 using Model.Dto.TestPapers;
 using Model.Dto.User;
 using Model.Dto.Yolo;
@@ -38,5 +39,7 @@ public class AutoMapperConfigs : Profile
             .ForMember(dest => dest.options, 
                 opt => opt.MapFrom(src => new List<string>() { src.Choice1, src.Choice2 }));
        
+        //RoleManagement
+        CreateMap<Users, RoleRes>();
     }
 }

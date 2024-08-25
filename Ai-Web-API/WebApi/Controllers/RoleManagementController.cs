@@ -17,7 +17,7 @@ public class RoleManagementController : ControllerBase
     }
 
 
-    [HttpGet]
+    [HttpPost]
     public async Task<ApiResult> GetUserRole(RoleReq req)
     {
         return await _managementService.GetUserRole(req);
