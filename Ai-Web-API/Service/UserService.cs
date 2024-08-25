@@ -1,14 +1,14 @@
 using System.Text.RegularExpressions;
 using AutoMapper;
+using CommonUtil;
+using CommonUtil.RedisUtil;
 using EFCoreMigrations;
 using Interface;
+using Model;
 using Model.Consts;
 using Model.Dto.User;
 using Model.Entitys;
 using Model.Other;
-using Service.Utils;
-using WebApi.Config;
-using Service.Utils.RedisUtil;
 
 namespace Service;
 

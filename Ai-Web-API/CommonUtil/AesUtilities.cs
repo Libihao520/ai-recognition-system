@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Service.Utils
+namespace CommonUtil
 {
     public class AesUtilities
     {

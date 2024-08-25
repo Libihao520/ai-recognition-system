@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Model;
 using Model.Dto.User;
 using Model.Enum;
 using Model.Other;

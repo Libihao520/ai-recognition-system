@@ -1,4 +1,4 @@
-﻿namespace Service.Utils.RedisUtil;
+﻿namespace CommonUtil.RedisUtil;
 
 /// <summary>
 /// 所有开发人员redis使用的Key前缀

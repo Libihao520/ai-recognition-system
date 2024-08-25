@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 
-namespace Service.Utils.RedisUtil;
+namespace CommonUtil.RedisUtil;
 
 /// <summary>
 ///  序列化工具类

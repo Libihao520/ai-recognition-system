@@ -1,7 +1,6 @@
-﻿
-using System;  
-using System.Text;  
-namespace Service.Utils;
+﻿using System.Text;
+
+namespace CommonUtil;
   
 public abstract class RandomIdGenerator  
 {  

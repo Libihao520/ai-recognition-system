@@ -1,6 +1,7 @@
 using Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Model;
 using Model.Dto.photo;
 using Model.Dto.Yolo;
 using Model.Other;

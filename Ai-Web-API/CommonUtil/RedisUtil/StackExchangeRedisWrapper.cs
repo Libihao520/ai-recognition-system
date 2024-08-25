@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using StackExchange.Redis;
 
-namespace Service.Utils.RedisUtil;
+namespace CommonUtil.RedisUtil;
 
 /**
  * 安装包：

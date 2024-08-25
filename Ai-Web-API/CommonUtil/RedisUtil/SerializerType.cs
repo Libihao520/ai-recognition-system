@@ -1,4 +1,4 @@
-﻿namespace Service.Utils.RedisUtil;
+﻿namespace CommonUtil.RedisUtil;
 
 public enum SerializerType
 {
