@@ -22,4 +22,15 @@ public class RoleManagementController : ControllerBase
     {
         return await _managementService.GetUserRole(req);
     }
+    [HttpDelete]
+    public async Task<ApiResult> Deleted(long id)
+    {
+        return await _managementService.DeleteAsync(id);
+    }
+
+    [HttpPut]
+    public async Task<ApiResult> PutPasswAsync(long id)
+    {
+        return await _managementService.PutPasswAsync(id);
+    }
 }

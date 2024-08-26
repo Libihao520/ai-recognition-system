@@ -9,4 +9,6 @@ public class RoleReq
     /// 用户名
     /// </summary>
     public string? username { get; set; }
+    
+
 }
