@@ -2,5 +2,7 @@ namespace Model.Dto.Role;
 
 public class RolePasswordRes
 {
-    public long? NewPassword { get; set; }
+    public long Id { get; set; }
+
+    public string? NewPassword { get; set; }
 }

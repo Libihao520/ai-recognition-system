@@ -29,8 +29,8 @@ public class RoleManagementController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<ApiResult> PutPasswAsync(long id)
+    public async Task<ApiResult> PutPasswAsync(RolePasswordRes res)
     {
-        return await _managementService.PutPasswAsync(id);
+        return await _managementService.PutPasswAsync(res);
     }
 }
