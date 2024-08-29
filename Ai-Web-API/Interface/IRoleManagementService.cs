@@ -9,5 +9,5 @@ public interface IRoleManagementService
     
     Task<ApiResult> DeleteAsync(long id);
 
-    Task<ApiResult> PutPasswAsync(long id);
+    Task<ApiResult> PutPasswAsync( RolePasswordRes res);
 }

@@ -59,18 +59,21 @@ public class RoleManagementService : IRoleManagementService
         }
     }
 
-    public async Task<ApiResult> PutPasswAsync(long id)
+    public async Task<ApiResult> PutPasswAsync(RolePasswordRes res)
     {
         try
         {
-            var findAsync = _context.Users.FindAsync(id);
+            var findAsync = _context.Users.Where(q => q.Id == res.Id).FirstOrDefault();
             if (findAsync == null)
             {
                 return ResultHelper.Error("用户不存在 ");
             }
-          
-            await _context.SaveChangesAsync();
-            return ResultHelper.Success("请求成功！", "密码更新完成");
+            else
+            {
+                findAsync.Password = res.NewPassword;
+                await _context.SaveChangesAsync();
+                return ResultHelper.Success("请求成功！", "密码更新完成");
+            }
         }
         catch (Exception e)
         {
@@ -78,5 +81,3 @@ public class RoleManagementService : IRoleManagementService
         }
     }
 }
-
-    
