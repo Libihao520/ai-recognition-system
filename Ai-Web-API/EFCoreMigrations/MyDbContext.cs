@@ -29,7 +29,7 @@ public class MyDbContext : DbContext
     {
         base.OnConfiguring(optionsBuilder);
         //数据库连接字符串
-        optionsBuilder.UseMySql("server=119.3.218.15;port=3306;database=aitest;user=xz;password=123456;",
+        optionsBuilder.UseMySql("server=47.96.138.7;port=3306;database=aitest;user=hostroot;password=1qazZAQ!;",
             new MySqlServerVersion(new Version(8, 0, 33)));
     }
 }
