@@ -116,15 +116,15 @@ export default {
     async fetchQuestions() {
       const questions = await getmMthematics()
       console.log(questions.data)
-      this.singleChoice = questions.data.data.singleChoice.map(question => ({
+      this.singleChoice = questions.data.data.singleChoice.map((question) => ({
         title: question.title,
         options: question.options
       }))
-      this.multipleChoice = questions.data.data.multipleChoice.map(question => ({
+      this.multipleChoice = questions.data.data.multipleChoice.map((question) => ({
         title: question.title,
         options: question.options
       }))
-      this.trueFalse = questions.data.data.trueFalse.map(question => ({
+      this.trueFalse = questions.data.data.trueFalse.map((question) => ({
         title: question.title
       }))
     },

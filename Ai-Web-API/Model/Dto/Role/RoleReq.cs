@@ -6,9 +6,12 @@
 public class RoleReq
 {
     /// <summary>
+    /// 用户id
+    /// </summary>
+    public long? Id { get; set; }
+
+    /// <summary>
     /// 用户名
     /// </summary>
     public string? username { get; set; }
-    
-
 }

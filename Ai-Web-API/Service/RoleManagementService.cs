@@ -24,7 +24,7 @@ public class RoleManagementService : IRoleManagementService
     {
         //TODO
         //根据req里的username返回用户的name,createDate,Tole,email,若id为空则返回所有的
-        if (string.IsNullOrEmpty(req.username))
+        if (req.Id == null)
         {
             var usersList = _context.Users.ToList();
             var resList = _mapper.Map<List<RoleRes>>(usersList);
@@ -32,7 +32,7 @@ public class RoleManagementService : IRoleManagementService
         }
         else
         {
-            var usersEnumerable = _context.Users.Where(u => u.Name == req.username).ToList();
+            var usersEnumerable = _context.Users.Where(u => u.Id == req.Id).ToList();
             var resList = _mapper.Map<List<RoleRes>>(usersEnumerable);
             return ResultHelper.Success("查询成功", resList);
         }

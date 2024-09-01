@@ -4,18 +4,10 @@ import { useUserStore } from '@/stores'
 import { getUserRoleService } from '../../api/Role'
 import { Edit, Delete } from '@element-plus/icons-vue'
 import { formatTime } from '@/utils/format.js'
+import UserRoleManagementEdit from './UserRoleManagementEdit.vue'
 
-const formRef = ref()
+//表单数据
 const channelList = ref([])
-
-//转菊花
-const loading = ref(false)
-
-// 是在使用仓库中数据的初始值 (无需响应式) 解构无问题
-const {
-  user: { id, name, createDate },
-  getUser
-} = useUserStore()
 
 //请求体
 const selectcondition = ref({
@@ -23,21 +15,26 @@ const selectcondition = ref({
   // pagesize: 5, //每页条数
   username: ''
 })
+//转菊花
+const loading = ref(false)
+
+//抽屉
+const RoleManagementEditRef = ref()
+
+//编辑逻辑(传值抽屉)
+const onEditChannel = (row) => {
+  RoleManagementEditRef.value.open(row)
+}
+
 //重置搜索框
 const Resetsearchbox = () => {
   selectcondition.value.username = ''
 }
-const form = ref({
-  id,
-  name,
-  createDate
-})
 
 const getUserRoleList = async () => {
   loading.value = true
   const res = await getUserRoleService(selectcondition.value)
   channelList.value = res.data.data
-  console.log(res.data.data)
   // total.value = res.data.total
   loading.value = false
 }
@@ -87,6 +84,8 @@ getUserRoleList()
       </el-table-column>
     </el-table>
   </page-containel>
+  <!-- 添加编辑抽屉 -->
+  <User-role-Management-Edit ref="RoleManagementEditRef" @success="onSuccess"></User-role-Management-Edit>
 </template>
 <style lang="scss" scoped>
 .select {
