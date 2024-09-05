@@ -26,4 +26,9 @@ public class RoleRes
     /// 电子邮件  
     /// </summary>  
     public string? Email { get; set; }
+    
+    /// <summary>
+    /// 密码
+    /// </summary>
+    public string Password { get; set; }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CommonUtil;
 using EFCoreMigrations;
 using Interface;
 using Model;
@@ -22,19 +23,23 @@ public class RoleManagementService : IRoleManagementService
 
     public async Task<ApiResult> GetUserRole(RoleReq req)
     {
-        //TODO
-        //根据req里的username返回用户的name,createDate,Tole,email,若id为空则返回所有的
         if (req.Id == null)
         {
-            var usersList = _context.Users.ToList();
+            var usersList = _context.Users.Where(q => q.IsDeleted == 0).ToList();
             var resList = _mapper.Map<List<RoleRes>>(usersList);
             return ResultHelper.Success("查询成功", resList);
         }
         else
         {
-            var usersEnumerable = _context.Users.Where(u => u.Id == req.Id).ToList();
-            var resList = _mapper.Map<List<RoleRes>>(usersEnumerable);
-            return ResultHelper.Success("查询成功", resList);
+            var usersEnumerable = _context.Users.Where(u => u.Id == req.Id).FirstOrDefault();
+            if (usersEnumerable == null)
+            {
+                return ResultHelper.Error("获取用户信息失败！");
+            }
+
+            var res = _mapper.Map<RoleRes>(usersEnumerable);
+            res.Password = AesUtilities.Decrypt(res.Password);
+            return ResultHelper.Success("查询成功", res);
         }
     }
 
@@ -59,20 +64,40 @@ public class RoleManagementService : IRoleManagementService
         }
     }
 
-    public async Task<ApiResult> PutPasswAsync(RolePasswordRes res)
+    public async Task<ApiResult> PutUserRole(PutUserRoleRes res)
     {
         try
         {
-            var findAsync = _context.Users.Where(q => q.Id == res.Id).FirstOrDefault();
-            if (findAsync == null)
+            //有id是编辑，无id是新增用户
+            if (res.Id == null)
             {
-                return ResultHelper.Error("用户不存在 ");
+                Users insterUser = new Users()
+                {
+                    Name = res.Name,
+                    Password = res.Password,
+                    Email = res.Email,
+                    CreateDate = DateTime.Now,
+                    CreateUserId = 0,
+                    IsDeleted = 0
+                };
+                _context.Users.Add(insterUser);
+                _context.SaveChanges();
+                return ResultHelper.Success("请求成功！", "新增用户成功！");
             }
             else
             {
-                findAsync.Password = res.NewPassword;
-                await _context.SaveChangesAsync();
-                return ResultHelper.Success("请求成功！", "密码更新完成");
+                var user = _context.Users.Where(q => q.Id == res.Id).FirstOrDefault();
+                if (user == null)
+                {
+                    return ResultHelper.Error("用户不存在 ");
+                }
+                else
+                {
+                    user.Password = res.Password;
+                    user.Email = res.Email;
+                    await _context.SaveChangesAsync();
+                    return ResultHelper.Success("请求成功！", "密码更新完成");
+                }
             }
         }
         catch (Exception e)
