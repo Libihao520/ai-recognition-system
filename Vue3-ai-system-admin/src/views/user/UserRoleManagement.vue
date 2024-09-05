@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useUserStore } from '@/stores'
-import { getUserRoleService } from '../../api/Role'
+import { getUserRoleService,DeletedService } from '../../api/Role'
 import { Edit, Delete } from '@element-plus/icons-vue'
 import { formatTime } from '@/utils/format.js'
 import UserRoleManagementEdit from './UserRoleManagementEdit.vue'
@@ -21,9 +21,24 @@ const loading = ref(false)
 //抽屉
 const RoleManagementEditRef = ref()
 
+//添加逻辑（不传值）
+const onAddTblist = () => {
+  RoleManagementEditRef.value.open({})
+}
 //编辑逻辑(传值抽屉)
 const onEditChannel = (row) => {
   RoleManagementEditRef.value.open(row)
+}
+//添加或者编辑成功回调
+const onSuccess = (type) => {
+  getUserRoleList()
+}
+
+//删除逻辑
+const onDelChannel = async (row, $index) => {
+  console.log(row.id)
+  const res = await DeletedService(row.id)
+  getUserRoleList()
 }
 
 //重置搜索框
@@ -51,7 +66,7 @@ getUserRoleList()
         <el-button @click="Resetsearchbox">重置</el-button>
       </el-form-item>
     </el-form>
-
+    <template #extra><el-button type="primary" @click="onAddTblist">添加用户</el-button></template>
     <!-- 表单数据 -->
     <el-table v-loading="loading" :data="channelList" style="width: 100%">
       <el-table-column type="index" label="序号" width="100"></el-table-column>
@@ -85,7 +100,10 @@ getUserRoleList()
     </el-table>
   </page-containel>
   <!-- 添加编辑抽屉 -->
-  <User-role-Management-Edit ref="RoleManagementEditRef" @success="onSuccess"></User-role-Management-Edit>
+  <User-role-Management-Edit
+    ref="RoleManagementEditRef"
+    @success="onSuccess"
+  ></User-role-Management-Edit>
 </template>
 <style lang="scss" scoped>
 .select {
