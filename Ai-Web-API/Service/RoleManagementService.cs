@@ -26,6 +26,11 @@ public class RoleManagementService : IRoleManagementService
         if (req.Id == null)
         {
             var usersList = _context.Users.Where(q => q.IsDeleted == 0).ToList();
+            if (!string.IsNullOrEmpty(req.username))
+            {
+                usersList = usersList.Where(q => q.Name.Contains(req.username)).ToList();
+            }
+
             var resList = _mapper.Map<List<RoleRes>>(usersList);
             return ResultHelper.Success("查询成功", resList);
         }
@@ -71,6 +76,13 @@ public class RoleManagementService : IRoleManagementService
             //有id是编辑，无id是新增用户
             if (res.Id == null)
             {
+                var user = _context.Users.Where(q => q.Name == res.Name).FirstOrDefault();
+                if (user != null)
+                {
+                    return ResultHelper.Error("用户名称已被注册了，请换一个！");
+                }
+
+                //TODO 验证邮箱是否合规（最好是将注册的验证邮箱抽出来通用）
                 Users insterUser = new Users()
                 {
                     Name = res.Name,
