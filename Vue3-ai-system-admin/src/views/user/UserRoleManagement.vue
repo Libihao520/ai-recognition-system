@@ -44,6 +44,7 @@ const onDelChannel = async (row, $index) => {
 //重置搜索框
 const Resetsearchbox = () => {
   selectcondition.value.username = ''
+  getUserRoleList()
 }
 
 const getUserRoleList = async () => {
@@ -62,7 +63,7 @@ getUserRoleList()
         <el-input placeholder="请输入用户名称" v-model="selectcondition.username"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="getPkqtbList">搜索</el-button>
+        <el-button type="primary" @click="getUserRoleList">搜索</el-button>
         <el-button @click="Resetsearchbox">重置</el-button>
       </el-form-item>
     </el-form>
