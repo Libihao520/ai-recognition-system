@@ -90,7 +90,7 @@ public class RoleManagementService : IRoleManagementService
                     return ResultHelper.Error("用户名称已被注册了，请换一个！");
                 }
 
-                //TODO 验证邮箱是否合规（最好是将注册的验证邮箱抽出来通用）
+                //TODO 验证邮箱是否合规（最好是将注册的验证邮箱抽出来通用） CreateUserId采用当前操作角色的id 
                 Users insterUser = new Users()
                 {
                     Name = res.Name,
@@ -98,6 +98,7 @@ public class RoleManagementService : IRoleManagementService
                     Email = res.Email,
                     CreateDate = DateTime.Now,
                     CreateUserId = 0,
+                    Role = res.role,
                     IsDeleted = 0
                 };
                 _context.Users.Add(insterUser);
@@ -115,6 +116,7 @@ public class RoleManagementService : IRoleManagementService
                 {
                     user.Password = res.Password;
                     user.Email = res.Email;
+                    user.Role = res.role;
                     await _context.SaveChangesAsync();
                     return ResultHelper.Success("请求成功！", "密码更新完成");
                 }
