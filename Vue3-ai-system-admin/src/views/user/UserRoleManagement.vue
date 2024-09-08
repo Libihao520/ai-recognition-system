@@ -1,18 +1,19 @@
 <script setup>
 import { ref } from 'vue'
 import { useUserStore } from '@/stores'
-import { getUserRoleService,DeletedService } from '../../api/Role'
+import { getUserRoleService, DeletedService } from '../../api/Role'
 import { Edit, Delete } from '@element-plus/icons-vue'
 import { formatTime } from '@/utils/format.js'
 import UserRoleManagementEdit from './UserRoleManagementEdit.vue'
 
 //表单数据
 const channelList = ref([])
+const total = ref(0) //总条数
 
 //请求体
 const selectcondition = ref({
-  // pagenum: 1, //当前页
-  // pagesize: 5, //每页条数
+  pagenum: 1, //当前页
+  pagesize: 5, //每页条数
   username: ''
 })
 //转菊花
@@ -47,11 +48,23 @@ const Resetsearchbox = () => {
   getUserRoleList()
 }
 
+//处理分页逻辑
+const onSizeChange = (size) => {
+  selectcondition.value.pagenum = 1
+  selectcondition.value.pagesize = size
+  getUserRoleList()
+}
+//页码
+const onCurrentChange = (page) => {
+  selectcondition.value.pagenum = page
+  getUserRoleList()
+}
+
 const getUserRoleList = async () => {
   loading.value = true
   const res = await getUserRoleService(selectcondition.value)
   channelList.value = res.data.data
-  // total.value = res.data.total
+  total.value = res.data.total
   loading.value = false
 }
 getUserRoleList()
@@ -99,6 +112,18 @@ getUserRoleList()
         </template>
       </el-table-column>
     </el-table>
+    <!-- 分页部分 -->
+    <el-pagination
+      v-model:current-page="selectcondition.pagenum"
+      v-model:page-size="selectcondition.pagesize"
+      :page-sizes="[5, 10, 15, 20]"
+      :background="true"
+      layout="jumper,total, sizes, prev, pager, next "
+      :total="total"
+      @size-change="onSizeChange"
+      @current-change="onCurrentChange"
+      style="margin-top: 20px; justify-content: flex-end"
+    />
   </page-containel>
   <!-- 添加编辑抽屉 -->
   <User-role-Management-Edit

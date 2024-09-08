@@ -2,6 +2,7 @@
 using CommonUtil;
 using EFCoreMigrations;
 using Interface;
+using Microsoft.EntityFrameworkCore;
 using Model;
 using Model.Dto.Role;
 using Model.Dto.User;
@@ -25,14 +26,21 @@ public class RoleManagementService : IRoleManagementService
     {
         if (req.Id == null)
         {
-            var usersList = _context.Users.Where(q => q.IsDeleted == 0).ToList();
+            var userstb = _context.Users.Where(q => q.IsDeleted == 0);
             if (!string.IsNullOrEmpty(req.username))
             {
-                usersList = usersList.Where(q => q.Name.Contains(req.username)).ToList();
+                userstb = userstb.Where(q => q.Name.Contains(req.username));
             }
 
-            var resList = _mapper.Map<List<RoleRes>>(usersList);
-            return ResultHelper.Success("查询成功", resList);
+            var total = await userstb.CountAsync();
+
+            var paginatedResult = await userstb
+                .Skip((req.pagenum - 1) * req.pagesize) // 跳过前面的记录  
+                .Take(req.pagesize) // 取接下来的指定数量的记录  
+                .ToListAsync(); // 转换为列表  
+
+            var resList = _mapper.Map<List<RoleRes>>(paginatedResult);
+            return ResultHelper.Success("查询成功", resList, total);
         }
         else
         {
