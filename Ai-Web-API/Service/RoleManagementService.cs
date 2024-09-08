@@ -8,6 +8,7 @@ using Model.Dto.Role;
 using Model.Dto.User;
 using Model.Entitys;
 using Model.Other;
+using Service.Common;
 
 namespace Service;
 
@@ -93,6 +94,7 @@ public class RoleManagementService : IRoleManagementService
                 //TODO 验证邮箱是否合规（最好是将注册的验证邮箱抽出来通用） CreateUserId采用当前操作角色的id 
                 Users insterUser = new Users()
                 {
+                    Id = TimeBasedIdGeneratorUtil.GenerateId(),
                     Name = res.Name,
                     Password = res.Password,
                     Email = res.Email,
