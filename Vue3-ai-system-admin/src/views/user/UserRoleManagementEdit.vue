@@ -17,8 +17,8 @@ const defaultForm = {
 
 //请求体
 const selectcondition = ref({
-  // pagenum: 1, //当前页
-  // pagesize: 5, //每页条数
+  pagenum: 0,
+  pagesize: 0, 
   id: '',
   username: ''
 })
