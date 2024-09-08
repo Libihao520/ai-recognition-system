@@ -13,7 +13,8 @@ import {
   Briefcase,
   Picture,
   Collection,
-  Tickets
+  Tickets,
+  Management
 } from '@element-plus/icons-vue'
 
 import avatar from '@/assets/default.png'
@@ -125,7 +126,7 @@ const handleCommand = async (key) => {
             <span>我的博客</span>
           </el-menu-item>
           <el-menu-item index="/user/RoleManagement">
-            <el-icon><EditPen /></el-icon>
+            <el-icon><Management /></el-icon>
             <span>用户管理</span>
           </el-menu-item>
         </el-sub-menu>
