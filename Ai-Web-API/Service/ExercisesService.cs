@@ -49,4 +49,11 @@ public class ExercisesService : IExercisesService
             
         return ResultHelper.Success("获取成功！", mathematicsRes);
     }
+
+    public Task<ApiResult> checkSubmit(SubmitExercisesReq req)
+    {
+        //TODO req 即是传过来的题目，进行批改并返回答对数量
+        throw new NotImplementedException();
+    }
+
 }
