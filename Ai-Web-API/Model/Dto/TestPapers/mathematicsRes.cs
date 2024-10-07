@@ -23,16 +23,22 @@ public class SingleChoice
     public string title { get; set; }
 
     public List<string> options { get; set; }
+    
+    public int TopicNumber { get; set; }
 }
 
 public class MultipleChoice
 {
     public string title { get; set; }
     public List<string> options { get; set; }
+    
+    public int TopicNumber { get; set; }
 }
 
 public class TrueFalse
 {
     public string title { get; set; }
     public List<string> options { get; set; }
+    
+    public int TopicNumber { get; set; }
 }

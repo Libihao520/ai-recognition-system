@@ -10,7 +10,7 @@ import {
   ElRadio
 } from 'element-plus'
 
-import { getmMthematics } from '../../api/exercises'
+import { getmMthematics, postSubmitExercises } from '../../api/exercises'
 
 // 使用 ref 声明响应式数据
 const singleChoice = ref([])
@@ -26,20 +26,28 @@ async function fetchQuestions() {
   console.log(questions.data)
   singleChoice.value = questions.data.data.singleChoice.map((question) => ({
     title: question.title,
-    options: question.options
+    options: question.options,
+    topicNumber: question.topicNumber
   }))
   multipleChoice.value = questions.data.data.multipleChoice.map((question) => ({
     title: question.title,
-    options: question.options
+    options: question.options,
+    topicNumber: question.topicNumber
   }))
   trueFalse.value = questions.data.data.trueFalse.map((question) => ({
-    title: question.title
+    title: question.title,
+    topicNumber: question.topicNumber
   }))
 }
 
 // 提交答案的方法
-function submit() {
+async function submit() {
   console.log('答案：', {
+    singleChoice: answers.value,
+    multipleChoice: multipleAnswers.value,
+    trueFalse: trueFalseAnswers.value
+  })
+  await postSubmitExercises({
     singleChoice: answers.value,
     multipleChoice: multipleAnswers.value,
     trueFalse: trueFalseAnswers.value
@@ -58,12 +66,12 @@ fetchQuestions()
       <el-main>
         <h2>单选题</h2>
         <div v-for="(question, index) in singleChoice" :key="index">
-          <p>{{ question.title }}</p>
+          <p>{{ question.topicNumber + '. ' + question.title }}</p>
           <el-radio-group v-model="answers[index]">
             <el-radio
               v-for="(option, optionIndex) in question.options"
               :key="optionIndex"
-              :label="option"
+              :label="optionIndex"
               >{{ option }}</el-radio
             >
           </el-radio-group>
@@ -73,7 +81,7 @@ fetchQuestions()
         <div v-if="multipleChoice.length">
           <h2>多选题</h2>
           <div v-for="(question, index) in multipleChoice" :key="index">
-            <p>{{ question.title }}</p>
+            <p>{{ question.topicNumber + '. ' + question.title }}</p>
             <el-checkbox-group v-model="multipleAnswers[index]">
               <el-checkbox
                 v-for="(option, optionIndex) in question.options"
@@ -89,7 +97,7 @@ fetchQuestions()
         <div v-if="trueFalse.length">
           <h2>判断题</h2>
           <div v-for="(question, index) in trueFalse" :key="index">
-            <p>{{ question.title }}</p>
+            <p>{{ question.topicNumber + '. ' + question.title }}</p>
             <el-radio-group v-model="trueFalseAnswers[index]">
               <el-radio label="true">正确</el-radio>
               <el-radio label="false">错误</el-radio>
