@@ -38,8 +38,21 @@ async function fetchQuestions() {
     title: question.title,
     topicNumber: question.topicNumber
   }))
+
+  // 初始化答案数组，确保每个问题都有一个对应的答案位置
+  answers.value = singleChoice.value.map(() => null)
+  multipleAnswers.value = multipleChoice.value.map(() => [])
+  trueFalseAnswers.value = trueFalse.value.map(() => null)
 }
 
+// 检查是否有未回答的题目
+function hasUnansweredQuestions() {
+  return (
+    answers.value.includes(null) ||
+    multipleAnswers.value.some((answers) => answers.length === 0) ||
+    trueFalseAnswers.value.includes(null)
+  )
+}
 // 提交答案的方法
 async function submit() {
   console.log('答案：', {
@@ -47,6 +60,11 @@ async function submit() {
     multipleChoice: multipleAnswers.value,
     trueFalse: trueFalseAnswers.value
   })
+  if (hasUnansweredQuestions()) {
+    alert('请确保所有题目都已回答！')
+    return
+  }
+
   await postSubmitExercises({
     singleChoice: answers.value,
     multipleChoice: multipleAnswers.value,
