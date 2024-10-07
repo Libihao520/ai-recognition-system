@@ -1,3 +1,4 @@
+using Model.Dto.TestPapers;
 using Model.Other;
 
 namespace Interface;
@@ -5,4 +6,8 @@ namespace Interface;
 public interface IExercisesService
 {
     public Task<ApiResult> GetmMthematics();
+
+
+    public Task<ApiResult> checkSubmit(SubmitExercisesReq req);
+
 }

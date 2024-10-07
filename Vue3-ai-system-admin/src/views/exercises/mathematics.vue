@@ -104,7 +104,7 @@ fetchQuestions()
               <el-checkbox
                 v-for="(option, optionIndex) in question.options"
                 :key="optionIndex"
-                :label="option"
+                :label="optionIndex"
                 >{{ option }}</el-checkbox
               >
             </el-checkbox-group>
