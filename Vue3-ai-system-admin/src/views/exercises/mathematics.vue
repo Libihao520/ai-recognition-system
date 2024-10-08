@@ -55,21 +55,18 @@ function hasUnansweredQuestions() {
 }
 // 提交答案的方法
 async function submit() {
-  console.log('答案：', {
-    singleChoice: answers.value,
-    multipleChoice: multipleAnswers.value,
-    trueFalse: trueFalseAnswers.value
-  })
+
   if (hasUnansweredQuestions()) {
     alert('请确保所有题目都已回答！')
     return
   }
 
-  await postSubmitExercises({
+  const questions = await postSubmitExercises({
     singleChoice: answers.value,
     multipleChoice: multipleAnswers.value,
     trueFalse: trueFalseAnswers.value
   })
+  alert(questions.data.data)
 }
 
 // 组件创建时调用 fetchQuestions
