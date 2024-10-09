@@ -72,7 +72,36 @@ public class ExercisesService : IExercisesService
 
             index++;
         }
+        
+        // 处理多选题
+        var multipleChoices = testPapersList.Where(m=>m.type==(int)ExercisesType.多选题)
+                .Select(m=>new {m.TopicNumber,CorrectAnswer=m.answer})
+                .OrderBy(s=>s.TopicNumber)
+                .ToList();
+        int multipleChoicesIndex = 0;
+        foreach (var mu in multipleChoices)
+        {
+           
+        }
+       
+        //处理判断题
+        var testPapersEnumerable = testPapersList.Where(p => p.type == (int)ExercisesType.判断题)
+            .Select(p => new { p.TopicNumber, Answer = p.answer.ToString() })
+            .OrderBy(p => p.TopicNumber)
+            .ToList()
+            ;
+        // 从0开始
+        int trueFlaseIndex = 0;
+        foreach (var testpaper in testPapersEnumerable)
+        {
+            if (testpaper.Answer==req.trueFalse[trueFlaseIndex])
+            {
+                count++;
+            }
 
+            trueFlaseIndex++;
+        }
+      
         return ResultHelper.Success("成功！", "做对题目为：" + count);
     }
 }
