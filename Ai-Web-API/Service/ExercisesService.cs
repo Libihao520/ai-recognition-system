@@ -62,46 +62,46 @@ public class ExercisesService : IExercisesService
             .OrderBy(s => s.TopicNumber)
             .ToList();
 
-        int index = 0;
-        foreach (var singleChoice in singleChoices)
+
+        for (int i = 0; i < Math.Min(singleChoices.Count, req.singleChoice.Count); i++)
         {
-            if (singleChoice.answer == req.singleChoice[index])
+            if (singleChoices[i].answer == req.singleChoice[i])
             {
                 count++;
             }
+        }
 
-            index++;
-        }
-        
         // 处理多选题
-        var multipleChoices = testPapersList.Where(m=>m.type==(int)ExercisesType.多选题)
-                .Select(m=>new {m.TopicNumber,CorrectAnswer=m.answer})
-                .OrderBy(s=>s.TopicNumber)
-                .ToList();
-        int multipleChoicesIndex = 0;
-        foreach (var mu in multipleChoices)
+        var multipleChoices = testPapersList.Where(m => m.type == (int)ExercisesType.多选题)
+            .Select(m => new { m.TopicNumber, CorrectAnswer = m.answer })
+            .OrderBy(s => s.TopicNumber)
+            .ToList();
+        for (int i = 0; i < Math.Min(multipleChoices.Count, req.multipleChoice.Count); i++)
         {
-           
+            if (multipleChoices[i].CorrectAnswer.SequenceEqual(req.multipleChoice[i]))
+            {
+                count++;
+            }
         }
-       
+
         //处理判断题
         var testPapersEnumerable = testPapersList.Where(p => p.type == (int)ExercisesType.判断题)
-            .Select(p => new { p.TopicNumber, Answer = p.answer.ToString() })
-            .OrderBy(p => p.TopicNumber)
-            .ToList()
+                .Select(p => new { p.TopicNumber, Answer = p.answer.ToString() })
+                .OrderBy(p => p.TopicNumber)
+                .ToList()
             ;
         // 从0开始
         int trueFlaseIndex = 0;
         foreach (var testpaper in testPapersEnumerable)
         {
-            if (testpaper.Answer==req.trueFalse[trueFlaseIndex])
+            if (testpaper.Answer == req.trueFalse[trueFlaseIndex])
             {
                 count++;
             }
 
             trueFlaseIndex++;
         }
-      
+
         return ResultHelper.Success("成功！", "做对题目为：" + count);
     }
 }
