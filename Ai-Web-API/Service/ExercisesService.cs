@@ -90,16 +90,12 @@ public class ExercisesService : IExercisesService
                 .OrderBy(p => p.TopicNumber)
                 .ToList()
             ;
-        // 从0开始
-        int trueFlaseIndex = 0;
-        foreach (var testpaper in testPapersEnumerable)
+        for (int i = 0; i < Math.Min(testPapersEnumerable.Count,req.trueFalse.Count); i++)
         {
-            if (testpaper.Answer == req.trueFalse[trueFlaseIndex])
+            if (testPapersEnumerable[i].Answer==req.trueFalse[i])
             {
                 count++;
             }
-
-            trueFlaseIndex++;
         }
 
         return ResultHelper.Success("成功！", "做对题目为：" + count);
