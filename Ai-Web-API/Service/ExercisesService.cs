@@ -86,7 +86,7 @@ public class ExercisesService : IExercisesService
 
         //处理判断题
         var testPapersEnumerable = testPapersList.Where(p => p.type == (int)ExercisesType.判断题)
-                .Select(p => new { p.TopicNumber, Answer = p.answer.ToString() })
+                .Select(p => new { p.TopicNumber, Answer = p.answer[0]==1?"true":"false" })
                 .OrderBy(p => p.TopicNumber)
                 .ToList()
             ;
