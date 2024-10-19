@@ -23,6 +23,7 @@ public class MyDbContext : DbContext
     }
 
     //数据库迁移
+    // cd EFCoreMigrations
     //dotnet ef migrations add InitialCreate
     //dotnet ef database update
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
