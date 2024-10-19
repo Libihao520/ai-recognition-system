@@ -79,10 +79,7 @@ fetchQuestions()
 <template>
   <page-containel title="数学题">
     <el-container>
-      <el-header>
-        <h1>注意：本网页包含单选题、多选题和判断题，在完成答题后点击提交按钮！</h1>
-      </el-header>
-      <el-main>
+        <el-alert title="注意：本网页包含单选题、多选题和判断题，在完成答题后点击提交按钮！" type="warning" />
         <h2>单选题</h2>
         <div v-for="(question, index) in singleChoice" :key="index">
           <p>{{ question.topicNumber + '. ' + question.title }}</p>
@@ -123,7 +120,6 @@ fetchQuestions()
             </el-radio-group>
           </div>
         </div>
-      </el-main>
       <el-footer>
         <el-button type="primary" @click="submit">提交</el-button>
       </el-footer>
