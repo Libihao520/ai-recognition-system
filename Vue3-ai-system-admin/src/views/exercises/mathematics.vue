@@ -7,7 +7,8 @@ import {
   ElFooter,
   ElButton,
   ElRadioGroup,
-  ElRadio
+  ElRadio,
+  ElMessage
 } from 'element-plus'
 
 import { getmMthematics, postSubmitExercises } from '../../api/exercises'
@@ -55,9 +56,12 @@ function hasUnansweredQuestions() {
 }
 // 提交答案的方法
 async function submit() {
-
   if (hasUnansweredQuestions()) {
-    alert('请确保所有题目都已回答！')
+    ElMessage({
+      message: '请仔细检查，确保所有题目都已回答！',
+      type: 'warning'
+    })
+
     return
   }
 
@@ -66,7 +70,7 @@ async function submit() {
     multipleChoice: multipleAnswers.value,
     trueFalse: trueFalseAnswers.value
   })
-  alert(questions.data.data)
+  ElMessageBox.alert(questions.data.data, '提示', { confirmButtonText: '明白' })
 }
 
 // 组件创建时调用 fetchQuestions
