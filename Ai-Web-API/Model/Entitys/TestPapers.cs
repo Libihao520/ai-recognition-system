@@ -22,11 +22,13 @@ public class TestPapers
     /// <summary>
     /// 题目类型
     /// </summary>
-    public int type { get; set; } 
+    public int type { get; set; }
+
     /// <summary>
     /// 选择 A B C D
     /// </summary>
     public string? Choice1 { get; set; }
+
     public string? Choice2 { get; set; }
     public string? Choice3 { get; set; }
     public string? Choice4 { get; set; }
@@ -34,5 +36,10 @@ public class TestPapers
     /// <summary>
     /// 答案
     /// </summary>
-    public List<int>? answer { get; set; } 
+    public List<int>? answer { get; set; }
+
+    /// <summary>
+    /// 分数
+    /// </summary>
+    public int Grade { get; set; }
 }
