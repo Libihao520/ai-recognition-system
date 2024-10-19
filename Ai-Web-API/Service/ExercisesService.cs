@@ -54,11 +54,11 @@ public class ExercisesService : IExercisesService
 
     public async Task<ApiResult> checkSubmit(SubmitExercisesReq req)
     {
-        //做对的题数
-        int count = 0;
+        //得分
+        int score = 0;
         var testPapersList = _context.testpapers.Where(x => x.subject == "数学").ToList();
         var singleChoices = testPapersList.Where(q => q.type == (int)ExercisesType.单选题)
-            .Select(p => new { p.TopicNumber, answer = p.answer[0] })
+            .Select(p => new { p.TopicNumber, answer = p.answer[0],p.Grade })
             .OrderBy(s => s.TopicNumber)
             .ToList();
 
@@ -67,26 +67,26 @@ public class ExercisesService : IExercisesService
         {
             if (singleChoices[i].answer == req.singleChoice[i])
             {
-                count++;
+                score=score+singleChoices[i].Grade;
             }
         }
 
         // 处理多选题
         var multipleChoices = testPapersList.Where(m => m.type == (int)ExercisesType.多选题)
-            .Select(m => new { m.TopicNumber, CorrectAnswer = m.answer })
+            .Select(m => new { m.TopicNumber, CorrectAnswer = m.answer,m.Grade })
             .OrderBy(s => s.TopicNumber)
             .ToList();
         for (int i = 0; i < Math.Min(multipleChoices.Count, req.multipleChoice.Count); i++)
         {
             if (multipleChoices[i].CorrectAnswer.SequenceEqual(req.multipleChoice[i]))
             {
-                count++;
+                score=score+multipleChoices[i].Grade;
             }
         }
 
         //处理判断题
         var testPapersEnumerable = testPapersList.Where(p => p.type == (int)ExercisesType.判断题)
-                .Select(p => new { p.TopicNumber, Answer = p.answer[0]==1?"true":"false" })
+                .Select(p => new { p.TopicNumber, Answer = p.answer[0]==1?"true":"false",p.Grade })
                 .OrderBy(p => p.TopicNumber)
                 .ToList()
             ;
@@ -94,10 +94,10 @@ public class ExercisesService : IExercisesService
         {
             if (testPapersEnumerable[i].Answer==req.trueFalse[i])
             {
-                count++;
+                score=score+testPapersEnumerable[i].Grade;
             }
         }
 
-        return ResultHelper.Success("成功！", "做对题目为：" + count);
+        return ResultHelper.Success("成功！", @$"本次答题得分为：{score} ,具体情况前往成绩中心查看！");
     }
 }
