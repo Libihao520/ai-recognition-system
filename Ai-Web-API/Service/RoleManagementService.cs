@@ -2,6 +2,8 @@
 using CommonUtil;
 using EFCoreMigrations;
 using Interface;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Model;
 using Model.Dto.Role;
@@ -57,7 +59,7 @@ public class RoleManagementService : IRoleManagementService
         }
     }
 
-    public async Task<ApiResult> DeleteAsync(long id)
+    public async Task<ApiResult> DeleteUserRoleAsync(long id)
     {
         try
         {
@@ -78,7 +80,7 @@ public class RoleManagementService : IRoleManagementService
         }
     }
 
-    public async Task<ApiResult> PutUserRole(PutUserRoleRes res)
+    public async Task<ApiResult> AddOrUpdateUserRole(PutUserRoleRes res)
     {
         try
         {
@@ -128,5 +130,15 @@ public class RoleManagementService : IRoleManagementService
         {
             return ResultHelper.Error("更新密码时发生错误");
         }
+    }
+
+    public async Task<ApiResult> ImportUsersFromExcel(IFormFile file)
+    {
+        return ResultHelper.Success("请求成功！", "");
+    }
+
+    public async Task<IActionResult> DownloadExcelUsersFromExcel()
+    {
+        return null;
     }
 }

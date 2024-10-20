@@ -35,7 +35,7 @@ public class RoleManagementController : ControllerBase
     [HttpDelete]
     public async Task<ApiResult> Deleted(long id)
     {
-        return await _managementService.DeleteAsync(id);
+        return await _managementService.DeleteUserRoleAsync(id);
     }
 
     /// <summary>
@@ -46,7 +46,28 @@ public class RoleManagementController : ControllerBase
     [HttpPut]
     public async Task<ApiResult> PutUserRole(PutUserRoleRes res)
     {
-        return await _managementService.PutUserRole(res);
+        return await _managementService.AddOrUpdateUserRole(res);
+    }
+
+    /// <summary>
+    /// 批量导入用户
+    /// </summary>
+    /// <param name="file"></param>
+    /// <returns></returns>
+    [HttpPost]
+    public async Task<ApiResult> UploadUserFile(IFormFile file)
+    {
+        return await _managementService.ImportUsersFromExcel(file);
+    }
+
+    /// <summary>
+    /// 批量导出用户
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public async Task<IActionResult> DownloadExcelUsersFromExcel()
+    {
+        return await _managementService.DownloadExcelUsersFromExcel();
     }
 
     /// <summary>
