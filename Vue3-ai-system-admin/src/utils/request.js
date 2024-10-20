@@ -25,7 +25,6 @@ instance.interceptors.request.use(
 //响应拦截器
 instance.interceptors.response.use(
   (res) => {
-    console.log(res.data.type)
     // 检查是否为blob类型响应  
     if (res || res.data || res.data.type || res.data.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
       return res;
