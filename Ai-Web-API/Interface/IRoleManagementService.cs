@@ -1,13 +1,19 @@
 using Model.Dto.Role;
 using Model.Other;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Interface;
 
 public interface IRoleManagementService
 {
-    public Task<ApiResult> GetUserRole(RoleReq req);
-    
-    Task<ApiResult> DeleteAsync(long id);
+    Task<ApiResult> GetUserRole(RoleReq req);
 
-    Task<ApiResult> PutUserRole( PutUserRoleRes res);
+    Task<ApiResult> DeleteUserRoleAsync(long id);
+
+    Task<ApiResult> AddOrUpdateUserRole(PutUserRoleRes res);
+
+    Task<ApiResult> ImportUsersFromExcel(IFormFile file);
+
+    Task<IActionResult> DownloadExcelUsersFromExcel();
 }
