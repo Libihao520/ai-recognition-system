@@ -5,6 +5,7 @@ import {
   getUserRoleService,
   DeletedService,
   downloadUserImportTemplateService,
+  DownloadExcelUsersFromExcelService,
   uploadUserFileService
 } from '../../api/Role'
 import { Edit, Delete } from '@element-plus/icons-vue'
@@ -76,7 +77,9 @@ const handleFileChange = async (event) => {
 }
 
 //批量导出用户
-const downloadExcelUser = () => {}
+const downloadExcelUser = () => {
+  DownloadExcelUsersFromExcelService()
+}
 
 //重置搜索框
 const Resetsearchbox = () => {

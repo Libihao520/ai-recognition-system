@@ -25,7 +25,7 @@ export const downloadUserImportTemplateService = () => {
   });
 };
 
-// 上传用户文件  
+// 批量导入
 export const uploadUserFileService = (file, additionalData = {}) => {
   const formData = new FormData();
   formData.append('file', file);
@@ -36,5 +36,21 @@ export const uploadUserFileService = (file, additionalData = {}) => {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
+  });
+};
+
+//批量导出
+export const DownloadExcelUsersFromExcelService = () => {
+  return request.get('/RoleManagement/DownloadExcelUsersFromExcel', {
+    responseType: 'blob' // 告诉axios我们期望服务器返回一个blob对象  
+  }).then(response => {
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', '用户数据.xlsx'); // 设置下载文件名  
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   });
 };
