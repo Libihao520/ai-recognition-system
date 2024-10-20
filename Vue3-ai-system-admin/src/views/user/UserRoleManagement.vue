@@ -1,7 +1,11 @@
 <script setup>
 import { ref } from 'vue'
 import { useUserStore } from '@/stores'
-import { getUserRoleService, DeletedService } from '../../api/Role'
+import {
+  getUserRoleService,
+  DeletedService,
+  downloadUserImportTemplateService
+} from '../../api/Role'
 import { Edit, Delete } from '@element-plus/icons-vue'
 import { formatTime } from '@/utils/format.js'
 import UserRoleManagementEdit from './UserRoleManagementEdit.vue'
@@ -42,6 +46,11 @@ const onDelChannel = async (row, $index) => {
   getUserRoleList()
 }
 
+//下载导入模板
+const downloadExcelTemplate = () => {
+  downloadUserImportTemplateService()
+}
+
 //重置搜索框
 const Resetsearchbox = () => {
   selectcondition.value.username = ''
@@ -80,7 +89,10 @@ getUserRoleList()
         <el-button @click="Resetsearchbox">重置</el-button>
       </el-form-item>
     </el-form>
-    <template #extra><el-button type="primary" @click="onAddTblist">添加用户</el-button></template>
+    <template #extra>
+      <el-button type="primary" @click="onAddTblist">添加用户</el-button>
+      <el-button type="info" @click="downloadExcelTemplate">下载导入模板</el-button>
+    </template>
     <!-- 表单数据 -->
     <el-table v-loading="loading" :data="channelList" style="width: 100%">
       <el-table-column type="index" label="序号" width="100"></el-table-column>

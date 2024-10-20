@@ -48,4 +48,32 @@ public class RoleManagementController : ControllerBase
     {
         return await _managementService.PutUserRole(res);
     }
+
+    /// <summary>
+    /// 下载导入模板
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public async Task<IActionResult> downloadExcelTemplate()
+    {
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "ExcelTemplate", "用户管理导入模板.xlsx");
+        // 检查文件是否存在  
+        if (!System.IO.File.Exists(filePath))
+        {
+            return NotFound("File not found");
+        }
+
+        // 读取文件内容  
+        var memory = new MemoryStream();
+        using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+        {
+            await stream.CopyToAsync(memory);
+        }
+
+        memory.Position = 0;
+
+        // 返回文件内容作为HTTP响应  
+        return File(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            Path.GetFileName(filePath));
+    }
 }
