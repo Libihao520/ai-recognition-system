@@ -10,6 +10,7 @@ using Model;
 using Model.Dto.Role;
 using Model.Dto.User;
 using Model.Entitys;
+using Model.Enum;
 using Model.Other;
 using OfficeOpenXml;
 using Service.Common;
@@ -136,7 +137,47 @@ public class RoleManagementService : IRoleManagementService
 
     public async Task<ApiResult> ImportUsersFromExcel(IFormFile file)
     {
-        return ResultHelper.Success("请求成功！", "");
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        using (var stream = new MemoryStream())
+        {
+            await file.CopyToAsync(stream);
+            stream.Position = 0; // 重置流的位置到起始点  
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets[0];
+                var rowCount = worksheet.Dimension.Rows;
+
+                // 一行是标题，从第二行开始读取数据  
+                for (int row = 2; row <= rowCount; row++)
+                {
+                    var userId = worksheet.Cells[row, 1].Text;
+                    var userName = worksheet.Cells[row, 2].Text;
+                    var userEmail = worksheet.Cells[row, 3].Text;
+                    // ... 读取其他列的数据  
+
+                    if (string.IsNullOrEmpty(userId)) continue; // 跳过空的用户ID行  
+
+                    Users insterUser = new Users()
+                    {
+                        Id = TimeBasedIdGeneratorUtil.GenerateId(),
+                        Name = userName,
+                        Password = "1111",
+                        Email = userEmail,
+                        CreateDate = DateTime.Now,
+                        //拿到当前请求创作人的id
+                        CreateUserId = 0,
+                        //注意角色的转换，中文转枚举，建议参照EnumConvert.ConvertRoleNameToString 在该类下再创建一个静态方法，用于中文转枚举
+                        Role = AuthorizeRoleName.Administrator,
+                        IsDeleted = 0
+                    };
+                    _context.Users.Add(insterUser);
+                }
+            }
+        }
+
+        _context.SaveChanges();
+        return ResultHelper.Success("请求成功！", "导入用户成功！");
     }
 
     public async Task<IActionResult> DownloadExcelUsersFromExcel()
