@@ -4,7 +4,8 @@ import { useUserStore } from '@/stores'
 import {
   getUserRoleService,
   DeletedService,
-  downloadUserImportTemplateService
+  downloadUserImportTemplateService,
+  uploadUserFileService
 } from '../../api/Role'
 import { Edit, Delete } from '@element-plus/icons-vue'
 import { formatTime } from '@/utils/format.js'
@@ -51,6 +52,32 @@ const downloadExcelTemplate = () => {
   downloadUserImportTemplateService()
 }
 
+//批量导入用户
+const fileInput = ref(null)
+const triggerFileInput = () => {
+  fileInput.value.click()
+}
+const handleFileChange = async (event) => {
+  const file = event.target.files[0] // 获取用户选择的第一个文件
+  if (file) {
+    try {
+      const response = await uploadUserFileService(file, {
+        // userId: '12345'
+      })
+      console.log('导入成功', response)
+    } catch (error) {
+      console.error('上传失败', error)
+    } finally {
+      fileInput.value.value = ''
+    }
+  } else {
+    this.$message.error('请选择文件')
+  }
+}
+
+//批量导出用户
+const downloadExcelUser = () => {}
+
 //重置搜索框
 const Resetsearchbox = () => {
   selectcondition.value.username = ''
@@ -91,7 +118,10 @@ getUserRoleList()
     </el-form>
     <template #extra>
       <el-button type="primary" @click="onAddTblist">添加用户</el-button>
-      <el-button type="info" @click="downloadExcelTemplate">下载导入模板</el-button>
+      <el-button type="success" @click="downloadExcelTemplate">下载导入模板</el-button>
+      <el-button type="warning" @click="triggerFileInput">批量导入用户</el-button>
+      <el-button type="info" @click="downloadExcelUser">批量导出用户</el-button>
+      <input type="file" ref="fileInput" @change="handleFileChange" style="display: none" />
     </template>
     <!-- 表单数据 -->
     <el-table v-loading="loading" :data="channelList" style="width: 100%">
