@@ -180,39 +180,38 @@ public class RoleManagementService : IRoleManagementService
         return ResultHelper.Success("请求成功！", "导入用户成功！");
     }
 
-    public async Task<IActionResult> DownloadExcelUsersFromExcel()
+    public async Task<byte[]> DownloadExcelUsersFromExcel()
     {
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
         var users = await _context.Users.ToListAsync();
 
-        using (var package = new ExcelPackage())
+        using (var ms = new MemoryStream())
         {
-            var woeksheet = package.Workbook.Worksheets.Add("Users");
-
-            woeksheet.Cells[1, 1].Value = "ID";
-            woeksheet.Cells[1, 2].Value = "用户名";
-            woeksheet.Cells[1, 3].Value = "邮箱";
-            woeksheet.Cells[1, 4].Value = "创建时间";
-
-            int row = 2;
-            foreach (var user in users)
+            using (var package = new ExcelPackage())
             {
-                woeksheet.Cells[row, 1].Value = user.Id;
-                woeksheet.Cells[row, 2].Value = user.Name;
-                woeksheet.Cells[row, 3].Value = user.Email;
-                woeksheet.Cells[row, 4].Value = user.CreateDate;
+                var worksheet = package.Workbook.Worksheets.Add("Users");
 
-                row++;
+                worksheet.Cells[1, 1].Value = "ID";
+                worksheet.Cells[1, 2].Value = "用户名";
+                worksheet.Cells[1, 3].Value = "邮箱";
+                worksheet.Cells[1, 4].Value = "创建时间";
+
+                int row = 2;
+                foreach (var user in users)
+                {
+                    worksheet.Cells[row, 1].Value = user.Id;
+                    worksheet.Cells[row, 2].Value = user.Name;
+                    worksheet.Cells[row, 3].Value = user.Email;
+                    worksheet.Cells[row, 4].Value = user.CreateDate;
+
+                    row++;
+                }
+
+                package.SaveAs(ms);
             }
 
-            using (var ms = new MemoryStream())
-            {
-                package.SaveAs(ms);
-                ms.Seek(0, SeekOrigin.Begin);
-                return new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")  
-                {  
-                    FileDownloadName = "用户数据.xlsx"  
-                };  
-            }  
-        }  
-    }  
+            ms.Seek(0, SeekOrigin.Begin);
+            return ms.ToArray();
+        }
+    }
 }
