@@ -15,5 +15,5 @@ public interface IRoleManagementService
 
     Task<ApiResult> ImportUsersFromExcel(IFormFile file);
 
-    Task<IActionResult> DownloadExcelUsersFromExcel();
+    Task<byte[]> DownloadExcelUsersFromExcel();
 }

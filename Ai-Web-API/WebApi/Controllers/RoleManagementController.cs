@@ -67,7 +67,8 @@ public class RoleManagementController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> DownloadExcelUsersFromExcel()
     {
-        return await _managementService.DownloadExcelUsersFromExcel();
+        var byteArray = await _managementService.DownloadExcelUsersFromExcel();  
+        return File(byteArray, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "用户数据.xlsx"); 
     }
 
     /// <summary>
