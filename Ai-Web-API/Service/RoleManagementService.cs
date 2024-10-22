@@ -154,10 +154,13 @@ public class RoleManagementService : IRoleManagementService
                     var userId = worksheet.Cells[row, 1].Text;
                     var userName = worksheet.Cells[row, 2].Text;
                     var userEmail = worksheet.Cells[row, 3].Text;
+                    var userPassword = worksheet.Cells[row, 4].Text;
+                    var userCreateDate = worksheet.Cells[row, 5].Text;
+                    var userCreateUserId = worksheet.Cells[row, 6].Text;
                     // ... 读取其他列的数据  
 
                     if (string.IsNullOrEmpty(userId)) continue; // 跳过空的用户ID行  
-
+                
                     Users insterUser = new Users()
                     {
                         Id = TimeBasedIdGeneratorUtil.GenerateId(),
