@@ -148,30 +148,22 @@ public class RoleManagementService : IRoleManagementService
                 var worksheet = package.Workbook.Worksheets[0];
                 var rowCount = worksheet.Dimension.Rows;
 
-                // 一行是标题，从第二行开始读取数据  
                 for (int row = 2; row <= rowCount; row++)
                 {
-                    var userId = worksheet.Cells[row, 1].Text;
-                    var userName = worksheet.Cells[row, 2].Text;
+                    var userName = worksheet.Cells[row, 1].Text;
+                    var role = EnumConvert.ConvertStringToRoleName(worksheet.Cells[row, 2].Text);
                     var userEmail = worksheet.Cells[row, 3].Text;
-                    var userPassword = worksheet.Cells[row, 4].Text;
-                    var userCreateDate = worksheet.Cells[row, 5].Text;
-                    var userCreateUserId = worksheet.Cells[row, 6].Text;
-                    // ... 读取其他列的数据  
+                    var userPassword = AesUtilities.Encrypt(worksheet.Cells[row, 4].Text);
 
-                    if (string.IsNullOrEmpty(userId)) continue; // 跳过空的用户ID行  
-                
                     Users insterUser = new Users()
                     {
                         Id = TimeBasedIdGeneratorUtil.GenerateId(),
                         Name = userName,
-                        Password = "1111",
+                        Password = userPassword,
                         Email = userEmail,
                         CreateDate = DateTime.Now,
-                        //拿到当前请求创作人的id
                         CreateUserId = 0,
-                        //注意角色的转换，中文转枚举，建议参照EnumConvert.ConvertRoleNameToString 在该类下再创建一个静态方法，用于中文转枚举
-                        Role = AuthorizeRoleName.Administrator,
+                        Role = role,
                         IsDeleted = 0
                     };
                     _context.Users.Add(insterUser);
