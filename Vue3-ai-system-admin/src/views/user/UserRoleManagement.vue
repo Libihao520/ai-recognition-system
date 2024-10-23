@@ -70,6 +70,7 @@ const handleFileChange = async (event) => {
       console.error('上传失败', error)
     } finally {
       fileInput.value.value = ''
+      getUserRoleList()
     }
   } else {
     this.$message.error('请选择文件')
