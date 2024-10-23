@@ -1,16 +1,41 @@
 namespace Service.Common;
 
-public class TimeBasedIdGeneratorUtil  
-{  
-    public static int GenerateId()  
-    {  
-        // 注意：这里为了简单起见，我们使用了DateTime.Now，但它不够精确。  
-        // 在生产环境中，你可能会考虑使用更精确的时间测量方法，如Stopwatch或DateTime.UtcNow.Ticks。  
-        // 然而，Ticks是一个long类型，你可能需要对其进行某种转换才能使用int。  
-        // 这里只是演示概念。  
-        return (int)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;  
-    }  
- 
-    // 注意：由于int的容量有限，上述方法在实际应用中可能会导致ID冲突，  
-    // 特别是当两个ID在同一秒内生成时。  
+public class TimeBasedIdGeneratorUtil
+{
+    // 用于在同一秒内生成唯一 ID 的计数器  
+    private static int _counter = 0;
+
+    // 用于锁定计数器以确保线程安全  
+    private static readonly object _lock = new object();
+
+    // 上一次生成 ID 的时间戳（秒）  
+    private static long _lastTimestamp = -1;
+
+    public static long GenerateId()
+    {
+        long timestamp = GetTimestampInSeconds();
+
+        lock (_lock)
+        {
+            if (timestamp == _lastTimestamp)
+            {
+                // 如果时间戳相同，则增加计数器  
+                _counter++;
+            }
+            else
+            {
+                // 如果时间戳不同，重置计数器  
+                _counter = 0;
+                _lastTimestamp = timestamp;
+            }
+
+            // 返回生成的 ID，可以结合时间戳和计数器  
+            return (timestamp << 20) | _counter; // 左移20位是为了给计数器留出足够的空间  
+        }
+    }
+
+    private static long GetTimestampInSeconds()
+    {
+        return (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
+    }
 }
