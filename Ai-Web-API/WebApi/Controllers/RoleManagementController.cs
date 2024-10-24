@@ -1,4 +1,5 @@
-﻿using Interface;
+﻿using System.IdentityModel.Tokens.Jwt;
+using Interface;
 using Microsoft.AspNetCore.Mvc;
 using Model.Dto.Role;
 using Model.Other;
@@ -57,7 +58,16 @@ public class RoleManagementController : ControllerBase
     [HttpPost]
     public async Task<ApiResult> UploadUserFile(IFormFile file)
     {
-        return await _managementService.ImportUsersFromExcel(file);
+        //解析token
+        string token = Request.Headers["Authorization"];
+        if (token.StartsWith("Bearer "))
+        {
+            token = token.Substring("Bearer ".Length);
+        }
+        var handler = new JwtSecurityTokenHandler();
+        var jwtToken = handler.ReadJwtToken(token);
+        var CreateUserId = long.Parse( jwtToken.Claims.FirstOrDefault(claim => claim.Type == "Id").Value);
+        return await _managementService.ImportUsersFromExcel(file,CreateUserId);
     }
 
     /// <summary>

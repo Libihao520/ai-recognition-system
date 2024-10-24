@@ -135,7 +135,7 @@ public class RoleManagementService : IRoleManagementService
         }
     }
 
-    public async Task<ApiResult> ImportUsersFromExcel(IFormFile file)
+    public async Task<ApiResult> ImportUsersFromExcel(IFormFile file,long createUserId)
     {
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
         using (var stream = new MemoryStream())
@@ -162,7 +162,7 @@ public class RoleManagementService : IRoleManagementService
                         Password = userPassword,
                         Email = userEmail,
                         CreateDate = DateTime.Now,
-                        CreateUserId = 0,
+                        CreateUserId = createUserId,
                         Role = role,
                         IsDeleted = 0
                     };
