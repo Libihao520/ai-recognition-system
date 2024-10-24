@@ -13,7 +13,7 @@ public interface IRoleManagementService
 
     Task<ApiResult> AddOrUpdateUserRole(PutUserRoleRes res);
 
-    Task<ApiResult> ImportUsersFromExcel(IFormFile file);
+    Task<ApiResult> ImportUsersFromExcel(IFormFile file,long CreateUserId);
 
     Task<byte[]> DownloadExcelUsersFromExcel();
 }
