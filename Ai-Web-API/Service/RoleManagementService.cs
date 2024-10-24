@@ -178,7 +178,7 @@ public class RoleManagementService : IRoleManagementService
     public async Task<byte[]> DownloadExcelUsersFromExcel()
     {
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        var users = await _context.Users.ToListAsync();
+        var users = await _context.Users.Where(q=>q.IsDeleted == 0).ToListAsync();
 
         using (var ms = new MemoryStream())
         {
