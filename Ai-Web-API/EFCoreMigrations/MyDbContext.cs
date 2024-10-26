@@ -13,6 +13,11 @@ public class MyDbContext : DbContext
 
     public DbSet<TestPapers> testpapers { get; set; }
 
+    /// <summary>
+    /// 成绩中心
+    /// </summary>
+    public DbSet<ReportCard> ReportCards { get; set; }
+
     public MyDbContext()
     {
     }
