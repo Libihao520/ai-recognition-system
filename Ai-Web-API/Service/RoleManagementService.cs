@@ -135,50 +135,59 @@ public class RoleManagementService : IRoleManagementService
         }
     }
 
-    public async Task<ApiResult> ImportUsersFromExcel(IFormFile file,long createUserId)
+    public async Task<ApiResult> ImportUsersFromExcel(IFormFile file, long createUserId)
     {
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        using (var stream = new MemoryStream())
+        try
         {
-            await file.CopyToAsync(stream);
-            stream.Position = 0; // 重置流的位置到起始点  
-
-            using (var package = new ExcelPackage(stream))
+            using (var stream = new MemoryStream())
             {
-                var worksheet = package.Workbook.Worksheets[0];
-                var rowCount = worksheet.Dimension.Rows;
+                await file.CopyToAsync(stream);
+                stream.Position = 0; // 重置流的位置到起始点  
 
-                for (int row = 2; row <= rowCount; row++)
+                using (var package = new ExcelPackage(stream))
                 {
-                    var userName = worksheet.Cells[row, 1].Text;
-                    var role = EnumConvert.ConvertStringToRoleName(worksheet.Cells[row, 2].Text);
-                    var userEmail = worksheet.Cells[row, 3].Text;
-                    var userPassword = AesUtilities.Encrypt(worksheet.Cells[row, 4].Text);
+                    var worksheet = package.Workbook.Worksheets[0];
+                    var rowCount = worksheet.Dimension.Rows;
 
-                    Users insterUser = new Users()
+                    for (int row = 2; row <= rowCount; row++)
                     {
-                        Id = TimeBasedIdGeneratorUtil.GenerateId(),
-                        Name = userName,
-                        Password = userPassword,
-                        Email = userEmail,
-                        CreateDate = DateTime.Now,
-                        CreateUserId = createUserId,
-                        Role = role,
-                        IsDeleted = 0
-                    };
-                    _context.Users.Add(insterUser);
+                        var userName = worksheet.Cells[row, 1].Text;
+                        AuthorizeRoleName role;
+                        role = EnumConvert.ConvertStringToRoleName(worksheet.Cells[row, 2].Text);
+                        var userEmail = worksheet.Cells[row, 3].Text;
+                        var userPassword = AesUtilities.Encrypt(worksheet.Cells[row, 4].Text);
+
+                        Users insterUser = new Users()
+                        {
+                            Id = TimeBasedIdGeneratorUtil.GenerateId(),
+                            Name = userName,
+                            Password = userPassword,
+                            Email = userEmail,
+                            CreateDate = DateTime.Now,
+                            CreateUserId = createUserId,
+                            Role = role,
+                            IsDeleted = 0
+                        };
+                        _context.Users.Add(insterUser);
+                    }
                 }
             }
+
+            _context.SaveChanges();
+        }
+        catch (Exception e)
+        {
+            return ResultHelper.Error("导入失败！");
         }
 
-        _context.SaveChanges();
         return ResultHelper.Success("请求成功！", "导入用户成功！");
     }
 
     public async Task<byte[]> DownloadExcelUsersFromExcel()
     {
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        var users = await _context.Users.Where(q=>q.IsDeleted == 0).ToListAsync();
+        var users = await _context.Users.Where(q => q.IsDeleted == 0).ToListAsync();
 
         using (var ms = new MemoryStream())
         {
