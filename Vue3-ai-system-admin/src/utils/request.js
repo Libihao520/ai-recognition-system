@@ -26,7 +26,7 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   (res) => {
     // 检查是否为blob类型响应  
-    if (res || res.data || res.data.type || res.data.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+    if (res && res.data && res.data.type && res.data.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
       return res;
     }
     if (res.data.code === 0) {
