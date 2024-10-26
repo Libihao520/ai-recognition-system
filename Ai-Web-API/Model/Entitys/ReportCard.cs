@@ -1,4 +1,5 @@
 using Model.Common;
+using Newtonsoft.Json.Linq;
 
 namespace Model.Entitys;
 
@@ -30,5 +31,5 @@ public class ReportCard : IEntity
     /// <summary>
     /// 提交的答案
     /// </summary>
-    public List<List<int>> SubmittedOptions { get; set; }
+    public string  SubmittedOptions { get; set; }
 }
