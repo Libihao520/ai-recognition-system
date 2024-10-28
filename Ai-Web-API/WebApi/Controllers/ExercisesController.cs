@@ -1,6 +1,7 @@
 using Interface;
 using Microsoft.AspNetCore.Mvc;
 using Model.Dto.TestPapers;
+using Model.Entitys;
 using Model.Other;
 
 namespace WebApi.Controllers;
@@ -27,5 +28,12 @@ public class ExercisesController : ControllerBase
     public Task<ApiResult> Submit(SubmitExercisesReq req)
     {
         return _exercisesService.checkSubmit(req);
+    }
+
+    [HttpPost]
+    public  Task SaveReport(ReportCard reportCard)
+    {
+        
+        return _exercisesService.SaveReportCard(reportCard);
     }
 }
