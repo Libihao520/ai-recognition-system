@@ -11,7 +11,7 @@ public class ReportCard : IEntity
     /// <summary>
     /// 科目
     /// </summary>
-    public string subject { get; set; }
+    public string? subject { get; set; }
 
     /// <summary>
     /// 总分
@@ -31,5 +31,5 @@ public class ReportCard : IEntity
     /// <summary>
     /// 提交的答案
     /// </summary>
-    public string  SubmittedOptions { get; set; }
+    public string?  SubmittedOptions { get; set; }
 }

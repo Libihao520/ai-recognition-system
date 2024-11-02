@@ -107,7 +107,7 @@ public class ExercisesService : IExercisesService
         var multipleOpions = string.Join(",",req.multipleChoice.SelectMany(a=>a));
         var trueFlaseOptions = string.Join(",",req.trueFalse);
 
-        ReportCard reportCard = new ReportCard
+        ReportCard reportCard1 = new ReportCard
         {
             subject = "数学",
             //总分
@@ -118,7 +118,9 @@ public class ExercisesService : IExercisesService
             CorrectQuantity =multipleChoiceCount+trueFalseCount+singleChoiceCount,
             // 提交的答案
             SubmittedOptions = $"{singleOptions};{multipleOpions};{trueFlaseOptions}"
-        };      
-            return ResultHelper.Success("成功！", @$"本次答题得分为：{score} ,具体情况前往成绩中心查看！");
+        };
+        _context.ReportCards.Add(reportCard1);
+        _context.SaveChanges();
+        return ResultHelper.Success("成功！", @$"本次答题得分为：{score} ,具体情况前往成绩中心查看！");
     }
 }
