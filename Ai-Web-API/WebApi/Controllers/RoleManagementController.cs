@@ -1,13 +1,18 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.Dto.Role;
+using Model.Enum;
 using Model.Other;
+using WebApi.Config.Authorization;
 
 namespace WebApi.Controllers;
 
 [Route("api/[controller]/[action]")]
 [ApiController]
+[AdminAuthorize(AuthorizeRoleName.Administrator)]
+[Authorize]
 public class RoleManagementController : ControllerBase
 {
     private readonly IRoleManagementService _managementService;
