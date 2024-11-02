@@ -100,4 +100,12 @@ public class ExercisesService : IExercisesService
 
         return ResultHelper.Success("成功！", @$"本次答题得分为：{score} ,具体情况前往成绩中心查看！");
     }
+
+    public async Task<ApiResult> SaveReportCard(ReportCard reportCard)
+    {
+        _context.ReportCards.Add(reportCard);
+
+        await _context.SaveChangesAsync();
+        return ResultHelper.Success(message: "保存成功", null);
+    }
 }
