@@ -29,11 +29,4 @@ public class ExercisesController : ControllerBase
     {
         return _exercisesService.checkSubmit(req);
     }
-
-    [HttpPost]
-    public  Task SaveReport(ReportCard reportCard)
-    {
-        
-        return _exercisesService.SaveReportCard(reportCard);
-    }
 }

@@ -10,6 +10,4 @@ public interface IExercisesService
 
 
     public Task<ApiResult> checkSubmit(SubmitExercisesReq req);
-
-    public Task<ApiResult> SaveReportCard(ReportCard reportCard);
 }
