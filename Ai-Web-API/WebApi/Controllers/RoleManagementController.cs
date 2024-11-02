@@ -63,16 +63,7 @@ public class RoleManagementController : ControllerBase
     [HttpPost]
     public async Task<ApiResult> UploadUserFile(IFormFile file)
     {
-        //解析token
-        string token = Request.Headers["Authorization"];
-        if (token.StartsWith("Bearer "))
-        {
-            token = token.Substring("Bearer ".Length);
-        }
-        var handler = new JwtSecurityTokenHandler();
-        var jwtToken = handler.ReadJwtToken(token);
-        var CreateUserId = long.Parse( jwtToken.Claims.FirstOrDefault(claim => claim.Type == "Id").Value);
-        return await _managementService.ImportUsersFromExcel(file,CreateUserId);
+        return await _managementService.ImportUsersFromExcel(file);
     }
 
     /// <summary>
@@ -82,8 +73,8 @@ public class RoleManagementController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> DownloadExcelUsersFromExcel()
     {
-        var byteArray = await _managementService.DownloadExcelUsersFromExcel();  
-        return File(byteArray, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "用户数据.xlsx"); 
+        var byteArray = await _managementService.DownloadExcelUsersFromExcel();
+        return File(byteArray, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "用户数据.xlsx");
     }
 
     /// <summary>

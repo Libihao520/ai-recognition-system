@@ -5,6 +5,7 @@ using EFCoreMigrations;
 using Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Model;
 using Model.Dto.Role;
@@ -21,11 +22,12 @@ public class RoleManagementService : IRoleManagementService
 {
     private MyDbContext _context;
     private IMapper _mapper;
-
-    public RoleManagementService(MyDbContext context, IMapper mapper)
+    private readonly IHttpContextAccessor _httpContextAccessor;  
+    public RoleManagementService(MyDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
     {
         _context = context;
         _mapper = mapper;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<ApiResult> GetUserRole(RoleReq req)
@@ -135,9 +137,13 @@ public class RoleManagementService : IRoleManagementService
         }
     }
 
-    public async Task<ApiResult> ImportUsersFromExcel(IFormFile file, long createUserId)
+    public async Task<ApiResult> ImportUsersFromExcel(IFormFile file)
     {
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+        var user =  _httpContextAccessor.HttpContext.User;
+        var createUserId =long.Parse( user.Claims.FirstOrDefault(c => c.Type == "Id").Value);
+
         try
         {
             using (var stream = new MemoryStream())
