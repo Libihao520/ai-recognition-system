@@ -19,6 +19,8 @@ builder.Services.AddDbContext<MyDbContext>(p =>
     p.UseMySql(builder.Configuration.GetConnectionString("MySQL"),new MySqlServerVersion(new Version(8,0,33)));
 
 });
+// 注册 IHttpContextAccessor  
+builder.Services.AddHttpContextAccessor();  
 
 var app = builder.Build();
 
