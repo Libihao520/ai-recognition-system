@@ -6,3 +6,6 @@ export const getmMthematics = () => request.get('/Exercises/GetmMthematics')
 //提交
 export const postSubmitExercises = (data) =>
   request.post('/Exercises/Submit', data)
+
+//成绩中心
+export const GetAchievementCenter = () => request.get('/Exercises/GetAchievementCenter')
