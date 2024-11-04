@@ -6,8 +6,23 @@ namespace Interface;
 
 public interface IExercisesService
 {
+    /// <summary>
+    /// 获取题目
+    /// </summary>
+    /// <returns></returns>
     public Task<ApiResult> GetmMthematics();
 
-
+    /// <summary>
+    /// 成绩提交
+    /// </summary>
+    /// <param name="req"></param>
+    /// <returns></returns>
     public Task<ApiResult> checkSubmit(SubmitExercisesReq req);
+
+    /// <summary>
+    /// 成绩中心获取列表
+    /// </summary>
+    /// <param name="req"></param>
+    /// <returns></returns>
+    public Task<ApiResult> AchievementCenter(AchievementCenterReq req);
 }
