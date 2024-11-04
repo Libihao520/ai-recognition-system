@@ -14,7 +14,8 @@ import {
   Picture,
   Collection,
   Tickets,
-  Management
+  Management,
+  DocumentCopy
 } from '@element-plus/icons-vue'
 
 import avatar from '@/assets/default.png'
@@ -71,6 +72,11 @@ const handleCommand = async (key) => {
           <el-menu-item index="/exercises/mathematics">
             <el-icon><Tickets /></el-icon>
             <span>数学题</span>
+          </el-menu-item>
+
+          <el-menu-item index="/exercises/AchievementCenter">
+            <el-icon><DocumentCopy /></el-icon>
+            <span>成绩中心 </span>
           </el-menu-item>
         </el-sub-menu>
 
