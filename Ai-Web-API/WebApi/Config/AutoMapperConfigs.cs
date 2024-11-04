@@ -40,6 +40,7 @@ public class AutoMapperConfigs : Profile
             .ForMember(dest => dest.options,
                 opt => opt.MapFrom(src => new List<string>() { src.Choice1, src.Choice2 }));
 
+        CreateMap<ReportCard, AchievementCenterRes>();
         //RoleManagement
         CreateMap<Users, RoleRes>()
             .ForMember(dest => dest.Role, opt => opt.MapFrom(src => EnumConvert.ConvertRoleNameToString(src.Role)));
