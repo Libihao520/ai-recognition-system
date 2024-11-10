@@ -2,6 +2,8 @@ namespace Model.Dto.TestPapers;
 
 public class AchievementCenterRes
 {
+    public long Id { get; set; }
+
     /// <summary>
     /// 科目
     /// </summary>
@@ -11,6 +13,16 @@ public class AchievementCenterRes
     /// 总分
     /// </summary>
     public int totalPoints { get; set; }
+
+    /// <summary>
+    /// 创建日期
+    /// </summary>
+    public DateTime CreateDate { get; set; }
+
+    /// <summary>
+    /// 创建人Id
+    /// </summary>
+    public long CreateUserId { get; set; }
 
     /// <summary>
     /// 总题目数量

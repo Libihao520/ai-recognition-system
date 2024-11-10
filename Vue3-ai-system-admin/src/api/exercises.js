@@ -8,4 +8,8 @@ export const postSubmitExercises = (data) =>
   request.post('/Exercises/Submit', data)
 
 //成绩中心
-export const GetAchievementCenter = () => request.get('/Exercises/GetAchievementCenter')
+export const GetAchievementCenter = (params) => request.get('/Exercises/GetAchievementCenter',{ params })
+
+//删除
+export const DeletedService = (id) =>
+  request.delete('/Exercises/Deleted', { params: { id } })

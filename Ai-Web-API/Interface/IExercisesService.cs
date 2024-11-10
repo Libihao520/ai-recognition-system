@@ -25,4 +25,18 @@ public interface IExercisesService
     /// <param name="req"></param>
     /// <returns></returns>
     public Task<ApiResult> AchievementCenter(AchievementCenterReq req);
+
+    /// <summary>
+    /// 删除数据
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public Task<ApiResult> DeleteService(long id);
+
+    /// <summary>
+    /// 下载wrod
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public Task<ApiResult> DownloadWrod(long id);
 }

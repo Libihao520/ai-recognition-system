@@ -39,10 +39,20 @@ public class ExercisesController : ControllerBase
         return _exercisesService.checkSubmit(req);
     }
 
-
+    /// <summary>
+    /// 成绩中心获取列表
+    /// </summary>
+    /// <param name="req"></param>
+    /// <returns></returns>
     [HttpGet]
     public Task<ApiResult> GetAchievementCenter([FromQuery] AchievementCenterReq req)
     {
         return _exercisesService.AchievementCenter(req);
+    }
+    
+    [HttpDelete]
+    public  async Task<ApiResult> Deleted(long id)
+    {
+        return await _exercisesService.DeleteService(id);
     }
 }
