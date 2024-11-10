@@ -1,11 +1,14 @@
+using System.Text.Json;
 using AutoMapper;
 using EFCoreMigrations;
 using Interface;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Model;
 using Model.Dto.TestPapers;
 using Model.Entitys;
 using Model.Other;
+using Service.Common;
 
 namespace Service;
 
@@ -14,11 +17,13 @@ public class ExercisesService : IExercisesService
 {
     private MyDbContext _context;
     private readonly IMapper _mapper;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public ExercisesService(MyDbContext context, IMapper mapper)
+    public ExercisesService(MyDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
     {
         _context = context;
         _mapper = mapper;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<ApiResult> GetmMthematics()
@@ -104,12 +109,17 @@ public class ExercisesService : IExercisesService
             }
         }
 
-        var singleOptions = string.Join(",", req.singleChoice);
-        var multipleOpions = string.Join(",", req.multipleChoice.SelectMany(a => a));
-        var trueFlaseOptions = string.Join(",", req.trueFalse);
+        var user = _httpContextAccessor.HttpContext.User;
+        var createUserId = long.Parse(user.Claims.FirstOrDefault(c => c.Type == "Id").Value);
 
         ReportCard reportCard1 = new ReportCard
         {
+            Id = TimeBasedIdGeneratorUtil.GenerateId(),
+
+            CreateDate = DateTime.Now,
+
+            CreateUserId = createUserId,
+
             subject = "数学",
             //总分
             totalPoints = score,
@@ -118,7 +128,7 @@ public class ExercisesService : IExercisesService
             // 答对数
             CorrectQuantity = multipleChoiceCount + trueFalseCount + singleChoiceCount,
             // 提交的答案
-            SubmittedOptions = $"{singleOptions};{multipleOpions};{trueFlaseOptions}"
+            SubmittedOptions = JsonSerializer.Serialize(req)
         };
         _context.ReportCards.Add(reportCard1);
         _context.SaveChanges();
@@ -127,9 +137,42 @@ public class ExercisesService : IExercisesService
 
     public async Task<ApiResult> AchievementCenter(AchievementCenterReq req)
     {
-        var contextReportCards =await _context.ReportCards.ToListAsync();
+        var reportCards = _context.ReportCards.Where(p => p.IsDeleted == 0);
 
-        var res = _mapper.Map<List<AchievementCenterRes>>(contextReportCards);
-        return ResultHelper.Success("查询成功", res);
+        var total = await reportCards.CountAsync();
+        var paginatedResult = await reportCards
+            .Skip((req.pagenum - 1) * req.pagesize) // 跳过前面的记录  
+            .Take(req.pagesize) // 取接下来的指定数量的记录  
+            .ToListAsync(); // 转换为列表  
+        
+        var res = _mapper.Map<List<AchievementCenterRes>>(paginatedResult);
+        return ResultHelper.Success("查询成功", res,total);
+    }
+
+    public async Task<ApiResult> DeleteService(long id)
+    {
+        try
+        {
+            var reportCard = await _context.ReportCards.FindAsync(id);
+            // 不为空则执行软删除并且保存到数据库中
+            if (reportCard != null)
+            {
+                reportCard.IsDeleted = 1;
+                await _context.SaveChangesAsync();
+            }
+
+            return ResultHelper.Success("请求成功！", "数据已删除");
+        }
+        catch (Exception e)
+        {
+            return ResultHelper.Error("数据删除失败!");
+        }
+    }
+
+    public async Task<ApiResult> DownloadWrod(long id)
+    {
+        // string jsonString = reader["SubmissionData"].ToString();  
+        // SubmitExercisesReq req = JsonSerializer.Deserialize<SubmitExercisesReq>(jsonString);
+        return null;
     }
 }
