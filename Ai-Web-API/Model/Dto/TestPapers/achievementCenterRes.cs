@@ -20,9 +20,9 @@ public class AchievementCenterRes
     public DateTime CreateDate { get; set; }
 
     /// <summary>
-    /// 创建人Id
+    /// 创建人
     /// </summary>
-    public long CreateUserId { get; set; }
+    public string? CreateName { get; set; }
 
     /// <summary>
     /// 总题目数量
