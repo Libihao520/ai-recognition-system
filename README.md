@@ -24,7 +24,7 @@
 ```
 首次登入可通过邮箱获取验证码注册账号，验证码会在后台储存在Redis，有效期为30分钟。
 ```
-![image](readmePhoto\login1.png)
+![image](readmePhoto/login1.png)
 ![image](readmePhoto\login2.png)
 ### 登录
 1.  xxxx
