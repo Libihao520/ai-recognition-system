@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text.Json;
 using AutoMapper;
 using EFCoreMigrations;
@@ -137,16 +138,27 @@ public class ExercisesService : IExercisesService
 
     public async Task<ApiResult> AchievementCenter(AchievementCenterReq req)
     {
-        var reportCards = _context.ReportCards.Where(p => p.IsDeleted == 0);
+        var query = from reportCards in _context.ReportCards.Where(p => p.IsDeleted == 0)
+            join Users in _context.Users on reportCards.CreateUserId equals Users.Id into usersGroup
+            from userItem in usersGroup.DefaultIfEmpty()
+            select new AchievementCenterRes
+            {
+                Id = reportCards.Id,
+                subject = reportCards.subject,
+                totalPoints = reportCards.totalPoints,
+                CreateDate = reportCards.CreateDate,
+                NumberOfQuestions = reportCards.NumberOfQuestions,
+                CorrectQuantity = reportCards.CorrectQuantity,
+                CreateName = userItem == null ? null : userItem.Name,
+            };
 
-        var total = await reportCards.CountAsync();
-        var paginatedResult = await reportCards
-            .Skip((req.pagenum - 1) * req.pagesize) // 跳过前面的记录  
-            .Take(req.pagesize) // 取接下来的指定数量的记录  
-            .ToListAsync(); // 转换为列表  
-        
-        var res = _mapper.Map<List<AchievementCenterRes>>(paginatedResult);
-        return ResultHelper.Success("查询成功", res,total);
+        var total = await query.CountAsync();
+        var paginatedResult = await query
+            .Skip((req.pagenum - 1) * req.pagesize)
+            .Take(req.pagesize)
+            .ToListAsync();
+
+        return ResultHelper.Success("查询成功", paginatedResult, total);
     }
 
     public async Task<ApiResult> DeleteService(long id)
@@ -171,6 +183,7 @@ public class ExercisesService : IExercisesService
 
     public async Task<ApiResult> DownloadWrod(long id)
     {
+        var directoryName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         // string jsonString = reader["SubmissionData"].ToString();  
         // SubmitExercisesReq req = JsonSerializer.Deserialize<SubmitExercisesReq>(jsonString);
         return null;
