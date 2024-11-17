@@ -13,3 +13,21 @@ export const GetAchievementCenter = (params) => request.get('/Exercises/GetAchie
 //删除
 export const DeletedService = (id) =>
   request.delete('/Exercises/Deleted', { params: { id } })
+
+
+//导出用户作答情况
+export const DownloadWordService = (id) => {
+  return request.get('/Exercises/DownloadWord', {
+    params: { id },
+    responseType: 'blob' 
+  }).then(response => {
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', '用户作答情况.docx'); // 设置下载文件名  
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  });
+};
