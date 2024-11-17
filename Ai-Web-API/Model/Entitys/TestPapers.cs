@@ -20,7 +20,7 @@ public class TestPapers
     public string Topic { get; set; }
 
     /// <summary>
-    /// 题目类型
+    /// 题目类型 0单选，1多选，2判断题
     /// </summary>
     public int type { get; set; }
 

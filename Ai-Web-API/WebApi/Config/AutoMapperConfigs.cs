@@ -39,6 +39,11 @@ public class AutoMapperConfigs : Profile
             .ForMember(dest => dest.title, opt => opt.MapFrom(src => src.Topic))
             .ForMember(dest => dest.options,
                 opt => opt.MapFrom(src => new List<string>() { src.Choice1, src.Choice2 }));
+        //成绩导出
+        CreateMap<ReportCard, DownloadAchievementWordDto>();
+        //只映射名称
+        CreateMap<Users, DownloadAchievementWordDto>()
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
 
         CreateMap<ReportCard, AchievementCenterRes>();
         //RoleManagement
