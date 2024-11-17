@@ -38,5 +38,5 @@ public interface IExercisesService
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public Task<ApiResult> DownloadWrod(long id);
+    public Task<byte[]> DownloadWord(long id);
 }
