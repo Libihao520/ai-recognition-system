@@ -11,7 +11,7 @@ import {
   ElMessage
 } from 'element-plus'
 import { Download, Delete } from '@element-plus/icons-vue'
-import { GetAchievementCenter, DeletedService } from '../../api/exercises'
+import { GetAchievementCenter, DeletedService, DownloadWordService } from '../../api/exercises'
 import { formatTime } from '@/utils/format.js'
 const channelList = ref([])
 const loading = ref(false)
@@ -36,6 +36,10 @@ const onDelChannel = async (row, $index) => {
   console.log(row.id)
   const res = await DeletedService(row.id)
   fetchQuestions()
+}
+//下载word
+const onDownloadChannel = async (row, $index) => {
+  const res  = await DownloadWordService(row.id)
 }
 //处理分页逻辑
 //每页条数
