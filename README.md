@@ -1,10 +1,10 @@
 # 乐思赋能平台
 
 ## 功能模块
+登录注册
 数据大屏
 练题系统
-模型识别入口
-识别结果记录
+A I 模块
 工具箱
 个人中心
 
@@ -20,28 +20,35 @@
 3.  xxxx
 
 ## 详细介绍
+提示：因本开源项目还在开发阶段，下面介绍可能和实际项目有所差异
+### 登录注册
 
 ```
 首次登入可通过邮箱获取验证码注册账号，验证码会在后台储存在Redis，有效期为30分钟。
 ```
 ![image](readmePhoto/login1.png)
 ![image](readmePhoto/login2.png)
-### 登录
-1.  xxxx
-2.  xxxx
-3.  xxxx
-image.png
+
+### 数据大屏
+![image](readmePhoto/sjdp.png)
+
+### 练题系统
+```
+练题系统包含单选题、多选题和判断题，在完成答题后点击提交按钮，后台会自动计算分数，并将答题情况保存到成绩中心。
+```
+![image](readmePhoto/ltxt1.png)
+```
+在成绩中心，可以管理各用户的答题情况，点击操作列的删除按钮，可以删除该次答题记录。
+点击下载按钮，会自动下载该次答题的详细记录。如下图
+```
+![image](readmePhoto/ltxt2.png)
+```
+在下载的答题记录中，展示姓名、分数、正确答案、作答人所选答案等信息！
+```
+![image](readmePhoto/ltxt3.png)
 ## 开发人员
 
 1.  爱吃香蕉的阿豪
 2.  栖止
 
 
-#### 特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
