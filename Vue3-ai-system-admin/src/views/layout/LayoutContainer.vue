@@ -15,7 +15,8 @@ import {
   Collection,
   Tickets,
   Management,
-  DocumentCopy
+  DocumentCopy,
+  FullScreen
 } from '@element-plus/icons-vue'
 
 import avatar from '@/assets/default.png'
@@ -79,18 +80,15 @@ const handleCommand = async (key) => {
             <span>成绩中心 </span>
           </el-menu-item>
         </el-sub-menu>
-
-        <el-menu-item index="/yolo/yolorecognition">
-          <el-icon><Cpu /></el-icon>
-          <span>模型识别入口</span>
-        </el-menu-item>
-
         <el-sub-menu index="/yolo">
           <template #title>
-            <el-icon><FolderOpened /></el-icon>
-            <span>识别结果记录</span>
+            <el-icon><Cpu /></el-icon>
+            <span>AI模块</span>
           </template>
-
+          <el-menu-item index="/yolo/yolorecognition">
+            <el-icon><FullScreen /></el-icon>
+            <span>在线识别入口</span>
+          </el-menu-item>
           <el-menu-item index="/yolo/yolopkq">
             <el-icon><List /></el-icon>
             <span>目标监测记录</span>
