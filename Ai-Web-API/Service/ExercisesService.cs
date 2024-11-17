@@ -186,12 +186,12 @@ public class ExercisesService : IExercisesService
     public async Task<byte[]> DownloadWord(long id)
     {
         var reportCard = await _context.ReportCards.FindAsync(id);
-        SubmitExercisesReq submitExercisesReq = JsonSerializer.Deserialize<SubmitExercisesReq>(reportCard.SubmittedOptions);
+        SubmitExercisesReq submitExercisesReq =
+            JsonSerializer.Deserialize<SubmitExercisesReq>(reportCard.SubmittedOptions);
         var testPapersList = await _context.testpapers.Where(q => q.subject == reportCard.subject).ToListAsync();
         var user = await _context.Users.FindAsync(reportCard.CreateUserId);
-        
-        
-        
+
+
         var model = _mapper.Map<DownloadAchievementWordDto>(reportCard);
         model = _mapper.Map(user, model);
 
@@ -201,43 +201,41 @@ public class ExercisesService : IExercisesService
             {
                 var map = _mapper.Map<SingleChoice>(testPapers);
                 map.answer = testPapers.answer[0].ToLetter();
-                map.subAnswer = submitExercisesReq.singleChoice[testPapers.TopicNumber-1].ToLetter();
+                map.subAnswer = submitExercisesReq.singleChoice[testPapers.TopicNumber - 1].ToLetter();
                 model.singleChoice.Add(map);
             }
             else if (testPapers.type == (int)ExercisesType.多选题)
             {
                 var map = _mapper.Map<MultipleChoice>(testPapers);
                 map.answer = string.Join(", ", testPapers.answer.Select(a => a.ToLetter().ToString()));
-                map.subAnswer = string.Join(", ",  submitExercisesReq.multipleChoice[testPapers.TopicNumber-1].Select(a => a.ToLetter().ToString()));
+                map.subAnswer = string.Join(", ",
+                    submitExercisesReq.multipleChoice[testPapers.TopicNumber - 1].Select(a => a.ToLetter().ToString()));
                 model.multipleChoice.Add(map);
             }
             else if (testPapers.type == (int)ExercisesType.判断题)
             {
                 var map = _mapper.Map<TrueFalse>(testPapers);
-                map.answer =  testPapers.answer[0] == 1 ? "正确" : "错误";
+                map.answer = testPapers.answer[0] == 1 ? "正确" : "错误";
                 map.subAnswer = submitExercisesReq.singleChoice[testPapers.TopicNumber - 1] == 1 ? "正确" : "错误";
                 model.trueFalse.Add(map);
             }
         }
-        
 
-        
-        var directoryName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty,"ExcelTemplate");
+
+        var directoryName =
+            Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty,
+                "ExcelTemplate");
         var document = DocumentFactory.Create(Path.Combine(directoryName, "练题系统答题情况导出模板.docx"), model);
         var generateId = TimeBasedIdGeneratorUtil.GenerateId().ToString();
         document.Generate(Path.Combine(directoryName, @$"{generateId}结果.docx"));
-      
-        using var fileStream = new FileStream(Path.Combine(directoryName, @$"{generateId}结果.docx"), FileMode.Open, FileAccess.Read);
+
+        using var fileStream = new FileStream(Path.Combine(directoryName, @$"{generateId}结果.docx"), FileMode.Open,
+            FileAccess.Read);
         using (var ms = new MemoryStream())
         {
             await fileStream.CopyToAsync(ms);
             ms.Seek(0, SeekOrigin.Begin);
             return ms.ToArray();
         }
-
-
-
-     
-        return null;
     }
 }
