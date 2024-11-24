@@ -26,4 +26,10 @@ public interface IUserService
     /// <param name="email"></param>
     /// <returns></returns>
     Task<ApiResult> SendVerificationCode(string email);
+
+    /// <summary>
+    /// 获取用户信息
+    /// </summary>
+    /// <returns></returns>
+    Task<ApiResult> GetUserInfo();
 }
