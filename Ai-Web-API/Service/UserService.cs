@@ -1,13 +1,17 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Text.RegularExpressions;
 using AutoMapper;
+using Azure.Core;
 using CommonUtil;
 using CommonUtil.RedisUtil;
 using EFCoreMigrations;
 using Interface;
+using Microsoft.AspNetCore.Http;
 using Model;
 using Model.Consts;
 using Model.Dto.User;
 using Model.Entitys;
+using Model.Enum;
 using Model.Other;
 
 namespace Service;
@@ -15,13 +19,14 @@ namespace Service;
 public class UserService : IUserService
 {
     private readonly IMapper _mapper;
-
     private MyDbContext _context;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public UserService(IMapper mapper, MyDbContext context)
+    public UserService(IMapper mapper, MyDbContext context, IHttpContextAccessor httpContextAccessor)
     {
         _mapper = mapper;
         _context = context;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public UserRes GetUser(string userName, string passWord)
@@ -142,6 +147,29 @@ public class UserService : IUserService
             decodeEmail);
 
         return ResultHelper.Success("发送成功，尽快验证！", $"验证码已经发送到您的邮箱{decodeEmail}！有效期30分钟");
+    }
+
+    /// <summary>
+    /// 获取用户信息
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public async Task<ApiResult> GetUserInfo()
+    {
+        var httpContextUser = _httpContextAccessor.HttpContext.User;
+        var userId = long.Parse(httpContextUser.Claims.FirstOrDefault(c => c.Type == "Id").Value);
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null)
+        {
+            return ResultHelper.Error("用户不存在！");
+        }
+
+        var userRes = new UserRes()
+        {
+            Name = user.Name,
+            Role = EnumConvert.ConvertRoleNameToString(user.Role)
+        };
+        return ResultHelper.Success("成功！", userRes);
     }
 
     /// <summary>

@@ -57,7 +57,7 @@ public class LoginController : ControllerBase
     [HttpPost]
     public async Task<ApiResult> add(UserAdd userAdd)
     {
-        return  await _userService.Add(userAdd);
+        return await _userService.Add(userAdd);
     }
 
     /// <summary>
@@ -68,23 +68,7 @@ public class LoginController : ControllerBase
     [Authorize]
     public async Task<ApiResult> userinfo()
     {
-        //解析token
-        string token = Request.Headers["Authorization"];
-        if (token.StartsWith("Bearer "))
-        {
-            token = token.Substring("Bearer ".Length);
-        }
-
-        var handler = new JwtSecurityTokenHandler();
-        var jwtToken = handler.ReadJwtToken(token);
-        var nameClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "Name").Value;
-        var roleClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "RoleName").Value;
-        var userRes = new UserRes()
-        {
-            Name = nameClaim,
-            Role = roleClaim.ToString() == AuthorizeRoleName.Administrator.ToString() ? "管理员" : "普通用户"
-        };
-        return ResultHelper.Success("成功！", userRes);
+        return await _userService.GetUserInfo();
     }
 
     /// <summary>
