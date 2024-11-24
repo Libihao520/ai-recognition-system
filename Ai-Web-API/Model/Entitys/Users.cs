@@ -28,4 +28,9 @@ public class Users : IEntity
     /// </summary>
     [Required]
     public string Email { get; set; }
+
+    /// <summary>
+    /// 头像id
+    /// </summary>
+    public long? PhotosId { get; set; }
 }
