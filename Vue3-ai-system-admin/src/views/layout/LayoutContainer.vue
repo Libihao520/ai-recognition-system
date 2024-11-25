@@ -145,8 +145,7 @@ const handleCommand = async (key) => {
         </div>
         <el-dropdown placement="bottom-end" @command="handleCommand">
           <span class="el-dropdown__box">
-            <!-- TODO:头像后续在数据库中添加默认头像至userStore.user.user_pic（base 64） -->
-            <el-avatar :src="userStore.user.user_pic || avatar" />
+            <el-avatar :src="userStore.user.photo || avatar" />
             <el-icon><CaretBottom /></el-icon>
           </span>
           <!-- 折叠下拉部分 -->
