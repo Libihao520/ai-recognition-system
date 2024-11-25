@@ -44,4 +44,9 @@ public class UserRes
     /// 用户角色
     /// </summary>
     public string Role { get; set; } 
+    
+        /// <summary>
+        /// 照片(base 64)
+        /// </summary>
+    public string? Photo { get; set; }
 }

@@ -164,10 +164,12 @@ public class UserService : IUserService
             return ResultHelper.Error("用户不存在！");
         }
 
+        var tPhotos = await _context.Photos.FindAsync(user.PhotosId);
         var userRes = new UserRes()
         {
             Name = user.Name,
-            Role = EnumConvert.ConvertRoleNameToString(user.Role)
+            Role = EnumConvert.ConvertRoleNameToString(user.Role),
+            Photo = tPhotos?.Photobase64
         };
         return ResultHelper.Success("成功！", userRes);
     }
