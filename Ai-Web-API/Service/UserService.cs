@@ -9,10 +9,12 @@ using Interface;
 using Microsoft.AspNetCore.Http;
 using Model;
 using Model.Consts;
+using Model.Dto.photo;
 using Model.Dto.User;
 using Model.Entitys;
 using Model.Enum;
 using Model.Other;
+using Service.Common;
 
 namespace Service;
 
@@ -169,9 +171,68 @@ public class UserService : IUserService
         {
             Name = user.Name,
             Role = EnumConvert.ConvertRoleNameToString(user.Role),
-            Photo = tPhotos?.Photobase64
+            Photo = tPhotos?.Photobase64,
+            CreateDate = user.CreateDate
         };
         return ResultHelper.Success("成功！", userRes);
+    }
+
+    public async Task<ApiResult> PutUserAvatar(PhotoAdd po, CancellationToken cancellationToken)
+    {
+        var httpContextUser = _httpContextAccessor.HttpContext.User;
+        var userIdClaim = httpContextUser.Claims.FirstOrDefault(c => c.Type == "Id");
+
+        if (userIdClaim == null || !long.TryParse(userIdClaim.Value, out long userId))
+        {
+            return ResultHelper.Error("用户 ID 不存在！");
+        }
+
+        var user = await _context.Users.FindAsync(userId, cancellationToken);
+        if (user == null)
+        {
+            return ResultHelper.Error("用户不存在！");
+        }
+
+        if (string.IsNullOrEmpty(po.photo))
+        {
+            return ResultHelper.Error("图片不能为空！");
+        }
+
+        // 检查用户是否已经有照片，如果有则更新，没有则创建新的照片实体
+        if (user.PhotosId == null)
+        {
+            var newPhotoId = TimeBasedIdGeneratorUtil.GenerateId();
+            user.PhotosId = newPhotoId;
+
+            var newPhoto = new Photos()
+            {
+                PhotosId = newPhotoId,
+                Photobase64 = po.photo
+            };
+            _context.Photos.Add(newPhoto);
+        }
+        else
+        {
+            // 用户已经有照片ID，更新现有照片
+            var existingPhoto = await _context.Photos.FindAsync(user.PhotosId, cancellationToken);
+            if (existingPhoto == null)
+            {
+                return ResultHelper.Error("找不到与用户关联的照片！");
+            }
+
+            existingPhoto.Photobase64 = po.photo;
+        }
+
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            return ResultHelper.Error("保存头像时出错：" + ex.Message);
+        }
+
+        return ResultHelper.Success("请求成功！", "头像更新成功");
     }
 
     /// <summary>
