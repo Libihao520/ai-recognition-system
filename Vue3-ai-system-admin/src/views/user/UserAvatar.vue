@@ -16,6 +16,11 @@ const {
 const imgUrl = ref(photo)
 
 const onUploadFile = (uploadFile) => {
+  const maxSize = 5 * 1024 * 1024
+  if (uploadFile.raw.size > maxSize) {
+    ElMessage.error('上传的图片大小不能超过5M，请重新选择')
+    return
+  }
   const reader = new FileReader()
   // imgUrl = ref('')
   // 图片转base64
@@ -33,10 +38,10 @@ const onUpdateAvatar = async () => {
       const res = await PutUserAvatarService(imgUrl.value)
       if (res.data.data) {
         ElMessage.success(res.data.data)
-      } 
+      }
       getUser()
     } catch (error) {
-      ElMessage.error('操作出现错误，请稍后再试');
+      ElMessage.error('操作出现错误，请稍后再试')
     } finally {
       loading.value = false
     }
