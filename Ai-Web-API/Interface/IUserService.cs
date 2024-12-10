@@ -1,3 +1,4 @@
+using Model.Dto.photo;
 using Model.Dto.User;
 using Model.Other;
 
@@ -32,4 +33,10 @@ public interface IUserService
     /// </summary>
     /// <returns></returns>
     Task<ApiResult> GetUserInfo();
+
+    /// <summary>
+    /// 更新头像
+    /// </summary>
+    /// <returns></returns>
+    Task<ApiResult> PutUserAvatar(PhotoAdd po, CancellationToken cancellationToken);
 }
