@@ -44,6 +44,9 @@ const onUpdateAvatar = async () => {
     ElMessage.error('请先上传图片')
   }
 }
+function clearImage() {
+  imgUrl.value = ''
+}
 </script>
 <template>
   <page-containel title="头像设置">
