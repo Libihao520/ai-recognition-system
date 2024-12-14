@@ -12,8 +12,8 @@ onMounted(async () => {
     //属性 option
     const option = {
         title: {
-            text: 'Referer of a Website',
-            subtext: 'Fake Data',
+            text: '用户画像',
+            subtext: '当前系统注册用户角色',
             left: 'center'
         },
         tooltip: {
@@ -29,11 +29,11 @@ onMounted(async () => {
                 type: 'pie',
                 radius: '50%',
                 data: [
-                    { value: 1048, name: 'Search Engine' },
-                    { value: 735, name: 'Direct' },
-                    { value: 580, name: 'Email' },
-                    { value: 484, name: 'Union Ads' },
-                    { value: 300, name: 'Video Ads' }
+                    { value: 2, name: '超级管理员' },
+                    { value: 5, name: '编辑用户' },
+                    { value: 10, name: '普通用户' },
+                    { value: 20, name: '教师' },
+                    { value: 25, name: '学生' }
                 ],
                 emphasis: {
                     itemStyle: {
