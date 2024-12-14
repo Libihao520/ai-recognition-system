@@ -11,6 +11,10 @@ onMounted(async () => {
     });
     //属性 option
     const option = {
+        title: {
+            text: '成绩分布',
+            left: 'center'
+        },
         tooltip: {
             trigger: 'axis',
             axisPointer: {
@@ -26,7 +30,7 @@ onMounted(async () => {
         xAxis: [
             {
                 type: 'category',
-                data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                data: ['<10', '10-30', '30-60', '60-80', '>80', '100'],
                 axisTick: {
                     alignWithLabel: true
                 }
@@ -42,7 +46,7 @@ onMounted(async () => {
                 name: 'Direct',
                 type: 'bar',
                 barWidth: '60%',
-                data: [10, 52, 200, 334, 390, 330, 220]
+                data: [3, 7, 8, 2, 1, 2, 7]
             }
         ]
     };
