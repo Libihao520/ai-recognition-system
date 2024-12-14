@@ -169,6 +169,7 @@ public class UserService : IUserService
         var tPhotos = await _context.Photos.FindAsync(user.PhotosId);
         var userRes = new UserRes()
         {
+            Id = user.Id,
             Name = user.Name,
             Role = EnumConvert.ConvertRoleNameToString(user.Role),
             Photo = tPhotos?.Photobase64,

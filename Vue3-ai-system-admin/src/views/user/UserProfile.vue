@@ -1,10 +1,11 @@
 <script setup>
 import { ref } from 'vue'
 import { useUserStore } from '@/stores'
-// import { userUpdateInfoService } from '@/api/user'
+import { formatTime } from '@/utils/format.js'
+import { getUserRoleService } from '@/api/Role.js'
 
 const formRef = ref()
-
+const loading = ref(false)
 // 是在使用仓库中数据的初始值 (无需响应式) 解构无问题
 const {
   user: { id, name, createDate },
@@ -14,13 +15,27 @@ const {
 const form = ref({
   id,
   name,
-  createDate
+  createDate,
+  email:''
 })
+//请求体
 
-console.log(form)
-
+const selectcondition = ref({
+  pagenum: 0,
+  pagesize: 0, 
+  id: form.value.id,
+  username: ''
+})
+const GetUserParticulars = async () => {
+  loading.value = true
+  const res = await getUserRoleService(selectcondition.value)
+  form.value.email = res.data.data.email
+  console.log(res.data.data)
+  loading.value = false
+}
+GetUserParticulars()
 const rules = ref({
-  nickname: [
+  name: [
     { required: true, message: '请输入用户昵称', trigger: 'blur' },
     {
       pattern: /^\S{2,10}/,
@@ -53,11 +68,14 @@ const submitForm = async () => {
   <page-containel title="基本资料">
     <!-- 表单部分 -->
     <el-form ref="formRef" :model="form" :rules="rules" label-width="100px">
-      <el-form-item label="用户昵称" prop="nickname">
-        <el-input v-model="form.name"></el-input>
+      <el-form-item label="用户昵称:" prop="name">
+        <el-input v-model="form.name" class="inputcss"></el-input>
       </el-form-item>
-      <el-form-item label="创建时间" prop="email">
-        <el-input v-model="form.createDate"></el-input>
+      <el-form-item label="电子邮箱:" prop="email">
+        <el-input v-model="form.email" class="inputcss"></el-input>
+      </el-form-item>
+      <el-form-item label="创建时间:">
+        <span class="read-only-date"> {{ formatTime(form.createDate) }}</span>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm">提交修改</el-button>
@@ -65,3 +83,8 @@ const submitForm = async () => {
     </el-form>
   </page-containel>
 </template>
+<style lang="scss" scoped>
+.inputcss {
+  width: 220px;
+}
+</style>
