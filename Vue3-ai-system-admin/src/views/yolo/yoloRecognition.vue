@@ -1,7 +1,8 @@
 <script setup>
 import { ref } from 'vue'
-import { Plus, Upload } from '@element-plus/icons-vue'
+import { Plus, Aim,Promotion } from '@element-plus/icons-vue'
 import { PutPhotoService } from '../../api/yolo'
+import { getPkqImage } from '@/utils/image'
 
 const loading = ref(false)
 const imgUrl = ref('')
@@ -32,6 +33,9 @@ const onUpdateAvatar = async () => {
     ElMessage.error('请先上传图片')
   }
   loading.value = false
+}
+function onExamples  ()  {
+  imgUrl.value = getPkqImage()
 }
 
 function clearImage() {
@@ -88,12 +92,19 @@ function clearImage() {
       >选择图片</el-button
     >
     <el-button
+      @click="onExamples"
+      type="primary"
+      :icon="Promotion"
+      size="large"
+      >示例</el-button
+    >
+    <el-button
       @click="onUpdateAvatar"
       type="success"
-      :icon="Upload"
+      :icon="Aim"
       size="large"
       v-loading="loading"
-      >上传图片</el-button
+      >开始识别</el-button
     >
   </page-containel>
 </template>
