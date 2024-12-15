@@ -1,4 +1,5 @@
 using AutoMapper;
+using CommonUtil.YoloUtil;
 using EFCoreMigrations;
 using Interface;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -74,6 +75,13 @@ public class YoloService : IYoloService
         {
             using (var image = Image.Load<Rgba32>(ms))
             {
+                if (po.name=="动物识别")
+                {
+                    using var animalyolo = new Yolo(Path.Combine(BasePath, "Model","animal.onnx"), false);
+                    var runClassification = animalyolo.RunClassification(image);
+                    var animalName = YoloClassAnimalUtil.GetAnimalName(runClassification[0].Label);
+                    return animalName;
+                }
                 using var yolo = new Yolo(Path.Combine(BasePath, "Model","pkq.onnx"), false);
                 var results = yolo.RunObjectDetection(image, 0.3);
 

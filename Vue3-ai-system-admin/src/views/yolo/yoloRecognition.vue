@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from 'vue'
-import { Plus, Aim,Promotion } from '@element-plus/icons-vue'
+import { Plus, Aim, Promotion } from '@element-plus/icons-vue'
 import { PutPhotoService } from '../../api/yolo'
-import { getPkqImage } from '@/utils/image'
+import { getPkqImage, getAnimalImage } from '@/utils/image'
 
 const loading = ref(false)
 const imgUrl = ref('')
@@ -16,15 +16,24 @@ const onSelectFile = (uploadFile) => {
   }
 }
 const name = ref('皮卡丘')
+const sbTest = ref('')
 //发送请求
 const onUpdateAvatar = async () => {
+  if (name.value == '车牌识别') {
+    ElMessage.error('未开放！')
+    return
+  }
   // 上传图片
   if (imgUrl.value) {
     loading.value = true
     const res = await PutPhotoService(imgUrl.value, name.value)
     console.log(res.data)
     if (res.data.data) {
-      imgUrl.value = res.data.data
+      if (name.value == '动物识别') {
+        sbTest.value = res.data.data
+      } else {
+        imgUrl.value = res.data.data
+      }
       ElMessage.success('识别成功')
     } else {
       ElMessage.error('未识别出目标')
@@ -34,26 +43,34 @@ const onUpdateAvatar = async () => {
   }
   loading.value = false
 }
-function onExamples  ()  {
-  imgUrl.value = getPkqImage()
+function onExamples() {
+  if (name.value == '皮卡丘') {
+    imgUrl.value = getPkqImage()
+  } else {
+    imgUrl.value = getAnimalImage()
+  }
 }
 
 function clearImage() {
   imgUrl.value = ''
 }
+
+function handleNameChange() {
+  sbTest.value = ''
+}
 </script>
 <template>
   <page-containel title="AI识别">
     <el-form-item class="select" label="选择模型：">
-      <el-select v-model="name">
+      <el-select v-model="name" @change="handleNameChange">
         <el-option label="皮卡丘" value="皮卡丘"></el-option>
+        <el-option label="动物识别" value="动物识别"></el-option>
         <el-option label="车牌识别（暂未开放）" value="车牌识别"></el-option>
-        <el-option label="动物识别（暂未开放）" value="动物识别"></el-option>
       </el-select>
     </el-form-item>
     <el-form-item class="sbjg" v-if="name != '皮卡丘'" label="识别结果：">
       <el-input
-        v-model="input1"
+        v-model="sbTest"
         class="input"
         placeholder="现在还木有开始识别呢！"
         :suffix-icon="Calendar"
@@ -91,19 +108,8 @@ function clearImage() {
       size="large"
       >选择图片</el-button
     >
-    <el-button
-      @click="onExamples"
-      type="primary"
-      :icon="Promotion"
-      size="large"
-      >示例</el-button
-    >
-    <el-button
-      @click="onUpdateAvatar"
-      type="success"
-      :icon="Aim"
-      size="large"
-      v-loading="loading"
+    <el-button @click="onExamples" type="primary" :icon="Promotion" size="large">示例</el-button>
+    <el-button @click="onUpdateAvatar" type="success" :icon="Aim" size="large" v-loading="loading"
       >开始识别</el-button
     >
   </page-containel>
