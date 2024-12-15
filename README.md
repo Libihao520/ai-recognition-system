@@ -16,7 +16,17 @@
 
 ## 安装教程
 
-1.  xxxx
+1.  模型合并
+```
+因为模型过大，被分割上传到git中，因此将代码拉取下来后需要本地对模型进行合成
+在路径 ai-recognition-system\Ai-Web-API\WebApi\Model 下，可见有很多part_开头的文件
+```
+![image](readmePhoto/git1.png)
+```
+以windows为例，打开PowerShell窗口，CD到项目的Model文件夹下
+执行命令  cat part_* > animal.onnx  等待一两分钟后，在文件夹下就会有我们合成后的模型animal.onnx
+```
+![image](readmePhoto/git2.png)
 2.  xxxx
 3.  xxxx
 
