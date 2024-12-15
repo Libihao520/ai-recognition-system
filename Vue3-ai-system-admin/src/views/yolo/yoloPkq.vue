@@ -79,8 +79,8 @@ const onCurrentChange = (page) => {
         <el-select class="select" v-model="selectcondition.clsName">
           <el-option label="全部" value="全部"></el-option>
           <el-option label="皮卡丘" value="皮卡丘"></el-option>
-          <el-option label="动物识别" value="动物识别"></el-option>
-          <el-option label="车牌识别" value="车牌识别"></el-option>
+          <!-- <el-option label="动物识别" value="动物识别"></el-option> -->
+          <!-- <el-option label="车牌识别" value="车牌识别"></el-option> -->
         </el-select>
       </el-form-item>
       <!-- 是否审核 -->
