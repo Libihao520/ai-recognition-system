@@ -74,7 +74,7 @@ public class YoloService : IYoloService
         {
             using (var image = Image.Load<Rgba32>(ms))
             {
-                using var yolo = new Yolo(Path.Combine(BasePath, "best.onnx"), false);
+                using var yolo = new Yolo(Path.Combine(BasePath, "Model","pkq.onnx"), false);
                 var results = yolo.RunObjectDetection(image, 0.3);
 
                 image.Draw(results);
