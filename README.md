@@ -20,7 +20,7 @@
 ```
 因为模型过大，被分割上传到git中，因此将代码拉取下来后需要本地对模型进行合成
 在路径 ai-recognition-system\Ai-Web-API\WebApi\Model 下，可见有很多part_开头的文件
-右键，点击Git Bash Here
+在任意空白处右键，更多=>点击Git Bash Here
 执行命令  cat part_* > animal.onnx 在文件夹下就会有我们合成后的模型animal.onnx
 ```
 ![image](readmePhoto/git1.png)
