@@ -59,7 +59,7 @@
 
 # 系统流程图
 本项目旨在构建一个多功能的用户交互系统，集成了数据查看、练习模块、个人中心管理和用户资料修改等功能。通过用户登录系统，用户可以选择进入不同的模块进行操作。
-！[image](readmePhoto/Flowchart.png)
+![image](readmePhoto/Flowchart.png)
 
 ### AI模块
 ### 工具箱
