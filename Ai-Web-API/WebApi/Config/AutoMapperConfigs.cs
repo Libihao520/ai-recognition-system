@@ -51,6 +51,7 @@ public class AutoMapperConfigs : Profile
         CreateMap<Users, RoleRes>()
             .ForMember(dest => dest.Role, opt => opt.MapFrom(src => EnumConvert.ConvertRoleNameToString(src.Role)));
 
+        //RoleManagement
         CreateMap<AiModels, GetModelRes>()
             //desc目标对象--将源对象AiModels的CreateUserId属性的值作为目标对象GetModelRes的CreateName属性的值
             .ForMember(dest => dest.CreateName, opt => opt.MapFrom(sec => (sec.CreateUserId)));
