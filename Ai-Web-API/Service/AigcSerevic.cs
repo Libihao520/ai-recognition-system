@@ -1,15 +1,63 @@
+using AutoMapper;
+using EFCoreMigrations;
 using Interface;
+using Microsoft.CodeAnalysis.FlowAnalysis;
+using Microsoft.EntityFrameworkCore;
+using Model;
 using Model.Dto.AiModel;
+using Model.Dto.photo;
 using Model.Other;
 
 namespace Service;
 
 public class AigcSerevic : IAigcSerevice
 {
-    public Task<ApiResult> GetModelService(GetModelReq req)
+    private MyDbContext _context;
+    private readonly IMapper _mapper;
+
+    public AigcSerevic(MyDbContext context,IMapper mapper)
+    {
+        _context = context;
+        _mapper = mapper;
+    }
+
+    public async Task<ApiResult> GetModelService(GetModelReq req)
     {
         // TODO 查询实体类用automap映射到GetModelRes，返回给前端（req如果有传类型和模型名称，就过滤，类型精准过滤，模型是模糊查询）
-        throw new NotImplementedException();
+        if (req==null)
+        {
+            return ResultHelper.Error("不能为空");
+        }
+
+        try
+        {
+            var query = _context.AiModels.AsQueryable();
+            if (!string.IsNullOrEmpty(req.ModelName))
+            {
+                query = query.Where(m=>m.ModelName.Contains(req.ModelName));
+            }
+
+            if (!string.IsNullOrEmpty(req.ModleCls))
+            {
+                query  = query.Where(m=>m.ModleCls==req.ModleCls);
+            }
+
+            var totalCount = query.CountAsync();
+
+            var paginatedResult = await query
+                .Skip((req.pageindex-1)*req.pagesize)
+                .Take(req.pageindex)
+                .ToListAsync();
+            
+            var resultList = _mapper.Map<List<GetModelRes>>(paginatedResult);
+
+            return ResultHelper.Success("查询成功", resultList,await totalCount);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("$发生异常");
+            return ResultHelper.Error("查询异常，请稍后重试");
+        }
     }
 
     public Task<ApiResult> PutModelService(PutModelReq req)

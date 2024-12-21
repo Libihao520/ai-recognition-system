@@ -1,4 +1,5 @@
 using AutoMapper;
+using Model.Dto.AiModel;
 using Model.Dto.Role;
 using Model.Dto.TestPapers;
 using Model.Dto.User;
@@ -49,5 +50,9 @@ public class AutoMapperConfigs : Profile
         //RoleManagement
         CreateMap<Users, RoleRes>()
             .ForMember(dest => dest.Role, opt => opt.MapFrom(src => EnumConvert.ConvertRoleNameToString(src.Role)));
+
+        CreateMap<AiModels, GetModelRes>()
+            //desc目标对象--将源对象AiModels的CreateUserId属性的值作为目标对象GetModelRes的CreateName属性的值
+            .ForMember(dest => dest.CreateName, opt => opt.MapFrom(sec => (sec.CreateUserId)));
     }
 }
