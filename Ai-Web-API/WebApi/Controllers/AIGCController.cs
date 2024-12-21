@@ -19,13 +19,13 @@ public class AigcController : ControllerBase
     }
 
     [HttpGet]
-    public Task<ApiResult> GetModelService([FromBody]GetModelReq req)
+    public Task<ApiResult> GetModelService([FromQuery] GetModelReq req)
     {
         return _aigcSerevice.GetModelService(req);
     }
 
     [HttpPut]
-    public Task<ApiResult> PutModelService([FromForm]PutModelReq req)
+    public Task<ApiResult> PutModelService([FromForm] PutModelReq req)
     {
         return _aigcSerevice.PutModelService(req);
     }
