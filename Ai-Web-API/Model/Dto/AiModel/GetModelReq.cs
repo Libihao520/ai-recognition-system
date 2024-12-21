@@ -1,17 +1,9 @@
+using Model.Common;
+
 namespace Model.Dto.AiModel;
 
-public class GetModelReq
+public class GetModelReq : paging
 {
-    /// <summary>
-    /// 当前页码
-    /// </summary>
-    public int pagenum { get; set; }
-
-    /// <summary>
-    /// 每页条数
-    /// </summary>
-    public int pagesize { get; set; }
-
     /// <summary>
     /// 模型类型
     /// </summary>
