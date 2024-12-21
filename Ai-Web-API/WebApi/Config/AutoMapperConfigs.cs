@@ -1,4 +1,5 @@
 using AutoMapper;
+using Model.Dto.AiModel;
 using Model.Dto.Role;
 using Model.Dto.TestPapers;
 using Model.Dto.User;
@@ -49,5 +50,7 @@ public class AutoMapperConfigs : Profile
         //RoleManagement
         CreateMap<Users, RoleRes>()
             .ForMember(dest => dest.Role, opt => opt.MapFrom(src => EnumConvert.ConvertRoleNameToString(src.Role)));
+        //AiGc
+        CreateMap<AiModels, GetModelRes>();
     }
 }
