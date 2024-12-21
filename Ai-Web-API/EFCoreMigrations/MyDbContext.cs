@@ -18,6 +18,11 @@ public class MyDbContext : DbContext
     /// </summary>
     public DbSet<ReportCard> ReportCards { get; set; }
 
+    /// <summary>
+    /// 模型管理
+    /// </summary>
+    public DbSet<AiModels> AiModels { get; set; }
+
     public MyDbContext()
     {
     }
