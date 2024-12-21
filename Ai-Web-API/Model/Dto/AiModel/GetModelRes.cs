@@ -8,9 +8,9 @@ public class GetModelRes
     public long Id { get; set; }
 
     /// <summary>
-    /// 创建人Id
+    /// 创建人
     /// </summary>
-    public long CreateUserId { get; set; }
+    public string CreateName { get; set; }
 
     /// <summary>
     /// 创建日期
