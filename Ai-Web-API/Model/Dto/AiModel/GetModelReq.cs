@@ -5,13 +5,13 @@ public class GetModelReq
     /// <summary>
     /// 当前页码
     /// </summary>
-    public int pageindex { get; set; }
-    
+    public int pagenum { get; set; }
+
     /// <summary>
     /// 每页条数
     /// </summary>
     public int pagesize { get; set; }
-    
+
     /// <summary>
     /// 模型类型
     /// </summary>
@@ -21,9 +21,4 @@ public class GetModelReq
     /// 模型名称
     /// </summary>
     public string? ModelName { get; set; }
-    
-    /// <summary>
-    /// 是否人工审核
-    /// </summary>
-    public int isaudit { get; set; }
 }

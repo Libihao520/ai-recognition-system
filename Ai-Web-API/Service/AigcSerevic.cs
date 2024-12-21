@@ -14,7 +14,7 @@ public class AigcSerevic : IAigcSerevice
     private MyDbContext _context;
     private readonly IMapper _mapper;
 
-    public AigcSerevic(MyDbContext context,IMapper mapper)
+    public AigcSerevic(MyDbContext context, IMapper mapper)
     {
         _context = context;
         _mapper = mapper;
@@ -23,34 +23,35 @@ public class AigcSerevic : IAigcSerevice
     public async Task<ApiResult> GetModelService(GetModelReq req)
     {
         // TODO 查询实体类用automap映射到GetModelRes，返回给前端（req如果有传类型和模型名称，就过滤，类型精准过滤，模型是模糊查询）
-        if (req==null)
+        if (req == null)
         {
             return ResultHelper.Error("不能为空");
         }
 
         try
         {
-            var query = _context.AiModels.AsQueryable();
+            var query = _context.AiModels.Where(q => q.IsDeleted == 0).AsQueryable();
+
             if (!string.IsNullOrEmpty(req.ModelName))
             {
-                query = query.Where(m=>m.ModelName.Contains(req.ModelName));
+                query = query.Where(m => m.ModelName.Contains(req.ModelName));
             }
 
             if (!string.IsNullOrEmpty(req.ModleCls))
             {
-                query  = query.Where(m=>m.ModleCls==req.ModleCls);
+                query = query.Where(m => m.ModleCls == req.ModleCls);
             }
 
-            var totalCount = query.CountAsync();
+            var totalCount = await query.CountAsync();
 
             var paginatedResult = await query
-                .Skip((req.pageindex-1)*req.pagesize)
-                .Take(req.pageindex)
+                .Skip((req.pagenum - 1) * req.pagesize)
+                .Take(req.pagesize)
                 .ToListAsync();
-            
+
             var resultList = _mapper.Map<List<GetModelRes>>(paginatedResult);
 
-            return ResultHelper.Success("查询成功", resultList,await totalCount);
+            return ResultHelper.Success("查询成功", resultList, totalCount);
         }
         catch (Exception e)
         {
