@@ -16,7 +16,9 @@ import {
   Tickets,
   Management,
   DocumentCopy,
-  FullScreen
+  FullScreen,
+  Grid,
+  ChatLineSquare
 } from '@element-plus/icons-vue'
 
 import avatar from '@/assets/default.png'
@@ -85,6 +87,10 @@ const handleCommand = async (key) => {
             <el-icon><Cpu /></el-icon>
             <span>AI模块</span>
           </template>
+          <el-menu-item index="/ai/modelManagement">
+            <el-icon><Grid /></el-icon>
+            <span>模型管理</span>
+          </el-menu-item>
           <el-menu-item index="/yolo/yolorecognition">
             <el-icon><FullScreen /></el-icon>
             <span>在线识别入口</span>
@@ -92,6 +98,10 @@ const handleCommand = async (key) => {
           <el-menu-item index="/yolo/yolopkq">
             <el-icon><List /></el-icon>
             <span>目标监测记录</span>
+          </el-menu-item>
+          <el-menu-item index="/ai/dhck">
+            <el-icon><ChatLineSquare /></el-icon>
+            <span>在线问答</span>
           </el-menu-item>
           <!-- 
           <el-menu-item index="/yolo/yolocar">
