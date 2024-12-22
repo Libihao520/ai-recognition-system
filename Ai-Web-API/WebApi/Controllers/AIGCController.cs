@@ -24,7 +24,7 @@ public class AigcController : ControllerBase
         return _aigcSerevice.GetModelService(req);
     }
 
-    [HttpPut]
+    [HttpPost]
     public Task<ApiResult> PutModelService([FromForm] PutModelReq req)
     {
         return _aigcSerevice.PutModelService(req);
