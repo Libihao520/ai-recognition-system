@@ -59,6 +59,14 @@ const router = createRouter({
           path: '/exercises/AchievementCenter',
           component: () => import('@/views/exercises/AchievementCenter.vue')
         },
+        {
+          path: '/ai/dhck',
+          component: () => import('@/views/ai/dhck.vue')
+        },
+        {
+          path: '/ai/modelManagement',
+          component: () => import('@/views/ai/modelManagement.vue')
+        },
       ]
     }
   ]
