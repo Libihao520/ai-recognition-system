@@ -5,3 +5,7 @@ export const getModelService = (params) => request.get('/Aigc/GetModelService',{
 
 export const PutModelService = (data) =>
   request.put('/Aigc/PutModelService', data)
+
+  //删除
+export const DelModelService = (id) =>
+request.delete('/Aigc/DelModelService', { params: { id } })
