@@ -7,20 +7,14 @@ const loading = ref(false)
 const visibleDrawer = ref(false)
 //抽屉是添加还是编辑
 const isAdd = ref(true)
-
+// 用于存储上传的文件
+const uploadedFile = ref(null)
 //默认表单数据
 const defaultForm = {
   id: null,
   name: ''
 }
 
-//请求体
-const selectcondition = ref({
-  pagenum: 0,
-  pagesize: 0,
-  id: '',
-  username: ''
-})
 //准备数据
 const formModel = ref({
   ...defaultForm
@@ -34,18 +28,33 @@ const open = async (row) => {
     ...defaultForm
   }
   isAdd.value = true
+  uploadedFile.value = ref(null)  // 重置上传的文件
+}
+// 监听文件上传
+const handleFileChange = (file) => {
+  uploadedFile.value = file.raw;
 }
 //表单提交
 const emit = defineEmits(['sucess'])
 const onSave = async (state) => {
-  const putFrom = ref({})
-  putFrom.value = JSON.parse(JSON.stringify(formModel.value))
-  putFrom.value.password = encrypt(formModel.value.password)
-
   if (state == '取消') {
     visibleDrawer.value = false
   } else {
-    await PutModelService(putFrom.value)
+    const file = uploadedFile.value
+    if (file) {
+      try {
+      const response = await PutModelService(file, {
+        modleCls:formModel.value.modleCls,
+        modelName:formModel.value.modelName
+      })
+      console.log('导入成功', response)
+    } catch (error) {
+      console.error('上传失败', error)
+    } finally {
+    }
+    } else {
+      console.error('上传失败', '请选择文件')
+  }
     visibleDrawer.value = false
     // 回调
     emit('success', 'add')
@@ -72,6 +81,24 @@ defineExpose({
           placeholder="请输入模型名称！"
           clearable
         ></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-upload
+          ref="upload"
+          class="upload-demo"
+          :on-change="handleFileChange"
+          :limit="1"
+          :auto-upload="false"
+        >
+          <template #trigger>
+            <el-button type="primary">点击上传文件</el-button>
+          </template>
+          <template #tip>
+            <div class="el-upload__tip text-red">
+              限制上传一个onnx模型文件，新文件将覆盖旧文件。
+            </div>
+          </template>
+        </el-upload>
       </el-form-item>
       <el-form-item>
         <el-button @click="onSave('已保存')" type="primary">{{
