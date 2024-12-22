@@ -36,11 +36,11 @@ public class AigcSerevic : IAigcSerevice
             {
                 query = query.Where(m => m.ModelName.Contains(req.ModelName));
             }
-
-            if (!string.IsNullOrEmpty(req.ModleCls))
+            if (!string.IsNullOrEmpty(req.ModleCls) && req.ModleCls.ToUpper()!="全部")
             {
                 query = query.Where(m => m.ModleCls == req.ModleCls);
             }
+            
 
             var totalCount = await query.CountAsync();
 
@@ -66,9 +66,29 @@ public class AigcSerevic : IAigcSerevice
         throw new NotImplementedException();
     }
 
-    public Task<ApiResult> DelModelService(long id)
+    public async Task<ApiResult> DelModelService(long id)
     {
         // TODO 根据id，软删除模型
+        if (id==null)
+        {
+            return ResultHelper.Error("不能为空");
+        }
+        var asQueryable = _context.AiModels
+            .Where(q => q.IsDeleted == 0 && q.Id==id)
+            .AsQueryable();
+        try
+        {
+            if (asQueryable!=null)
+            {
+                
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        
         throw new NotImplementedException();
     }
 }
