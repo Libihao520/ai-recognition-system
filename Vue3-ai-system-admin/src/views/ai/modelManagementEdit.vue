@@ -9,17 +9,17 @@ const visibleDrawer = ref(false)
 const isAdd = ref(true)
 // 用于存储上传的文件
 const uploadedFile = ref(null)
+const upload = ref(null)
 //默认表单数据
 const defaultForm = {
-  id: null,
-  name: ''
+  modleCls: '目标监测',
+  modelName: ''
 }
-
 //准备数据
 const formModel = ref({
   ...defaultForm
 })
-
+const uploadKey = ref(0)
 // 父类点击抽屉时传row到这里
 const open = async (row) => {
   visibleDrawer.value = true
@@ -28,11 +28,14 @@ const open = async (row) => {
     ...defaultForm
   }
   isAdd.value = true
-  uploadedFile.value = ref(null)  // 重置上传的文件
+  uploadKey.value += 1 // 改变 key 以强制重渲染
+  uploadedFile.value = null // 重置上传的文件
+  upload.value = null
 }
+
 // 监听文件上传
 const handleFileChange = (file) => {
-  uploadedFile.value = file.raw;
+  uploadedFile.value = file.raw
 }
 //表单提交
 const emit = defineEmits(['sucess'])
@@ -40,24 +43,34 @@ const onSave = async (state) => {
   if (state == '取消') {
     visibleDrawer.value = false
   } else {
+    if (!formModel.value.modelName) {
+      ElMessage.error('请输入模型名称')
+      return
+    }
     const file = uploadedFile.value
     if (file) {
+      // 检查文件后缀是否为.onnx
+      const fileExtension = file.name.split('.').pop().toLowerCase()
+      if (fileExtension !== 'onnx') {
+        ElMessage.error('请上传一个.onnx模型文件')
+        return
+      }
       try {
-      const response = await PutModelService(file, {
-        modleCls:formModel.value.modleCls,
-        modelName:formModel.value.modelName
-      })
-      console.log('导入成功', response)
-    } catch (error) {
-      console.error('上传失败', error)
-    } finally {
-    }
+        const response = await PutModelService(file, {
+          modleCls: formModel.value.modleCls,
+          modelName: formModel.value.modelName
+        })
+        ElMessage.success('上传成功')
+        visibleDrawer.value = false
+        // 回调
+        emit('success', 'add')
+      } catch (error) {
+        ElMessage.error('上传失败')
+      } finally {
+      }
     } else {
-      console.error('上传失败', '请选择文件')
-  }
-    visibleDrawer.value = false
-    // 回调
-    emit('success', 'add')
+      ElMessage.error('请上传文件')
+    }
   }
 }
 defineExpose({
@@ -84,6 +97,7 @@ defineExpose({
       </el-form-item>
       <el-form-item>
         <el-upload
+          :key="uploadKey"
           ref="upload"
           class="upload-demo"
           :on-change="handleFileChange"
