@@ -3,6 +3,7 @@ using EFCoreMigrations;
 using Interface;
 using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer.ValueGeneration.Internal;
 using Model;
 using Model.Dto.AiModel;
 using Model.Other;
@@ -68,27 +69,21 @@ public class AigcSerevic : IAigcSerevice
 
     public async Task<ApiResult> DelModelService(long id)
     {
-        // TODO 根据id，软删除模型
-        if (id==null)
-        {
-            return ResultHelper.Error("不能为空");
-        }
-        var asQueryable = _context.AiModels
-            .Where(q => q.IsDeleted == 0 && q.Id==id)
-            .AsQueryable();
+        // TODO 根据id，软删除模型----0未删除；1已删除
         try
         {
-            if (asQueryable!=null)
+            var entity =await _context.AiModels.FindAsync(id);
+            if (entity!=null)
             {
-                
+                entity.IsDeleted = 1;
+                await _context.SaveChangesAsync();
             }
+
+            return ResultHelper.Success("请求成功！", "数据已删除");
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return ResultHelper.Error("删除模型出现异常，请稍后重试");
         }
-        
-        throw new NotImplementedException();
     }
 }
