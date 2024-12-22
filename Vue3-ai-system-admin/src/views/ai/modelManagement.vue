@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { getModelService } from '../../api/Aigc'
+import { getModelService,DelModelService } from '../../api/Aigc'
 import { Edit, Delete } from '@element-plus/icons-vue'
 import { formatTime } from '@/utils/format.js'
 import modelManagementEdit from './modelManagementEdit.vue'
@@ -38,7 +38,7 @@ const onEditChannel = (row) => {
 //删除逻辑
 const onDelChannel = async (row, $index) => {
   console.log(row.id)
-  const res = await DeletedService(row.id)
+  const res = await DelModelService(row.id)
   getTableList()
 }
 //重置搜索框
