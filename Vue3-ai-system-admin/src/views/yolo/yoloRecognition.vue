@@ -17,6 +17,16 @@ const onSelectFile = (uploadFile) => {
 }
 const name = ref('皮卡丘')
 const sbTest = ref('')
+const ModelClass = [
+  { label: '目标检测', value: '目标检测' },
+  { label: '目标分类', value: '目标分类' },
+  { label: '皮卡丘', value: '皮卡丘' }
+]
+const options = [
+  { label: '皮卡丘', value: '皮卡丘' },
+  { label: '动物识别', value: '动物识别' },
+  { label: '车牌识别（暂未开放）', value: '车牌识别' }
+]
 //发送请求
 const onUpdateAvatar = async () => {
   if (name.value == '车牌识别') {
@@ -63,9 +73,15 @@ function handleNameChange() {
   <page-containel title="AI识别">
     <el-form-item class="select" label="选择模型：">
       <el-select v-model="name" @change="handleNameChange">
-        <el-option label="皮卡丘" value="皮卡丘"></el-option>
+        <el-option
+          v-for="option in options"
+          :key="option.value"
+          :label="option.label"
+          :value="option.value"
+        ></el-option>
+        <!-- <el-option label="皮卡丘" value="皮卡丘"></el-option>
         <el-option label="动物识别" value="动物识别"></el-option>
-        <el-option label="车牌识别（暂未开放）" value="车牌识别"></el-option>
+        <el-option label="车牌识别（暂未开放）" value="车牌识别"></el-option> -->
       </el-select>
     </el-form-item>
     <el-form-item class="sbjg" v-if="name != '皮卡丘'" label="识别结果：">
