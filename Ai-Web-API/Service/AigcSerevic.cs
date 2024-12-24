@@ -188,7 +188,8 @@ public class AigcSerevic : IAigcSerevice
         catch (Exception ex)
         {
             // 如果在开启事务等外层操作出现异常，直接返回错误结果告知调用方模型添加失败及失败原因
-            return ResultHelper.Error($"模型添加是吧，原因：{ex.Message}");
+            //ex.Message是由系统自动生成并传递给代码里的异常处理部分
+            return ResultHelper.Error($"模型添加失败，原因：{ex.Message}");
         }
     }
 
