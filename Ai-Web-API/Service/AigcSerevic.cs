@@ -102,7 +102,7 @@ public class AigcSerevic : IAigcSerevice
         }
 
         // 在数据库中查找是否已存在同名模型（此处原逻辑保留，后续结合唯一约束及事务增强并发处理）
-        var existingmodel = _context.AiModels.FirstOrDefault(a => a.ModelName == req.ModelName);
+        var existingmodel = _context.AiModels.FirstOrDefault(a => a.ModelName == req.ModelName && a.IsDeleted == 0);
         if (existingmodel != null)
         {
             return ResultHelper.Error("模型已存在，请更换名称后重新添加");
