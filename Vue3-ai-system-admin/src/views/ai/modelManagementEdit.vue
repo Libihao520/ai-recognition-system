@@ -35,11 +35,15 @@ const open = async (row) => {
 
 // 监听文件上传
 const handleFileChange = (file) => {
+  loading.value = true
   uploadedFile.value = file.raw
+  loading.value = false
+  console.log(file.raw.size)
 }
 //表单提交
 const emit = defineEmits(['sucess'])
 const onSave = async (state) => {
+  loading.value = true
   if (state == '取消') {
     visibleDrawer.value = false
   } else {
@@ -53,6 +57,7 @@ const onSave = async (state) => {
       const fileExtension = file.name.split('.').pop().toLowerCase()
       if (fileExtension !== 'onnx') {
         ElMessage.error('请上传一个.onnx模型文件')
+        loading.value = false
         return
       }
       try {
@@ -67,9 +72,11 @@ const onSave = async (state) => {
       } catch (error) {
         ElMessage.error('上传失败')
       } finally {
+        loading.value = false
       }
     } else {
       ElMessage.error('请上传文件')
+      loading.value = false
     }
   }
 }
