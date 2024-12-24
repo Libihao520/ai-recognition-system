@@ -25,9 +25,11 @@ public class AigcController : ControllerBase
     }
 
     [HttpPost]
-    public Task<ApiResult> PutModelService([FromForm] PutModelReq req)
+    [RequestFormLimits(MultipartBodyLengthLimit = 262144000)] // 设置表单数据的最大长度为250MB
+    [RequestSizeLimit(262144000)] // 设置整个HTTP请求的最大大小为250MB
+    public async Task<ApiResult> PutModelService([FromForm] PutModelReq req)
     {
-        return _aigcSerevice.PutModelService(req);
+        return await _aigcSerevice.PutModelService(req);
     }
 
     [HttpDelete]
