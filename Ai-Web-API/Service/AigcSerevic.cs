@@ -19,7 +19,8 @@ public class AigcSerevic : IAigcSerevice
     private MyDbContext _context;
     private readonly IMapper _mapper;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    public AigcSerevic(MyDbContext context, IMapper mapper,IHttpContextAccessor httpContextAccessor)
+
+    public AigcSerevic(MyDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
     {
         _context = context;
         _mapper = mapper;
@@ -42,11 +43,12 @@ public class AigcSerevic : IAigcSerevice
             {
                 query = query.Where(m => m.ModelName.Contains(req.ModelName));
             }
-            if (!string.IsNullOrEmpty(req.ModleCls) && req.ModleCls.ToUpper()!="全部")
+
+            if (!string.IsNullOrEmpty(req.ModleCls) && req.ModleCls.ToUpper() != "全部")
             {
                 query = query.Where(m => m.ModleCls == req.ModleCls);
             }
-            
+
 
             var totalCount = await query.CountAsync();
 
@@ -84,9 +86,9 @@ public class AigcSerevic : IAigcSerevice
             return ResultHelper.Error("模型类型不能为空");
         }
 
-        if (req.Model == null && req.Model.Count == 0)
+        if (req.Model == null || req.Model.Length == 0)
         {
-            return ResultHelper.Error("模型文件异常");
+            return ResultHelper.Error("没有文件上传");
         }
 
         // 检查本地Model文件夹是否存在，不存在则创建
@@ -98,6 +100,7 @@ public class AigcSerevic : IAigcSerevice
             // 创建Model文件夹
             Directory.CreateDirectory(modelFolderPath);
         }
+
         // 在数据库中查找是否已存在同名模型（此处原逻辑保留，后续结合唯一约束及事务增强并发处理）
         var existingmodel = _context.AiModels.FirstOrDefault(a => a.ModelName == req.ModelName);
         if (existingmodel != null)
@@ -111,22 +114,21 @@ public class AigcSerevic : IAigcSerevice
 
         // 定义允许的模型文件扩展名数组，这里假设只允许.pt和.onnx格式，可按需调整
         var alloweExtensions = new[] { ".pt", ".onnx" };
-        foreach (var formFile in req.Model)
+
+        // 获取当前文件的扩展名，并转换为小写形式，方便后续比较
+        var fileExtension = Path.GetExtension(req.Model.FileName).ToLowerInvariant();
+        if (!alloweExtensions.Contains(fileExtension))
         {
-            // 获取当前文件的扩展名，并转换为小写形式，方便后续比较
-            var fileExtension = Path.GetExtension(formFile.FileName).ToLowerInvariant();
-            if (!alloweExtensions.Contains(fileExtension))
-            {
-                return ResultHelper.Error($"不支持文件格式，仅支持{String.Join(",", alloweExtensions)}格式的模型文件");
-            }
+            return ResultHelper.Error($"不支持文件格式，仅支持{String.Join(",", alloweExtensions)}格式的模型文件");
         }
+
 
         /*获取文件名称，扩展名
          用于存储模型文件的相对路径 --先将"Model"文件夹名与模型名称、一个新的唯一标识符（Guid）、文件原始扩展名拼接起来，构成相对路径
            通过Guid生成一个32位的十六进制数字字符串123e4567-e89b转为字符串123e4567e89b---得到相对路径
            */
         var relativeFilePath = Path.Combine("Model",
-            req.ModelName + Guid.NewGuid().ToString("N") + Path.GetExtension(req.Model.First().FileName));
+            req.ModelName + "_" + TimeBasedIdGeneratorUtil.GenerateId() + "_" + req.Model.FileName);
         // 再将应用当前目录与相对路径拼接，得到文件的绝对完整路径，用于后续保存文件到磁盘
         var fullFilePath = Path.Combine(Directory.GetCurrentDirectory(), relativeFilePath);
 
@@ -136,22 +138,22 @@ public class AigcSerevic : IAigcSerevice
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                //文件保存到本地
-                foreach (var formFile in req.Model)
+                //创建文件流，创建模式打开目标文件，不存在则创建，存在则覆盖
+                using (var stream = new FileStream(fullFilePath, FileMode.Create))
                 {
-                    //创建文件流，创建模式打开目标文件，不存在则创建，存在则覆盖
-                    using (var stream = new FileStream(fullFilePath, FileMode.Create))
-                    {
-                        // 将上传的文件内容从请求中的IFormFile流复制到本地创建的文件流中，实现文件保存到磁盘
-                        await formFile.CopyToAsync(stream);
-                    }
-                }   
+                    // 将上传的文件内容从请求中的IFormFile流复制到本地创建的文件流中，实现文件保存到磁盘
+                    await req.Model.CopyToAsync(stream);
+                }
+
+                var fileSizeInMb = (int)Math.Round(req.Model.Length / (1024.0 * 1024.0));
+
                 var aiModels = new AiModels()
                 {
                     ModelName = req.ModelName,
                     ModleCls = req.ModleCls,
                     Id = TimeBasedIdGeneratorUtil.GenerateId(),
-                    Path = relativeFilePath,  // 设置文件路径到数据库记录中
+                    Path = relativeFilePath, // 设置文件路径到数据库记录中
+                    ModelSizee = fileSizeInMb,
                     CreateDate = DateTime.Now,
                     IsDeleted = 0,
                     CreateUserId = createUserId,
@@ -195,8 +197,8 @@ public class AigcSerevic : IAigcSerevice
         // TODO 根据id，软删除模型----0未删除；1已删除
         try
         {
-            var entity =await _context.AiModels.FindAsync(id);
-            if (entity!=null)
+            var entity = await _context.AiModels.FindAsync(id);
+            if (entity != null)
             {
                 entity.IsDeleted = 1;
                 await _context.SaveChangesAsync();
