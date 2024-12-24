@@ -140,18 +140,10 @@ public class AigcSerevic : IAigcSerevice
                 foreach (var formFile in req.Model)
                 {
                     //创建文件流，创建模式打开目标文件，不存在则创建，存在则覆盖
-                    using (var fileStream =formFile.OpenReadStream())
+                    using (var stream = new FileStream(fullFilePath, FileMode.Create))
                     {
-                        int bufferSize = 5 * 1024 * 1024;
-                        var buffer = new byte[bufferSize];
-                        using (var outputStream=new FileStream(fullFilePath,FileMode.Create))
-                        {
-                            int byteRead;
-                            while ((byteRead=await fileStream.ReadAsync(buffer,0,buffer.Length) )>0)
-                            {
-                                await outputStream.WriteAsync(buffer, 0, byteRead);
-                            }
-                        }
+                        // 将上传的文件内容从请求中的IFormFile流复制到本地创建的文件流中，实现文件保存到磁盘
+                        await formFile.CopyToAsync(stream);
                     }
                 }   
                 var aiModels = new AiModels()
