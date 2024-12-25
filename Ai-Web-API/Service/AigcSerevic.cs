@@ -89,12 +89,6 @@ public class AigcSerevic : IAigcSerevice
             return ResultHelper.Error("模型已存在，请更换名称后重新添加");
         }
 
-        //缓冲方式
-        // if (.Length == 0)
-        // {
-        //     return ResultHelper.Error("没有文件上传");
-        // }
-
         // 流式上传
         if (!MultipartRequestHelper.HasFormFileContentDisposition(_httpContextAccessor.HttpContext.Request.ContentType))
         {
