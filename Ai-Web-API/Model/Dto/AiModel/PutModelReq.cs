@@ -22,5 +22,5 @@ public class PutModelReq
     /// <summary>
     /// 模型
     /// </summary>
-    public IFormFile Model { get; set; }
+    // public IFormFile Model { get; set; }
 }
