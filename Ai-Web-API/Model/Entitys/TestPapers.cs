@@ -2,11 +2,6 @@ namespace Model.Entitys;
 
 public class TestPapers
 {
-    /// <summary>
-    /// 试卷ID
-    /// </summary>
-    public int? testPapersManageId { get; set; }
-    
     public int id { get; set; }
 
     /// <summary>
@@ -47,4 +42,9 @@ public class TestPapers
     /// 分数
     /// </summary>
     public int Grade { get; set; }
+
+    /// <summary>
+    /// 试卷ID
+    /// </summary>
+    public long? testPapersManageId { get; set; }
 }
