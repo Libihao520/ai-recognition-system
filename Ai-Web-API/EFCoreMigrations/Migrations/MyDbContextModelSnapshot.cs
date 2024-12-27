@@ -136,9 +136,6 @@ namespace EFCoreMigrations.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("testPapersManageId")
-                        .HasColumnType("int");
-
                     b.Property<int>("type")
                         .HasColumnType("int");
 
