@@ -23,6 +23,10 @@ public class MyDbContext : DbContext
     /// </summary>
     public DbSet<AiModels> AiModels { get; set; }
 
+    /// <summary>
+    ///试卷管理
+    /// </summary>
+    public DbSet<TestPapersManage> TestPapersManages { get; set; }
     public MyDbContext()
     {
     }
