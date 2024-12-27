@@ -46,7 +46,7 @@ public class ToolController : ControllerBase
 
         var papers = new TestPapers()
         {
-            id = 1,
+            Id = 1,
             subject = "数学",
             TopicNumber = 1,
             Topic = "计算表达式 (3×5)+(4÷2)-(6-2) 的结果，选择正确的选项",
@@ -55,7 +55,7 @@ public class ToolController : ControllerBase
             Choice2 = "A:12",
             Choice3 = "A:11",
             Choice4 = "A:14",
-            answer = new List<int>{1}
+            answer = new List<int> { 1 }
         };
 
         #endregion
@@ -65,7 +65,7 @@ public class ToolController : ControllerBase
         var papers2 = new TestPapers()
         {
             type = 1,
-            id = 2,
+            Id = 2,
             subject = "数学",
             TopicNumber = 2,
             Topic = "以下哪些选项是关于地球的正确陈述？",
@@ -73,7 +73,7 @@ public class ToolController : ControllerBase
             Choice2 = "地球的自转周期约为24小时。",
             Choice3 = "地球的公转轨道是一个完美的圆形。",
             Choice4 = "地球的大气层主要由氮气和氧气组成。",
-            answer = new List<int>{1,2,4}
+            answer = new List<int> { 1, 2, 4 }
         };
 
         #endregion
@@ -83,13 +83,13 @@ public class ToolController : ControllerBase
         var papers3 = new TestPapers()
         {
             type = 2,
-            id = 3,
+            Id = 3,
             subject = "数学",
             TopicNumber = 3,
             Topic = "地球是太阳系中最大的行星。 ( )",
             Choice1 = "√",
             Choice2 = "×。",
-            answer = new List<int>{1}
+            answer = new List<int> { 1 }
         };
 
         #endregion
@@ -111,7 +111,7 @@ public class ToolController : ControllerBase
 
         #region 添加到数据库
 
-        _context.testpapers.AddRange(new List<TestPapers>{papers,papers2,papers3});
+        _context.testpapers.AddRange(new List<TestPapers> { papers, papers2, papers3 });
         _context.Users.AddRange(users);
         //_context.Users.AddRange(new[] { user1, user2 });
         // _context.yolotbs.Add(yolotbs);
@@ -123,6 +123,7 @@ public class ToolController : ControllerBase
         _context.SaveChanges();
 
         #endregion
+
         return "ok";
     }
 }

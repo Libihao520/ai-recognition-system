@@ -1,9 +1,9 @@
+using Model.Common;
+
 namespace Model.Entitys;
 
-public class TestPapers
+public class TestPapers : IBase
 {
-    public int id { get; set; }
-
     /// <summary>
     /// 科目
     /// </summary>
