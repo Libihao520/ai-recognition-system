@@ -2,6 +2,11 @@ namespace Model.Entitys;
 
 public class TestPapers
 {
+    /// <summary>
+    /// 试卷ID
+    /// </summary>
+    public int? testPapersManageId { get; set; }
+    
     public int id { get; set; }
 
     /// <summary>
