@@ -78,7 +78,7 @@ public class ExercisesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ApiResult> AddTestPaperManage(AddTestPaperManageReq req)
+    public async Task<ApiResult> AddTestPaperManage([FromForm] AddTestPaperManageReq req)
     {
         return await _exercisesService.AddTestPaperManage(req);
     }
