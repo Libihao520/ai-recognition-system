@@ -306,6 +306,7 @@ public class ExercisesService : IExercisesService
             var createUserId = long.Parse(user.Claims.FirstOrDefault(c => c.Type == "Id").Value);
             var newRecord = new TestPapersManage()
             {
+                Id = TimeBasedIdGeneratorUtil.GenerateId(),
                 FileLabel = req.FileLabel,
                 QuestionBankCourseTitle = req.QuestionBankCourseTitle,
                 ExcelFilePath = filePath,
@@ -315,7 +316,7 @@ public class ExercisesService : IExercisesService
                 HasAnsweringStarted = null
             };
             _context.TestPapersManages.Add(newRecord);
-            await _context.SaveChangesAsync();
+
             //检查指定路径filePath的文件是否存在==>往下AI--注释占时不要删，还要看
 
             using (var stream = new MemoryStream())
@@ -333,6 +334,7 @@ public class ExercisesService : IExercisesService
                         var paperData = new TestPapers()
                         {
                             TopicNumber = row - 1,
+                            subject = req.QuestionBankCourseTitle,
                             type = (worksheet.Cells[row, 2].Value is int cellValueIntForType) ? cellValueIntForType : 0,
                             Topic = worksheet.Cells[row, 3].Value?.ToString(),
                             Choice1 = worksheet.Cells[row, 4].Value?.ToString(),
@@ -340,9 +342,7 @@ public class ExercisesService : IExercisesService
                             Choice3 = worksheet.Cells[row, 6].Value?.ToString(),
                             Choice4 = worksheet.Cells[row, 7].Value?.ToString(),
                             answer = new List<int>(),
-                            Grade = (worksheet.Cells[row, 9].Value is int cellValueInForGrande)
-                                ? cellValueInForGrande
-                                : 0,
+                            Grade = int.Parse(worksheet.Cells[row, 9].Value?.ToString() ?? string.Empty),
                             testPapersManageId = newRecord.Id
                         };
                         paperData.answer =
@@ -351,7 +351,7 @@ public class ExercisesService : IExercisesService
                     }
                 }
             }
-            
+
             await _context.SaveChangesAsync();
 
             return ResultHelper.Success("请求成功", "文件上传成功且数据保存完整");

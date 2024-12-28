@@ -43,7 +43,7 @@ const handleFileChange = (file) => {
 //表单提交
 const emit = defineEmits(['sucess'])
 const onSave = async (state) => {
-  loading.value = true
+  
   if (state == '取消') {
     visibleDrawer.value = false
   } else {
@@ -55,6 +55,7 @@ const onSave = async (state) => {
       ElMessage.error('请输入科目')
       return
     }
+    loading.value = true
     const file = uploadedFile.value
     if (file) {
       // 检查文件后缀是否为.xls
