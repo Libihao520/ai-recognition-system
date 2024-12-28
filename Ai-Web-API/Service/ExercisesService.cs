@@ -281,6 +281,7 @@ public class ExercisesService : IExercisesService
 
     public async Task<ApiResult> AddTestPaperManage(AddTestPaperManageReq req)
     {
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
         //TODO 在TestPaperManage 新建一条数据 ，然后读取excel，把数据存到TestPaper
         try
         {
@@ -316,16 +317,17 @@ public class ExercisesService : IExercisesService
             _context.TestPapersManages.Add(newRecord);
             await _context.SaveChangesAsync();
             //检查指定路径filePath的文件是否存在==>往下AI--注释占时不要删，还要看
-            if (File.Exists(filePath))
+
+            using (var stream = new MemoryStream())
             {
-                //使用 OfficeOpenXml 库来加载指定路径（filePath）下的 Excel 文件，以便后续能够读取和操作该文件中的内容
-                using (var package = new ExcelPackage(new FileInfo(filePath)))
+                await req.File.CopyToAsync(stream);
+                stream.Position = 0; // 重置流的位置到起始点  
+
+                using (var package = new ExcelPackage(stream))
                 {
-                    //读取第一个工作表
                     var worksheet = package.Workbook.Worksheets[0];
-                    //获取数据区域所包含的行数
-                    int rowCount = worksheet.Dimension.Rows;
-                    //第一行是标题行，从第二行开始读取数据
+                    var rowCount = worksheet.Dimension.Rows;
+
                     for (int row = 2; row <= rowCount; row++)
                     {
                         var paperData = new TestPapers()
@@ -343,13 +345,14 @@ public class ExercisesService : IExercisesService
                                 : 0,
                             testPapersManageId = newRecord.Id
                         };
-                        ExcelDataParser.ParseAnswerFromCellValue(worksheet.Cells[row, 8].Value?.ToString());
+                        paperData.answer =
+                            ExcelDataParser.ParseAnswerFromCellValue(worksheet.Cells[row, 8].Value?.ToString());
                         _context.testpapers.Add(paperData);
                     }
                 }
-
-                await _context.SaveChangesAsync();
             }
+            
+            await _context.SaveChangesAsync();
 
             return ResultHelper.Success("请求成功", "文件上传成功且数据保存完整");
         }

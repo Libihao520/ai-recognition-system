@@ -28,16 +28,57 @@ public class ExcelDataParser
                 {
                     // 使用int.TryParse方法尝试将当前子字符串part转换为整数，该方法会返回一个布尔值表示是否转换成功，
                     // 如果转换成功，会将转换后的整数值赋给out参数parsedValue
-                    if (int.TryParse(part.Trim(), out int parsedValue))
-                    {
-                        // 如果成功转换为整数，将该整数添加到result列表中，逐步构建最终的整数列表
-                        result.Add(parsedValue);
-                    }
+                    var stringToNumber = StringToNumber(part);
+
+                    // 如果成功转换为整数，将该整数添加到result列表中，逐步构建最终的整数列表
+                    result.Add(stringToNumber);
                 }
             }
         }
 
         // 返回解析完成后的整数列表result，该列表包含了从Excel单元格值中成功解析出的所有整数元素
         return result;
+    }
+
+    static int StringToNumber(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+        {
+            throw new ArgumentException("Input string must not be null or empty.");
+        }
+
+        input = input.ToLower(); // 统一转换为小写
+
+        // 先处理特定字符串
+        if (input == "错误")
+        {
+            return 0; // 或者您可以选择抛出一个异常，表示这不是一个有效的数字转换
+        }
+
+        if (input == "正确")
+        {
+            return 1; // 同上，也可以考虑抛出异常
+        }
+
+        // 处理单字符输入（长度为1的字符串）
+        if (input.Length == 1)
+        {
+            switch (input)
+            {
+                case "a":
+                    return 0;
+                case "b":
+                    return 2;
+                case "c":
+                    return 3;
+                case "d":
+                    return 4;
+                default:
+                    throw new ArgumentException("Invalid single character input.");
+            }
+        }
+
+        // 如果输入既不是特定字符串也不是单字符，则抛出异常
+        throw new ArgumentException("Input string must be either a single character or one of the specified strings.");
     }
 }
