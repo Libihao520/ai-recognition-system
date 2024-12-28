@@ -269,7 +269,7 @@ public class ExercisesService : IExercisesService
 
             var resultList = _mapper.Map<List<TestPaperManageRes>>(listAsync);
 
-            return ResultHelper.Success("查询成功", resultList);
+            return ResultHelper.Success("查询成功", resultList, total);
         }
 
         catch (Exception e)
