@@ -1,12 +1,15 @@
 <script setup>
 import { ref } from 'vue'
 import { Plus, Aim, Promotion } from '@element-plus/icons-vue'
+import { getModelService } from '../../api/Aigc'
 import { PutPhotoService } from '../../api/yolo'
 import { getPkqImage, getAnimalImage } from '@/utils/image'
+import { nextTick } from 'vue'
 
 const loading = ref(false)
 const imgUrl = ref('')
 const uploadRef = ref()
+const modelSelectKey = ref(0)
 const onSelectFile = (uploadFile) => {
   // 基于 FileReader 读取图片做预览
   const reader = new FileReader()
@@ -15,31 +18,28 @@ const onSelectFile = (uploadFile) => {
     imgUrl.value = reader.result
   }
 }
-const name = ref('皮卡丘')
 const sbTest = ref('')
-const ModelClass = [
-  { label: '目标检测', value: '目标检测' },
-  { label: '目标分类', value: '目标分类' },
-  { label: '皮卡丘', value: '皮卡丘' }
+const ModelClass = ref('目标监测')
+const ModelClasss = [
+  { label: '目标监测', value: '目标监测' },
+  { label: '图像分类', value: '图像分类' },
+  { label: '其他模型', value: '其他模型' }
 ]
-const options = [
-  { label: '皮卡丘', value: '皮卡丘' },
-  { label: '动物识别', value: '动物识别' },
-  { label: '车牌识别（暂未开放）', value: '车牌识别' }
-]
+const ModelName = ref('')
+const ModelNames = []
 //发送请求
 const onUpdateAvatar = async () => {
-  if (name.value == '车牌识别') {
+  if (ModelName.value == '车牌识别') {
     ElMessage.error('未开放！')
     return
   }
   // 上传图片
   if (imgUrl.value) {
     loading.value = true
-    const res = await PutPhotoService(imgUrl.value, name.value)
+    const res = await PutPhotoService(imgUrl.value, ModelName.value)
     console.log(res.data)
     if (res.data.data) {
-      if (name.value == '动物识别') {
+      if (ModelName.value == '动物识别') {
         sbTest.value = res.data.data
       } else {
         imgUrl.value = res.data.data
@@ -54,7 +54,7 @@ const onUpdateAvatar = async () => {
   loading.value = false
 }
 function onExamples() {
-  if (name.value == '皮卡丘') {
+  if (ModelName.value == '皮卡丘') {
     imgUrl.value = getPkqImage()
   } else {
     imgUrl.value = getAnimalImage()
@@ -65,26 +65,52 @@ function clearImage() {
   imgUrl.value = ''
 }
 
+async function handleModelClassChange() {
+  ModelNames.value = []
+  const selectcondition = ref({
+    pagenum: 1, //当前页
+    pagesize: 99, //每页条数
+    modleCls: ModelClass.value,
+    modelName: ''
+  })
+  const res = await getModelService(selectcondition.value)
+  ModelName.value = ''
+  res.data.data.forEach((item) => {
+    ModelNames.value.push({ label: item.modelName, value: item.id })
+  })
+  // 使用 nextTick 确保 DOM 更新
+  await nextTick()
+  modelSelectKey.value++
+}
+handleModelClassChange()
+
 function handleNameChange() {
   sbTest.value = ''
 }
 </script>
 <template>
   <page-containel title="AI识别">
-    <el-form-item class="select" label="选择模型：">
-      <el-select v-model="name" @change="handleNameChange">
+    <el-form-item class="select" label="模型类型：">
+      <el-select v-model="ModelClass" @change="handleModelClassChange">
         <el-option
-          v-for="option in options"
+          v-for="option in ModelClasss"
           :key="option.value"
           :label="option.label"
           :value="option.value"
         ></el-option>
-        <!-- <el-option label="皮卡丘" value="皮卡丘"></el-option>
-        <el-option label="动物识别" value="动物识别"></el-option>
-        <el-option label="车牌识别（暂未开放）" value="车牌识别"></el-option> -->
       </el-select>
     </el-form-item>
-    <el-form-item class="sbjg" v-if="name != '皮卡丘'" label="识别结果：">
+    <el-form-item class="select" label="模型名称：">
+      <el-select v-model="ModelName" @change="handleNameChange" :key="modelSelectKey">
+        <el-option
+          v-for="option in ModelNames.value"
+          :key="option.value"
+          :label="option.label"
+          :value="option.value"
+        ></el-option>
+      </el-select>
+    </el-form-item>
+    <el-form-item class="sbjg" v-if="ModelClass != '目标监测'" label="识别结果：">
       <el-input
         v-model="sbTest"
         class="input"
