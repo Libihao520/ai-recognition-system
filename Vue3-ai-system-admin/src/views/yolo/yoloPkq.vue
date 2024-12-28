@@ -4,15 +4,18 @@ import { GetPkqTbService, DeletedService } from '../../api/yolo'
 import { Edit, Delete } from '@element-plus/icons-vue'
 import { formatTime } from '@/utils/format.js'
 import yoloEdit from './yoloEdit.vue'
+import { getModelClasss } from '@/utils/ModelCls'
 
 const channelList = ref([])
 const total = ref(0) //总条数
 const selectcondition = ref({
   pagenum: 1, //当前页
   pagesize: 5, //每页条数
-  clsName: '全部',
+  ModleCls: '全部',
+  ModelName:'',
   isaudit: '0'
 })
+const ModelClasss = getModelClasss()
 //转菊花
 const loading = ref(false)
 //获取文章列表
@@ -43,7 +46,8 @@ const onDelChannel = async (row, $index) => {
 }
 //重置搜索框
 const Resetsearchbox = () => {
-  selectcondition.value.clsName = '全部'
+  selectcondition.value.ModleCls = '全部'
+  selectcondition.value.ModelName = ''
   selectcondition.value.isaudit = '0'
 }
 
@@ -72,16 +76,28 @@ const onCurrentChange = (page) => {
 }
 </script>
 <template>
-  <page-containel title="目标监测识别详情"
+  <page-containel title="识别详情"
     ><el-form inline>
       <!-- 类别 -->
-      <el-form-item label="类别:">
-        <el-select class="select" v-model="selectcondition.clsName">
+      <el-form-item label="模型类型：">
+        <el-select class="select" v-model="selectcondition.ModleCls">
           <el-option label="全部" value="全部"></el-option>
-          <el-option label="皮卡丘" value="皮卡丘"></el-option>
-          <!-- <el-option label="动物识别" value="动物识别"></el-option> -->
-          <!-- <el-option label="车牌识别" value="车牌识别"></el-option> -->
+          <el-option
+            v-for="option in ModelClasss"
+            :key="option.value"
+            :label="option.label"
+            :value="option.value"
+          ></el-option>
         </el-select>
+      </el-form-item>
+      <el-form-item label="模型名称:">
+        <el-input
+        class="select"
+          v-model="selectcondition.ModelName"
+          style="width: 240px"
+          placeholder="请输入模型名称！"
+          clearable
+        />
       </el-form-item>
       <!-- 是否审核 -->
       <el-form-item label="审核情况:">
@@ -100,7 +116,8 @@ const onCurrentChange = (page) => {
     <!-- 表单数据 -->
     <el-table v-loading="loading" :data="channelList" style="width: 100%">
       <el-table-column type="index" label="序号" width="100"></el-table-column>
-      <el-table-column prop="cls" label="类别"></el-table-column>
+      <el-table-column prop="cls" label="模型类型"></el-table-column>
+      <el-table-column prop="name" label="模型名称"></el-table-column>
       <el-table-column prop="sbjgCount" label="数量"></el-table-column>
       <el-table-column prop="createDate" label="时间">
         <template #default="{ row }">

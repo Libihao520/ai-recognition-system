@@ -52,9 +52,9 @@ public class ExercisesController : ControllerBase
     {
         return _exercisesService.AchievementCenter(req);
     }
-    
+
     [HttpDelete]
-    public  async Task<ApiResult> Deleted(long id)
+    public async Task<ApiResult> Deleted(long id)
     {
         return await _exercisesService.DeleteService(id);
     }
@@ -65,14 +65,14 @@ public class ExercisesController : ControllerBase
         var byteArray = await _exercisesService.DownloadWord(id);
         return File(byteArray, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "用户作答情况.docx");
     }
-    
+
     /// <summary>
-    /// 获取Excel题库信息
+    /// 获取题库信息
     /// </summary>
     /// <param name="req"></param>
     /// <returns></returns>
-    [HttpPost]
-    public async Task<ApiResult> GetTestPaperManage(GetTestPaperManageReq req)
+    [HttpGet]
+    public async Task<ApiResult> GetTestPaperManage([FromQuery] GetTestPaperManageReq req)
     {
         return await _exercisesService.GetTestPaperManage(req);
     }

@@ -12,6 +12,12 @@ public class Yolotbs : IEntity
     public string Cls { get; set; }
 
     /// <summary>
+    /// 模型名称
+    /// </summary>
+    [Required]
+    public string? Name { get; set; }
+
+    /// <summary>
     /// 识别结果数量
     /// </summary>
     [Required]
@@ -46,8 +52,8 @@ public class Yolotbs : IEntity
     /// </summary>
     [Required]
     public double zhl { get; set; }
-    
+
     public long PhotosId { get; set; }
-    
+
     public Photos? Photos { get; set; }
 }

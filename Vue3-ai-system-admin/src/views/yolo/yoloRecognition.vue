@@ -4,6 +4,7 @@ import { Plus, Aim, Promotion } from '@element-plus/icons-vue'
 import { getModelService } from '../../api/Aigc'
 import { PutPhotoService } from '../../api/yolo'
 import { getPkqImage, getAnimalImage } from '@/utils/image'
+import { getModelClasss } from '@/utils/ModelCls'
 import { nextTick } from 'vue'
 
 const loading = ref(false)
@@ -20,11 +21,7 @@ const onSelectFile = (uploadFile) => {
 }
 const sbTest = ref('')
 const ModelClass = ref('目标监测')
-const ModelClasss = [
-  { label: '目标监测', value: '目标监测' },
-  { label: '图像分类', value: '图像分类' },
-  { label: '其他模型', value: '其他模型' }
-]
+const ModelClasss = getModelClasss()
 const ModelName = ref('')
 const ModelNames = []
 //发送请求
@@ -90,34 +87,36 @@ function handleNameChange() {
 </script>
 <template>
   <page-containel title="AI识别">
-    <el-form-item class="select" label="模型类型：">
-      <el-select v-model="ModelClass" @change="handleModelClassChange">
-        <el-option
-          v-for="option in ModelClasss"
-          :key="option.value"
-          :label="option.label"
-          :value="option.value"
-        ></el-option>
-      </el-select>
-    </el-form-item>
-    <el-form-item class="select" label="模型名称：">
-      <el-select v-model="ModelName" @change="handleNameChange" :key="modelSelectKey">
-        <el-option
-          v-for="option in ModelNames.value"
-          :key="option.value"
-          :label="option.label"
-          :value="option.value"
-        ></el-option>
-      </el-select>
-    </el-form-item>
-    <el-form-item class="sbjg" v-if="ModelClass != '目标监测'" label="识别结果：">
-      <el-input
-        v-model="sbTest"
-        class="input"
-        placeholder="现在还木有开始识别呢！"
-        :suffix-icon="Calendar"
-      />
-    </el-form-item>
+    <el-form>
+      <el-form-item class="select" label="模型类型：">
+        <el-select v-model="ModelClass" @change="handleModelClassChange">
+          <el-option
+            v-for="option in ModelClasss"
+            :key="option.value"
+            :label="option.label"
+            :value="option.value"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item class="select" label="模型名称：">
+        <el-select v-model="ModelName" @change="handleNameChange" :key="modelSelectKey">
+          <el-option
+            v-for="option in ModelNames.value"
+            :key="option.value"
+            :label="option.label"
+            :value="option.value"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item class="sbjg" v-if="ModelClass != '目标监测'" label="识别结果：">
+        <el-input
+          v-model="sbTest"
+          class="input"
+          placeholder="现在还木有开始识别呢！"
+          :suffix-icon="Calendar"
+        />
+      </el-form-item>
+    </el-form>
     <el-upload
       ref="uploadRef"
       :auto-upload="false"

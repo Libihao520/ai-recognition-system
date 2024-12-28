@@ -44,9 +44,14 @@ public class YoloService : IYoloService
     {
         IQueryable<Yolotbs> yolotb = _context.yolotbs.Where(p => p.IsDeleted == 0);
         //筛选条件
-        if (req.clsName != "全部")
+        if (req.ModleCls != "全部")
         {
-            yolotb = yolotb.Where(p => p.Cls == req.clsName);
+            yolotb = yolotb.Where(p => p.Cls == req.ModleCls);
+        }
+
+        if (!string.IsNullOrEmpty(req.ModelName))
+        {
+            yolotb = yolotb.Where(p => p.Name.Contains(req.ModelName));
         }
 
         if (req.isaudit != 0)
@@ -75,14 +80,15 @@ public class YoloService : IYoloService
         {
             using (var image = Image.Load<Rgba32>(ms))
             {
-                if (po.name=="动物识别")
+                if (po.name == "动物识别")
                 {
-                    using var animalyolo = new Yolo(Path.Combine(BasePath, "Model","animal.onnx"), false);
+                    using var animalyolo = new Yolo(Path.Combine(BasePath, "Model", "animal.onnx"), false);
                     var runClassification = animalyolo.RunClassification(image);
                     var animalName = YoloClassAnimalUtil.GetAnimalName(runClassification[0].Label);
                     return animalName;
                 }
-                using var yolo = new Yolo(Path.Combine(BasePath, "Model","pkq.onnx"), false);
+
+                using var yolo = new Yolo(Path.Combine(BasePath, "Model", "pkq.onnx"), false);
                 var results = yolo.RunObjectDetection(image, 0.3);
 
                 image.Draw(results);
