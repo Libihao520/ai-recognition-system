@@ -56,6 +56,10 @@ const router = createRouter({
           component: () => import('@/views/exercises/mathematics.vue')
         },
         {
+          path: '/exercises/testPapersManage',
+          component: () => import('@/views/exercises/testPapersManage.vue')
+        },
+        {
           path: '/exercises/AchievementCenter',
           component: () => import('@/views/exercises/AchievementCenter.vue')
         },

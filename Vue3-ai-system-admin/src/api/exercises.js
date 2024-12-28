@@ -8,7 +8,7 @@ export const postSubmitExercises = (data) =>
   request.post('/Exercises/Submit', data)
 
 //成绩中心
-export const GetAchievementCenter = (params) => request.get('/Exercises/GetAchievementCenter',{ params })
+export const GetAchievementCenter = (params) => request.get('/Exercises/GetAchievementCenter', { params })
 
 //删除
 export const DeletedService = (id) =>
@@ -19,7 +19,7 @@ export const DeletedService = (id) =>
 export const DownloadWordService = (id) => {
   return request.get('/Exercises/DownloadWord', {
     params: { id },
-    responseType: 'blob' 
+    responseType: 'blob'
   }).then(response => {
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
@@ -29,5 +29,21 @@ export const DownloadWordService = (id) => {
     link.click();
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
+  });
+};
+
+//获取题库
+export const getTestPaperManage = (params) => request.get('/Exercises/GetTestPaperManage', { params })
+
+export const addTestPaperManage = (file, additionalData = {}) => {
+  const formData = new FormData();
+  formData.append('File', file);
+  for (const [key, value] of Object.entries(additionalData)) {
+    formData.append(key, value);
+  }
+  return request.post('/Exercises/AddTestPaperManage', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
   });
 };

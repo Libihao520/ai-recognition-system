@@ -18,7 +18,8 @@ import {
   DocumentCopy,
   FullScreen,
   Grid,
-  ChatLineSquare
+  ChatLineSquare,
+  Notebook
 } from '@element-plus/icons-vue'
 
 import avatar from '@/assets/default.png'
@@ -71,7 +72,10 @@ const handleCommand = async (key) => {
             <el-icon><Collection /></el-icon>
             <span>练题系统</span>
           </template>
-
+          <el-menu-item index="/exercises/testPapersManage">
+            <el-icon><Notebook /></el-icon>
+            <span>题库管理</span>
+          </el-menu-item>
           <el-menu-item index="/exercises/mathematics">
             <el-icon><Tickets /></el-icon>
             <span>数学题</span>
