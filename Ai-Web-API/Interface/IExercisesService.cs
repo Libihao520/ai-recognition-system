@@ -1,3 +1,4 @@
+using Model.Dto.TestPaperManage;
 using Model.Dto.TestPapers;
 using Model.Entitys;
 using Model.Other;
@@ -39,4 +40,18 @@ public interface IExercisesService
     /// <param name="id"></param>
     /// <returns></returns>
     public Task<byte[]> DownloadWord(long id);
+
+    /// <summary>
+    /// 题库管理
+    /// </summary>
+    /// <param name="req"></param>
+    /// <returns></returns>
+    Task<ApiResult> GetTestPaperManage(GetTestPaperManageReq req);
+
+    /// <summary>
+    /// 批量导入题库
+    /// </summary>
+    /// <param name="req"></param>
+    /// <returns></returns>
+    Task<ApiResult> AddTestPaperManage(AddTestPaperManageReq req);
 }
