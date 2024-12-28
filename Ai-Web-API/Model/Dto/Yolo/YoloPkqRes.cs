@@ -13,6 +13,11 @@ public class YoloPkqRes
     public string Cls { get; set; }
 
     /// <summary>
+    /// 模型名称
+    /// </summary>
+    public string Name { get; set; }
+    
+    /// <summary>
     /// 识别结果数量
     /// </summary>
     public int sbjgCount { get; set; }

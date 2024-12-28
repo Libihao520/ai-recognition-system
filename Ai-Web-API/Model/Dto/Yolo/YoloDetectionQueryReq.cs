@@ -5,11 +5,15 @@ namespace Model.Dto.Yolo;
 public class YoloDetectionQueryReq : paging
 {
     /// <summary>
-    /// 类别
+    /// 模型类型
     /// </summary>
-    public string clsName { get; set; }
+    public string? ModleCls { get; set; }
 
-
+    /// <summary>
+    /// 模型名称
+    /// </summary>
+    public string? ModelName { get; set; }
+    
     /// <summary>
     /// 是否人工审核
     /// </summary>

@@ -97,7 +97,7 @@ const handleCommand = async (key) => {
           </el-menu-item>
           <el-menu-item index="/yolo/yolopkq">
             <el-icon><List /></el-icon>
-            <span>目标监测记录</span>
+            <span>识别记录</span>
           </el-menu-item>
           <el-menu-item index="/ai/dhck">
             <el-icon><ChatLineSquare /></el-icon>
