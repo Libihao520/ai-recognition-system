@@ -1,6 +1,7 @@
 using Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Model.Dto.TestPaperManage;
 using Model.Dto.TestPapers;
 using Model.Entitys;
 using Model.Other;
@@ -8,7 +9,7 @@ using Model.Other;
 namespace WebApi.Controllers;
 
 [ApiController]
-[Authorize]
+/*[Authorize]*/
 [Route("api/[controller]/[action]")]
 public class ExercisesController : ControllerBase
 
@@ -63,5 +64,22 @@ public class ExercisesController : ControllerBase
     {
         var byteArray = await _exercisesService.DownloadWord(id);
         return File(byteArray, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "用户作答情况.docx");
+    }
+    
+    /// <summary>
+    /// 获取Excel题库信息
+    /// </summary>
+    /// <param name="req"></param>
+    /// <returns></returns>
+    [HttpPost]
+    public async Task<ApiResult> GetTestPaperManage(GetTestPaperManageReq req)
+    {
+        return await _exercisesService.GetTestPaperManage(req);
+    }
+
+    [HttpPost]
+    public async Task<ApiResult> AddTestPaperManage(AddTestPaperManageReq req)
+    {
+        return await _exercisesService.AddTestPaperManage(req);
     }
 }

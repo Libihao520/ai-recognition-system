@@ -32,11 +32,6 @@ public class AigcSerevic : IAigcSerevice
     public async Task<ApiResult> GetModelService(GetModelReq req)
     {
         // TODO 查询实体类用automap映射到GetModelRes，返回给前端（req如果有传类型和模型名称，就过滤，类型精准过滤，模型是模糊查询）
-        if (req == null)
-        {
-            return ResultHelper.Error("不能为空");
-        }
-
         try
         {
             var query = _context.AiModels.Where(q => q.IsDeleted == 0).AsQueryable();
@@ -50,8 +45,7 @@ public class AigcSerevic : IAigcSerevice
             {
                 query = query.Where(m => m.ModleCls == req.ModleCls);
             }
-
-
+            
             var totalCount = await query.CountAsync();
 
             var paginatedResult = await query

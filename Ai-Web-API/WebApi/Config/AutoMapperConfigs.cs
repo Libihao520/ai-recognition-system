@@ -1,6 +1,7 @@
 using AutoMapper;
 using Model.Dto.AiModel;
 using Model.Dto.Role;
+using Model.Dto.TestPaperManage;
 using Model.Dto.TestPapers;
 using Model.Dto.User;
 using Model.Dto.Yolo;
@@ -40,6 +41,10 @@ public class AutoMapperConfigs : Profile
             .ForMember(dest => dest.title, opt => opt.MapFrom(src => src.Topic))
             .ForMember(dest => dest.options,
                 opt => opt.MapFrom(src => new List<string>() { src.Choice1, src.Choice2 }));
+
+        // 题库模块
+        CreateMap<TestPapersManage, TestPaperManageRes>();
+        
         //成绩导出
         CreateMap<ReportCard, DownloadAchievementWordDto>();
         //只映射名称

@@ -7,6 +7,7 @@ using Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Model;
+using Model.Dto.TestPaperManage;
 using Model.Dto.TestPapers;
 using Model.Entitys;
 using Model.Other;
@@ -237,5 +238,48 @@ public class ExercisesService : IExercisesService
             ms.Seek(0, SeekOrigin.Begin);
             return ms.ToArray();
         }
+    }
+
+    public async Task<ApiResult> GetTestPaperManage(GetTestPaperManageReq req)
+    {
+        try
+        {
+            var queryable = _context.TestPapersManages.Where(t => t.IsDeleted == 0).AsQueryable();
+            //string.IsNullOrEmpty()判断是否空，空返回true,有值是false
+            //!string.IsNullOrEmpty()判断是否空，空返回false,有值是true
+            //if(true){才执行}
+            if (!string.IsNullOrEmpty(req.FileLabel))
+            {
+                queryable = queryable.Where(t => t.FileLabel.Contains(req.FileLabel));
+            }
+
+            if (!string.IsNullOrEmpty(req.QuestionBankCourseTitle))
+            {
+                queryable = queryable.Where(t => t.QuestionBankCourseTitle.Contains(req.QuestionBankCourseTitle));
+            }
+
+            var total = await queryable.CountAsync();
+
+            var listAsync = await queryable
+                .Skip((req.pagenum - 1) * req.pagesize)
+                .Take(req.pagesize)
+                .ToListAsync();
+
+            var resultList = _mapper.Map<List<TestPaperManageRes>>(listAsync);
+
+            return ResultHelper.Success("查询成功", resultList);
+        }
+
+        catch (Exception e)
+        {
+            Console.WriteLine("$发生异常");
+            return ResultHelper.Error("查询异常，请稍后重试");
+        }
+    }
+
+    public Task<ApiResult> AddTestPaperManage(AddTestPaperManageReq req)
+    {
+        //TODO 在TestPaperManage 新建一条数据 ，然后读取excel，把数据存到TestPaper
+        throw new NotImplementedException();
     }
 }

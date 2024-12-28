@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Http;
+using Model.Common;
 
 namespace Model.Dto.TestPaperManage;
 
-public class TestPaperManageReq
+public class GetTestPaperManageReq : paging
 {
     /// <summary>
     /// 卷名
@@ -12,10 +13,5 @@ public class TestPaperManageReq
     /// <summary>
     /// 科目
     /// </summary>
-    public string? QuestionBankCourseTitle  { get; set; }
-    
-    /// <summary>
-    ///Excel文件
-    /// </summary>
-    public IFormFile? File { get; set; }
+    public string? QuestionBankCourseTitle { get; set; }
 }
