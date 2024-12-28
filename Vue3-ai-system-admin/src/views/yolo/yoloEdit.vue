@@ -2,17 +2,19 @@
 import { ref } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { PubListPkqTbService, getPkqEditTbService } from '@/api/yolo'
+import { getModelClasss } from '@/utils/ModelCls'
 
 const loading = ref(false)
 //控制抽屉显示隐藏
 const visibleDrawer = ref(false)
 //抽屉是添加还是编辑
 const isAdd = ref(true)
-
+const ModelClasss = getModelClasss()
 //默认表单数据
 const defaultForm = {
   id: null,
   cls: '',
+  name: '',
   sbjgCount: 0,
   createDate: '',
   photo: '',
@@ -109,10 +111,19 @@ defineExpose({
     direction="rtl"
     size="50%"
   >
-    <!-- l类别框 -->
     <el-form :model="formModel" ref="formRef" label-width="100px" v-loading="loading">
-      <el-form-item label="类别:" prop="title">
-        <el-input class="inputcss" v-model="formModel.cls" placeholder="请输入类别"></el-input>
+      <el-form-item label="模型类型:">
+        <el-select class="inputcss" v-model="formModel.cls">
+          <el-option
+            v-for="option in ModelClasss"
+            :key="option.value"
+            :label="option.label"
+            :value="option.value"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="模型名称:" prop="title">
+        <el-input class="inputcss" v-model="formModel.name" placeholder="请输入名称"></el-input>
       </el-form-item>
       <el-form-item label="数量:" prop="title">
         <el-input
