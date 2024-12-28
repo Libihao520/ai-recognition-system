@@ -88,7 +88,6 @@ const ModelClasss = getModelClasss()
         </el-select>
       </el-form-item>
 
-      <!-- 是否审核 -->
       <el-form-item label="模型名称:">
         <el-input
           v-model="selectcondition.modelName"
