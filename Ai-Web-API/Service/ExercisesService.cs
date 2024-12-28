@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Text.Json;
 using AutoMapper;
 using CommonUtil.Extensions;
+using CommonUtil.YoloUtil;
 using EFCoreMigrations;
 using Interface;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +12,7 @@ using Model.Dto.TestPaperManage;
 using Model.Dto.TestPapers;
 using Model.Entitys;
 using Model.Other;
+using OfficeOpenXml;
 using Service.Common;
 using SharpDocx;
 
@@ -277,9 +279,83 @@ public class ExercisesService : IExercisesService
         }
     }
 
-    public Task<ApiResult> AddTestPaperManage(AddTestPaperManageReq req)
+    public async Task<ApiResult> AddTestPaperManage(AddTestPaperManageReq req)
     {
         //TODO 在TestPaperManage 新建一条数据 ，然后读取excel，把数据存到TestPaper
-        throw new NotImplementedException();
+        try
+        {
+            string filePath = "";
+            if (req.File != null)
+            {
+                //得：唯一文件名+扩展名
+                string fileName = req.FileLabel + "_" + TimeBasedIdGeneratorUtil.GenerateId() + "_" +
+                                  Path.GetExtension(req.File.FileName);
+                //获取项目下现在的目录以及TempExcelFiles文件夹
+                string saveDirectory = Path.Combine(Directory.GetCurrentDirectory(), "TempExcelFiles");
+                Directory.CreateDirectory(saveDirectory);
+
+                filePath = Path.Combine(saveDirectory, fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await req.File.CopyToAsync(stream);
+                }
+            }
+
+            var user = _httpContextAccessor?.HttpContext?.User;
+            var createUserId = long.Parse(user.Claims.FirstOrDefault(c => c.Type == "Id").Value);
+            var newRecord = new TestPapersManage()
+            {
+                FileLabel = req.FileLabel,
+                QuestionBankCourseTitle = req.QuestionBankCourseTitle,
+                ExcelFilePath = filePath,
+                CreateUserId = createUserId,
+                CreateDate = DateTime.Now,
+                IsDeleted = 0,
+                HasAnsweringStarted = null
+            };
+            _context.TestPapersManages.Add(newRecord);
+            await _context.SaveChangesAsync();
+            //检查指定路径filePath的文件是否存在==>往下AI--注释占时不要删，还要看
+            if (File.Exists(filePath))
+            {
+                //使用 OfficeOpenXml 库来加载指定路径（filePath）下的 Excel 文件，以便后续能够读取和操作该文件中的内容
+                using (var package = new ExcelPackage(new FileInfo(filePath)))
+                {
+                    //读取第一个工作表
+                    var worksheet = package.Workbook.Worksheets[0];
+                    //获取数据区域所包含的行数
+                    int rowCount = worksheet.Dimension.Rows;
+                    //第一行是标题行，从第二行开始读取数据
+                    for (int row = 2; row <= rowCount; row++)
+                    {
+                        var paperData = new TestPapers()
+                        {
+                            TopicNumber = row - 1,
+                            type = (worksheet.Cells[row, 2].Value is int cellValueIntForType) ? cellValueIntForType : 0,
+                            Topic = worksheet.Cells[row, 3].Value?.ToString(),
+                            Choice1 = worksheet.Cells[row, 4].Value?.ToString(),
+                            Choice2 = worksheet.Cells[row, 5].Value?.ToString(),
+                            Choice3 = worksheet.Cells[row, 6].Value?.ToString(),
+                            Choice4 = worksheet.Cells[row, 7].Value?.ToString(),
+                            answer = new List<int>(),
+                            Grade = (worksheet.Cells[row, 9].Value is int cellValueInForGrande)
+                                ? cellValueInForGrande
+                                : 0,
+                            testPapersManageId = newRecord.Id
+                        };
+                        ExcelDataParser.ParseAnswerFromCellValue(worksheet.Cells[row, 8].Value?.ToString());
+                        _context.testpapers.Add(paperData);
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+            }
+
+            return ResultHelper.Success("请求成功", "文件上传成功且数据保存完整");
+        }
+        catch (Exception e)
+        {
+            return ResultHelper.Error($"添加失败原因：{e.Message}");
+        }
     }
 }
