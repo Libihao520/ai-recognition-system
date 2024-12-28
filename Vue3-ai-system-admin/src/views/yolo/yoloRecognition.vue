@@ -4,6 +4,7 @@ import { Plus, Aim, Promotion } from '@element-plus/icons-vue'
 import { getModelService } from '../../api/Aigc'
 import { PutPhotoService } from '../../api/yolo'
 import { getPkqImage, getAnimalImage } from '@/utils/image'
+import { getModelClasss } from '@/utils/ModelCls'
 import { nextTick } from 'vue'
 
 const loading = ref(false)
@@ -20,11 +21,7 @@ const onSelectFile = (uploadFile) => {
 }
 const sbTest = ref('')
 const ModelClass = ref('目标监测')
-const ModelClasss = [
-  { label: '目标监测', value: '目标监测' },
-  { label: '图像分类', value: '图像分类' },
-  { label: '其他模型', value: '其他模型' }
-]
+const ModelClasss = getModelClasss()
 const ModelName = ref('')
 const ModelNames = []
 //发送请求
