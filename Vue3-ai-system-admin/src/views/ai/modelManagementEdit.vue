@@ -2,6 +2,7 @@
 import { ref, toRaw } from 'vue'
 import { PutModelService } from '../../api/Aigc'
 import { encrypt } from '@/utils/util'
+import { getModelClasss } from '@/utils/ModelCls'
 const loading = ref(false)
 //控制抽屉显示隐藏
 const visibleDrawer = ref(false)
@@ -10,6 +11,8 @@ const isAdd = ref(true)
 // 用于存储上传的文件
 const uploadedFile = ref(null)
 const upload = ref(null)
+//模型类型选项
+const ModelClasss = getModelClasss()
 //默认表单数据
 const defaultForm = {
   modleCls: '目标监测',
@@ -89,9 +92,12 @@ defineExpose({
     <el-form :model="formModel.value" ref="formRef" label-width="100px" v-loading="loading">
       <el-form-item label="模型类型:">
         <el-select class="inputcss" v-model="formModel.modleCls">
-          <el-option label="目标监测" value="目标监测"></el-option>
-          <el-option label="图像分类" value="图像分类"></el-option>
-          <el-option label="其他模型" value="其他模型"></el-option>
+          <el-option
+            v-for="option in ModelClasss"
+            :key="option.value"
+            :label="option.label"
+            :value="option.value"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="模型名称:">

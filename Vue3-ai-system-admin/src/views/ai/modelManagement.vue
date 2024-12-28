@@ -1,9 +1,10 @@
 <script setup>
 import { ref } from 'vue'
-import { getModelService,DelModelService } from '../../api/Aigc'
+import { getModelService, DelModelService } from '../../api/Aigc'
 import { Edit, Delete } from '@element-plus/icons-vue'
 import { formatTime } from '@/utils/format.js'
 import modelManagementEdit from './modelManagementEdit.vue'
+import { getModelClasss } from '@/utils/ModelCls'
 
 const channelList = ref([])
 const total = ref(0) //总条数
@@ -70,19 +71,23 @@ const onCurrentChange = (page) => {
   selectcondition.value.pagenum = page
   getTableList()
 }
+const ModelClasss = getModelClasss()
 </script>
 <template>
   <page-containel title="模型管理"
     ><el-form inline>
       <!-- 类别 -->
-      <el-form-item label="模型类型:">
+      <el-form-item label="模型类型：">
         <el-select class="select" v-model="selectcondition.modleCls">
-          <el-option label="全部" value="全部"></el-option>
-          <el-option label="目标监测" value="目标监测"></el-option>
-          <el-option label="图像分类" value="图像分类"></el-option>
-          <el-option label="其他模型" value="其他模型"></el-option>
+          <el-option
+            v-for="option in ModelClasss"
+            :key="option.value"
+            :label="option.label"
+            :value="option.value"
+          ></el-option>
         </el-select>
       </el-form-item>
+
       <!-- 是否审核 -->
       <el-form-item label="模型名称:">
         <el-input
