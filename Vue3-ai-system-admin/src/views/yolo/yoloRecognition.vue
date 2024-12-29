@@ -36,10 +36,10 @@ const onUpdateAvatar = async () => {
     const res = await PutPhotoService(imgUrl.value, ModelName.value)
     console.log(res.data)
     if (res.data.data) {
-      if (ModelName.value == '动物识别') {
-        sbTest.value = res.data.data
-      } else {
+      if (ModelClass.value == '目标监测') {
         imgUrl.value = res.data.data
+      } else {
+        sbTest.value = res.data.data
       }
       ElMessage.success('识别成功')
     } else {
@@ -51,7 +51,8 @@ const onUpdateAvatar = async () => {
   loading.value = false
 }
 function onExamples() {
-  if (ModelName.value == '皮卡丘') {
+  console.log(ModelName)
+  if (ModelName.value == '1813709254033409') {
     imgUrl.value = getPkqImage()
   } else {
     imgUrl.value = getAnimalImage()
