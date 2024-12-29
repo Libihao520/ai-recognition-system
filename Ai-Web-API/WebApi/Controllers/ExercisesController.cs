@@ -77,9 +77,20 @@ public class ExercisesController : ControllerBase
         return await _exercisesService.GetTestPaperManage(req);
     }
 
+    /// <summary>
+    /// 批量导入题库
+    /// </summary>
+    /// <param name="req"></param>
+    /// <returns></returns>
     [HttpPost]
     public async Task<ApiResult> AddTestPaperManage([FromForm] AddTestPaperManageReq req)
     {
         return await _exercisesService.AddTestPaperManage(req);
+    }
+
+    [HttpGet]
+    public async Task<ApiResult> GetSubjectsOrFileLabel([FromQuery] string? fileLabel)
+    {
+        return await _exercisesService.GetSubjectsOrFileLabel(fileLabel);
     }
 }
