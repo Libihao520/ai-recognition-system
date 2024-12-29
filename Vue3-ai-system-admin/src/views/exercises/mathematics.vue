@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import {
   ElContainer,
   ElHeader,
@@ -12,6 +12,7 @@ import {
 } from 'element-plus'
 
 import { getmMthematics, postSubmitExercises } from '../../api/exercises'
+import { useRoute } from 'vue-router'
 
 // 使用 ref 声明响应式数据
 const singleChoice = ref([])
@@ -20,9 +21,11 @@ const trueFalse = ref([])
 const answers = ref([]) // 单选题答案
 const multipleAnswers = ref([]) // 多选题答案（数组形式，存储选中的所有选项）
 const trueFalseAnswers = ref([]) // 判断题答案（true 或 false）
-
+const route = useRoute()
 // 异步方法获取题目
 async function fetchQuestions() {
+  const subjectName = route.params.subjectName
+  console.log(subjectName)
   const questions = await getmMthematics()
   console.log(questions.data)
   singleChoice.value = questions.data.data.singleChoice.map((question) => ({
@@ -75,51 +78,64 @@ async function submit() {
 
 // 组件创建时调用 fetchQuestions
 fetchQuestions()
+// 使用watch监听路由参数subjectName的变化
+watch(
+  () => route.params.subjectName,
+  (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+      // 当subjectName变化时，重新调用fetchQuestions获取对应题目
+      fetchQuestions()
+    }
+  }
+)
 </script>  
 <template>
   <page-containel title="数学题">
     <el-container>
-        <el-alert title="注意：本网页包含单选题、多选题和判断题，在完成答题后点击提交按钮！" type="warning" />
-        <h2>单选题</h2>
-        <div v-for="(question, index) in singleChoice" :key="index">
+      <el-alert
+        title="注意：本网页包含单选题、多选题和判断题，在完成答题后点击提交按钮！"
+        type="warning"
+      />
+      <h2>单选题</h2>
+      <div v-for="(question, index) in singleChoice" :key="index">
+        <p>{{ question.topicNumber + '. ' + question.title }}</p>
+        <el-radio-group v-model="answers[index]">
+          <el-radio
+            v-for="(option, optionIndex) in question.options"
+            :key="optionIndex"
+            :label="optionIndex"
+            >{{ option }}</el-radio
+          >
+        </el-radio-group>
+      </div>
+
+      <!-- 多选题部分 -->
+      <div v-if="multipleChoice.length">
+        <h2>多选题</h2>
+        <div v-for="(question, index) in multipleChoice" :key="index">
           <p>{{ question.topicNumber + '. ' + question.title }}</p>
-          <el-radio-group v-model="answers[index]">
-            <el-radio
+          <el-checkbox-group v-model="multipleAnswers[index]">
+            <el-checkbox
               v-for="(option, optionIndex) in question.options"
               :key="optionIndex"
               :label="optionIndex"
-              >{{ option }}</el-radio
+              >{{ option }}</el-checkbox
             >
+          </el-checkbox-group>
+        </div>
+      </div>
+
+      <!-- 判断题部分 -->
+      <div v-if="trueFalse.length">
+        <h2>判断题</h2>
+        <div v-for="(question, index) in trueFalse" :key="index">
+          <p>{{ question.topicNumber + '. ' + question.title }}</p>
+          <el-radio-group v-model="trueFalseAnswers[index]">
+            <el-radio label="true">正确</el-radio>
+            <el-radio label="false">错误</el-radio>
           </el-radio-group>
         </div>
-
-        <!-- 多选题部分 -->
-        <div v-if="multipleChoice.length">
-          <h2>多选题</h2>
-          <div v-for="(question, index) in multipleChoice" :key="index">
-            <p>{{ question.topicNumber + '. ' + question.title }}</p>
-            <el-checkbox-group v-model="multipleAnswers[index]">
-              <el-checkbox
-                v-for="(option, optionIndex) in question.options"
-                :key="optionIndex"
-                :label="optionIndex"
-                >{{ option }}</el-checkbox
-              >
-            </el-checkbox-group>
-          </div>
-        </div>
-
-        <!-- 判断题部分 -->
-        <div v-if="trueFalse.length">
-          <h2>判断题</h2>
-          <div v-for="(question, index) in trueFalse" :key="index">
-            <p>{{ question.topicNumber + '. ' + question.title }}</p>
-            <el-radio-group v-model="trueFalseAnswers[index]">
-              <el-radio label="true">正确</el-radio>
-              <el-radio label="false">错误</el-radio>
-            </el-radio-group>
-          </div>
-        </div>
+      </div>
       <el-footer>
         <el-button type="primary" @click="submit">提交</el-button>
       </el-footer>
