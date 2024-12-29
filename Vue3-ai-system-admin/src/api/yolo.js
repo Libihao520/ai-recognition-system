@@ -4,8 +4,8 @@ import request from '@/utils/request'
 export const GetPkqTbService = (params) => request.get('/yolo/yolopkq', { params })
 
 //上传照片识别
-export const PutPhotoService = (photo, name) => {
-  return request.put('/yolo/PutPhoto', { photo, name })
+export const PutPhotoService = (photo, ModelId) => {
+  return request.put('/yolo/PutPhoto', { photo, ModelId })
 }
 
 //皮卡丘表单手动添加
