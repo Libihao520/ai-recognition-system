@@ -28,7 +28,7 @@ public class YoloService : IYoloService
     private MyDbContext _context;
 
     private static readonly string? BasePath =
-        Path.GetDirectoryName(typeof(YoloService).Assembly.Location);
+        Directory.GetCurrentDirectory();
 
     public YoloService(MyDbContext context, IMapper mapper)
     {
@@ -73,25 +73,47 @@ public class YoloService : IYoloService
 
     public async Task<string> PutPhoto(PhotoAdd po, CancellationToken cancellationToken)
     {
+        var aiModels = await _context.AiModels.FindAsync(po.ModelId, cancellationToken);
+        if (aiModels == null || string.IsNullOrEmpty(aiModels.Path))
+        {
+            return "模型不存在，或地址异常";
+        }
+
         string base64 = po.photo.Substring(po.photo.IndexOf(',') + 1);
         byte[] data = Convert.FromBase64String(base64);
-
         using (MemoryStream ms = new MemoryStream(data))
         {
+            var sbjgCount = 0;
+            var result = "";
             using (var image = Image.Load<Rgba32>(ms))
             {
-                if (po.name == "动物识别")
+                if (aiModels.ModleCls == "图像分类")
                 {
-                    using var animalyolo = new Yolo(Path.Combine(BasePath, "Model", "animal.onnx"), false);
-                    var runClassification = animalyolo.RunClassification(image);
-                    var animalName = YoloClassAnimalUtil.GetAnimalName(runClassification[0].Label);
-                    return animalName;
+                    using var yolo = new Yolo(Path.Combine(BasePath, aiModels.Path), false);
+                    var runClassification = yolo.RunClassification(image);
+                    if (aiModels.ModelName == "动物识别")
+                    {
+                        result = YoloClassAnimalUtil.GetAnimalName(runClassification[0].Label);
+                    }
+                    else
+                    {
+                        result = runClassification[0].Label;
+                    }
                 }
 
-                using var yolo = new Yolo(Path.Combine(BasePath, "Model", "pkq.onnx"), false);
-                var results = yolo.RunObjectDetection(image, 0.3);
+                if (aiModels.ModleCls == "目标监测")
+                {
+                    using var yolo = new Yolo(Path.Combine(BasePath, aiModels.Path), false);
+                    var results = yolo.RunObjectDetection(image, 0.3);
+                    image.Draw(results);
+                    sbjgCount = results.Count;
+                }
 
-                image.Draw(results);
+                if (aiModels.ModleCls == "其他模型")
+                {
+                    return "暂未开放";
+                }
+
 
                 using (MemoryStream outputMs = new MemoryStream())
                 {
@@ -101,8 +123,9 @@ public class YoloService : IYoloService
 
                     var yolotbs = new Yolotbs()
                     {
-                        Cls = po.name,
-                        sbjgCount = results.Count,
+                        Cls = aiModels.ModleCls,
+                        Name = aiModels.ModelName,
+                        sbjgCount = sbjgCount,
                         IsManualReview = false,
                         sbzqCount = 0,
                         rgmsCount = 0,
@@ -115,7 +138,14 @@ public class YoloService : IYoloService
                     yolotbs.Photos = new Photos() { Photobase64 = "data:image/jpeg;base64," + base64Image };
                     _context.yolotbs.Add(yolotbs);
                     _context.SaveChanges();
-                    return "data:image/jpeg;base64," + base64Image;
+                    if (aiModels.ModleCls == "目标监测")
+                    {
+                        return "data:image/jpeg;base64," + base64Image;
+                    }
+                    else
+                    {
+                        return result;
+                    }
                 }
             }
         }
