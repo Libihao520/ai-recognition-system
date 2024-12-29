@@ -361,4 +361,23 @@ public class ExercisesService : IExercisesService
             return ResultHelper.Error($"添加失败原因：{e.Message}");
         }
     }
+
+    public async Task<ApiResult> GetSubjectsOrFileLabel(string? fileLabel)
+    {
+        if (string.IsNullOrEmpty(fileLabel))
+        {
+            var list = _context.TestPapersManages.Select(q => q.QuestionBankCourseTitle).Distinct().ToList();
+            var resultList = list.Select((title, index) => new Dictionary<string, object>
+            {
+                { "label", title },
+                { "value", index + 1 }
+            }).ToList();
+            return ResultHelper.Success("请求成功！", resultList);
+        }
+        else
+        {
+            return ResultHelper.Success("", "");
+
+        }
+    }
 }

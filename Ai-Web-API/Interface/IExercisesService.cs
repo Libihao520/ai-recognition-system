@@ -54,4 +54,11 @@ public interface IExercisesService
     /// <param name="req"></param>
     /// <returns></returns>
     Task<ApiResult> AddTestPaperManage(AddTestPaperManageReq req);
+
+    /// <summary>
+    /// 获取科目或卷名
+    /// </summary>
+    /// <param name="fileLabel"></param>
+    /// <returns></returns>
+    Task<ApiResult> GetSubjectsOrFileLabel(string? fileLabel);
 }
