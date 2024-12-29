@@ -52,7 +52,7 @@ const router = createRouter({
         },
         // 做题
         {
-          path: '/exercises/mathematics',
+          path: '/exercises/mathematics/:subjectName',
           component: () => import('@/views/exercises/mathematics.vue')
         },
         {

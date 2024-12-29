@@ -21,14 +21,23 @@ import {
   ChatLineSquare,
   Notebook
 } from '@element-plus/icons-vue'
-
 import avatar from '@/assets/default.png'
 import { useUserStore } from '@/stores'
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { getSubjectsOrFileLabel } from '../../api/exercises'
 
 const userStore = useUserStore()
 const router = useRouter()
+const subjects = []
+const getTableList = async () => {
+  const res = await getSubjectsOrFileLabel()
+  subjects.value = []
+  res.data.data.forEach((item) => {
+    subjects.value.push({ label: item.label, value: item.value })
+  })
+}
+getTableList()
 
 onMounted(() => {
   userStore.getUser()
@@ -76,11 +85,12 @@ const handleCommand = async (key) => {
             <el-icon><Notebook /></el-icon>
             <span>题库管理</span>
           </el-menu-item>
-          <el-menu-item index="/exercises/mathematics">
-            <el-icon><Tickets /></el-icon>
-            <span>数学题</span>
-          </el-menu-item>
-
+          <div v-for="subject in subjects.value" :key="subject.value">
+            <el-menu-item :index="'/exercises/mathematics/' + subject.label">
+              <el-icon><Tickets /></el-icon>
+              <span>{{ subject.label }}</span>
+            </el-menu-item>
+          </div>
           <el-menu-item index="/exercises/AchievementCenter">
             <el-icon><DocumentCopy /></el-icon>
             <span>成绩中心 </span>
