@@ -1,5 +1,6 @@
 using AutoMapper;
 using Azure.Core;
+using CommonUtil;
 using CommonUtil.RequesUtil;
 using EFCoreMigrations;
 using Interface;
@@ -9,10 +10,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer.ValueGeneration.Internal;
 using Model;
 using Model.Dto.AiModel;
-using Model.Entitys;
+using Model.Entities;
 using Model.Other;
 using MySqlConnector;
-using Service.Common;
 
 namespace Service;
 
@@ -41,16 +41,16 @@ public class AigcSerevic : IAigcSerevice
                 query = query.Where(m => m.ModelName.Contains(req.ModelName));
             }
 
-            if (!string.IsNullOrEmpty(req.ModleCls) && req.ModleCls.ToUpper() != "全部")
+            if (!string.IsNullOrEmpty(req.ModelCls) && req.ModelCls.ToUpper() != "全部")
             {
-                query = query.Where(m => m.ModleCls == req.ModleCls);
+                query = query.Where(m => m.ModleCls == req.ModelCls);
             }
             
             var totalCount = await query.CountAsync();
 
             var paginatedResult = await query
-                .Skip((req.pagenum - 1) * req.pagesize)
-                .Take(req.pagesize)
+                .Skip((req.PageNum - 1) * req.PageSize)
+                .Take(req.PageSize)
                 .ToListAsync();
 
             var resultList = _mapper.Map<List<GetModelRes>>(paginatedResult);
@@ -72,7 +72,7 @@ public class AigcSerevic : IAigcSerevice
             return ResultHelper.Error("模型名称不能为空");
         }
 
-        if (string.IsNullOrEmpty(req.ModleCls))
+        if (string.IsNullOrEmpty(req.ModelCls))
         {
             return ResultHelper.Error("模型类型不能为空");
         }
@@ -119,7 +119,7 @@ public class AigcSerevic : IAigcSerevice
         var aiModels = new AiModels()
         {
             ModelName = req.ModelName,
-            ModleCls = req.ModleCls,
+            ModleCls = req.ModelCls,
             Id = TimeBasedIdGeneratorUtil.GenerateId(),
             Path = relativeFilePath, // 设置文件路径到数据库记录中
             ModelSizee = fileSizeInMb,

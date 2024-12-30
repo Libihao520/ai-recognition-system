@@ -2,9 +2,9 @@ using System.ComponentModel.DataAnnotations;
 using Model.Common;
 using Model.Enum;
 
-namespace Model.Entitys;
+namespace Model.Entities;
 
-public class Users : IEntity
+public class Users : Entity
 {
     /// <summary>
     /// 用户名

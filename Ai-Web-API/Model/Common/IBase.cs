@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Model.Common;
 
-public class IBase
+public abstract class Base
 {
     /// <summary>
     /// 主键

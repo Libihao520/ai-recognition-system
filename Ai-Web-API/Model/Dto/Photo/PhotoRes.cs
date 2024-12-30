@@ -11,7 +11,7 @@ public class PhotoRes
 public class Result
 {
     public int Class { get; set; }
-    public string ClassName { get; set; }
+    public string? ClassName { get; set; }
     public object bbox { get; set; }
     public double confidence { get; set; }
 }

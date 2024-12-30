@@ -10,11 +10,10 @@ using Microsoft.EntityFrameworkCore;
 using Model;
 using Model.Dto.Role;
 using Model.Dto.User;
-using Model.Entitys;
+using Model.Entities;
 using Model.Enum;
 using Model.Other;
 using OfficeOpenXml;
-using Service.Common;
 
 namespace Service;
 

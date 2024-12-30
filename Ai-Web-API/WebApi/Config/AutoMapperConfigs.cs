@@ -5,7 +5,7 @@ using Model.Dto.TestPaperManage;
 using Model.Dto.TestPapers;
 using Model.Dto.User;
 using Model.Dto.Yolo;
-using Model.Entitys;
+using Model.Entities;
 using Model.Enum;
 
 namespace WebApi.Config;

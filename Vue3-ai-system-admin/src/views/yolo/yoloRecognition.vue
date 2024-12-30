@@ -68,7 +68,7 @@ async function handleModelClassChange() {
   const selectcondition = ref({
     pagenum: 1, //当前页
     pagesize: 99, //每页条数
-    modleCls: ModelClass.value,
+    ModelCls: ModelClass.value,
     modelName: ''
   })
   const res = await getModelService(selectcondition.value)

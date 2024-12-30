@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.Dto.TestPaperManage;
 using Model.Dto.TestPapers;
-using Model.Entitys;
+using Model.Entities;
 using Model.Other;
 
 namespace WebApi.Controllers;
@@ -89,8 +89,8 @@ public class ExercisesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ApiResult> GetSubjectsOrFileLabel([FromQuery] string? fileLabel)
+    public async Task<ApiResult> GetSubjectsOrFileLabel([FromQuery] string? subjectName)
     {
-        return await _exercisesService.GetSubjectsOrFileLabel(fileLabel);
+        return await _exercisesService.GetSubjectsOrFileLabel(subjectName);
     }
 }

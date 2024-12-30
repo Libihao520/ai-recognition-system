@@ -2,7 +2,7 @@ using Model.Common;
 
 namespace Model.Dto.Yolo;
 
-public class YoloDetectionQueryReq : paging
+public class YoloDetectionQueryReq : Paging
 {
     /// <summary>
     /// 模型类型

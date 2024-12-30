@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using Model.Common;
 
-namespace Model.Entitys;
+namespace Model.Entities;
 
-public class Yolotbs : IEntity
+public class Yolotbs : Entity
 {
     /// <summary>
     /// 类别

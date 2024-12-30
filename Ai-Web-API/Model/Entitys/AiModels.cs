@@ -1,8 +1,8 @@
 using Model.Common;
 
-namespace Model.Entitys;
+namespace Model.Entities;
 
-public class AiModels : IEntity
+public class AiModels : Entity
 {
     /// <summary>
     /// 模型地址

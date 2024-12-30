@@ -2,12 +2,12 @@ using Model.Common;
 
 namespace Model.Dto.AiModel;
 
-public class GetModelReq : paging
+public class GetModelReq : Paging
 {
     /// <summary>
     /// 模型类型
     /// </summary>
-    public string? ModleCls { get; set; }
+    public string? ModelCls { get; set; }
 
     /// <summary>
     /// 模型名称
