@@ -10,7 +10,7 @@ public class GetModelRes
     /// <summary>
     /// 创建人
     /// </summary>
-    public string CreateName { get; set; }
+    public string? CreateName { get; set; }
 
     /// <summary>
     /// 创建日期
@@ -20,7 +20,7 @@ public class GetModelRes
     /// <summary>
     /// 模型类型
     /// </summary>
-    public string? ModleCls { get; set; }
+    public string? ModelCls { get; set; }
 
     /// <summary>
     /// 模型名称
@@ -30,7 +30,7 @@ public class GetModelRes
     /// <summary>
     /// 模型大小
     /// </summary>
-    public float? ModelSizee { get; set; }
+    public float? ModelSize { get; set; }
 
     /// <summary>
     /// 模型地址

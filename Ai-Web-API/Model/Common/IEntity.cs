@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Model.Common;
 
-public class IEntity : IBase
+public abstract class Entity : Base
 {
     /// <summary>
     /// 创建人Id

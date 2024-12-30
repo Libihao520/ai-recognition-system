@@ -1,18 +1,25 @@
 using Microsoft.EntityFrameworkCore;
-using Model.Entitys;
+using Model.Entities;
 
 namespace EFCoreMigrations;
 
 public class MyDbContext : DbContext
 {
+    /// <summary>
+    /// 用户表
+    /// </summary>
     public DbSet<Users> Users { get; set; }
 
-    public DbSet<Yolotbs> yolotbs { get; set; }
+    /// <summary>
+    /// yolo识别记录表
+    /// </summary>
+    public DbSet<Yolotbs> YoloTbs { get; set; }
 
+    /// <summary>
+    /// 图片base64
+    /// </summary>
     public DbSet<Photos> Photos { get; set; }
-
-    public DbSet<TestPapers> testpapers { get; set; }
-
+    
     /// <summary>
     /// 成绩中心
     /// </summary>
@@ -24,9 +31,15 @@ public class MyDbContext : DbContext
     public DbSet<AiModels> AiModels { get; set; }
 
     /// <summary>
-    ///试卷管理
+    /// 题目
+    /// </summary>
+    public DbSet<TestPapers> TestPapers { get; set; }
+
+    /// <summary>
+    ///题库
     /// </summary>
     public DbSet<TestPapersManage> TestPapersManages { get; set; }
+
     public MyDbContext()
     {
     }

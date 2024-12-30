@@ -12,7 +12,7 @@ public class PutModelReq
     /// <summary>
     /// 模型类型
     /// </summary>
-    public string? ModleCls { get; set; }
+    public string? ModelCls { get; set; }
 
     /// <summary>
     /// 模型名称

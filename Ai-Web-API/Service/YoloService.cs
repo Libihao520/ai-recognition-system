@@ -1,4 +1,5 @@
 using AutoMapper;
+using CommonUtil;
 using CommonUtil.YoloUtil;
 using EFCoreMigrations;
 using Interface;
@@ -9,11 +10,10 @@ using Microsoft.VisualBasic.CompilerServices;
 using Model;
 using Model.Dto.photo;
 using Model.Dto.Yolo;
-using Model.Entitys;
+using Model.Entities;
 using Model.Other;
 using RestSharp;
 using RestSharp.Serializers.NewtonsoftJson;
-using Service.Common;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.PixelFormats;
@@ -42,7 +42,7 @@ public class YoloService : IYoloService
     /// <returns></returns>
     public async Task<ApiResult> getpkqTb(YoloDetectionQueryReq req)
     {
-        IQueryable<Yolotbs> yolotb = _context.yolotbs.Where(p => p.IsDeleted == 0);
+        IQueryable<Yolotbs> yolotb = _context.YoloTbs.Where(p => p.IsDeleted == 0);
         //筛选条件
         if (req.ModleCls != "全部")
         {
@@ -62,8 +62,8 @@ public class YoloService : IYoloService
         var total = await yolotb.CountAsync();
 
         var paginatedResult = await yolotb
-            .Skip((req.pagenum - 1) * req.pagesize) // 跳过前面的记录  
-            .Take(req.pagesize) // 取接下来的指定数量的记录  
+            .Skip((req.PageNum - 1) * req.PageSize) // 跳过前面的记录  
+            .Take(req.PageSize) // 取接下来的指定数量的记录  
             .ToListAsync(); // 转换为列表  
 
         var yoloPkqResList = _mapper.Map<List<YoloPkqRes>>(paginatedResult);
@@ -79,7 +79,7 @@ public class YoloService : IYoloService
             return "模型不存在，或地址异常";
         }
 
-        string base64 = po.photo.Substring(po.photo.IndexOf(',') + 1);
+        string base64 = po.Photo.Substring(po.Photo.IndexOf(',') + 1);
         byte[] data = Convert.FromBase64String(base64);
         using (MemoryStream ms = new MemoryStream(data))
         {
@@ -136,7 +136,7 @@ public class YoloService : IYoloService
                         IsDeleted = 0
                     };
                     yolotbs.Photos = new Photos() { Photobase64 = "data:image/jpeg;base64," + base64Image };
-                    _context.yolotbs.Add(yolotbs);
+                    _context.YoloTbs.Add(yolotbs);
                     _context.SaveChanges();
                     if (aiModels.ModleCls == "目标监测")
                     {
@@ -153,7 +153,7 @@ public class YoloService : IYoloService
 
     public async Task<YoloPkqEditRes> GetPkqEdtTb(long id)
     {
-        var yoloTb = await _context.yolotbs.FindAsync(id);
+        var yoloTb = await _context.YoloTbs.FindAsync(id);
         if (yoloTb == null)
         {
             return null;
@@ -168,8 +168,8 @@ public class YoloService : IYoloService
     public async Task<YoloSjdpRes> Getsjdp()
     {
         var userCount = await _context.Users.CountAsync();
-        var sbcsCount = await _context.yolotbs.CountAsync();
-        var mbslCount = await _context.yolotbs.SumAsync(x => x.sbjgCount);
+        var sbcsCount = await _context.YoloTbs.CountAsync();
+        var mbslCount = await _context.YoloTbs.SumAsync(x => x.sbjgCount);
         var yoloSjdpRes = new YoloSjdpRes()
         {
             userCount = userCount,
@@ -214,13 +214,13 @@ public class YoloService : IYoloService
                 PhotosId = photId,
                 Photobase64 = req.Photo
             };
-            _context.yolotbs.Add(yoloRes);
+            _context.YoloTbs.Add(yoloRes);
             _context.Photos.Add(photos);
         }
         // 否则更新
         else
         {
-            var findAsync = await _context.yolotbs.FindAsync(req.Id);
+            var findAsync = await _context.YoloTbs.FindAsync(req.Id);
             if (findAsync != null)
             {
                 if (findAsync.PhotosId != null)
@@ -269,7 +269,7 @@ public class YoloService : IYoloService
         try
         {
             // 根据id查找yoloTb对象
-            var yoloTb = await _context.yolotbs.FindAsync(id);
+            var yoloTb = await _context.YoloTbs.FindAsync(id);
             // 不为空则执行软删除并且保存到数据库中
             if (yoloTb != null)
             {
@@ -292,7 +292,7 @@ public class YoloService : IYoloService
 
     public async Task<Yolotbs?> GetByIdAsync(int id)
     {
-        var findAsync = _context.yolotbs.FindAsync(id);
+        var findAsync = _context.YoloTbs.FindAsync(id);
         return await findAsync;
     }
 

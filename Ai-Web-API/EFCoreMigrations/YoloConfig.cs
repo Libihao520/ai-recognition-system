@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Model.Entitys;
+using Model.Entities;
 
 namespace EFCoreMigrations;
 

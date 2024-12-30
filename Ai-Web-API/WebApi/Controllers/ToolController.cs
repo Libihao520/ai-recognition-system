@@ -1,6 +1,6 @@
 using EFCoreMigrations;
 using Microsoft.AspNetCore.Mvc;
-using Model.Entitys;
+using Model.Entities;
 
 namespace WebApi.Controllers;
 
@@ -111,7 +111,7 @@ public class ToolController : ControllerBase
 
         #region 添加到数据库
 
-        _context.testpapers.AddRange(new List<TestPapers> { papers, papers2, papers3 });
+        _context.TestPapers.AddRange(new List<TestPapers> { papers, papers2, papers3 });
         _context.Users.AddRange(users);
         //_context.Users.AddRange(new[] { user1, user2 });
         // _context.yolotbs.Add(yolotbs);

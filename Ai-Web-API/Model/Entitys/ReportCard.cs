@@ -1,12 +1,12 @@
 using Model.Common;
 using Newtonsoft.Json.Linq;
 
-namespace Model.Entitys;
+namespace Model.Entities;
 
 /// <summary>
 /// 成绩
 /// </summary>
-public class ReportCard : IEntity
+public class ReportCard : Entity
 {
     /// <summary>
     /// 科目

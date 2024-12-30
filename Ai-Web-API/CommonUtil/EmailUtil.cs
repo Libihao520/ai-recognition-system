@@ -8,10 +8,10 @@ namespace CommonUtil;
 public static class EmailUtil
 {
     //填写你自己需要设置的发件人邮箱
-    private static string MyEmail = "1074775789@qq.com";
+    private static string _myEmail = "1074775789@qq.com";
 
     //发件人邮箱授权码
-    private static string MyKey = "phktrrjaxylxhgbe";
+    private static string _myKey = "phktrrjaxylxhgbe";
 
     /// <summary>
     /// 发送邮件
@@ -54,7 +54,7 @@ public static class EmailUtil
             System.Net.Mail.MailMessage mailMessage = new System.Net.Mail.MailMessage();
             mailMessage.Subject = strTitle;
             mailMessage.Body = strMailText;
-            mailMessage.From = new System.Net.Mail.MailAddress(MyEmail);
+            mailMessage.From = new System.Net.Mail.MailAddress(_myEmail);
             if (to == null || to.Count == 0)
             {
                 return "请填写收件人";
@@ -93,7 +93,7 @@ public static class EmailUtil
             smtpClient.Port = 25;
 
             // 填写你自己需要设置的发件人邮箱, 以及授权码
-            smtpClient.Credentials = new System.Net.NetworkCredential(MyEmail, MyKey);
+            smtpClient.Credentials = new System.Net.NetworkCredential(_myEmail, _myKey);
             smtpClient.Host = "smtp.qq.com";
             if (!string.IsNullOrEmpty(path))
             {

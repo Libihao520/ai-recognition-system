@@ -5,8 +5,8 @@ namespace CommonUtil
 {
     public class AesUtilities
     {
-        private static byte[] keyArray = Encoding.UTF8.GetBytes("C#ACXJAesCode@#!");
-        private static byte[] ivArray = Encoding.UTF8.GetBytes("ACXJV1024AESCODE");
+        private static byte[] _keyArray = Encoding.UTF8.GetBytes("C#ACXJAesCode@#!");
+        private static byte[] _ivArray = Encoding.UTF8.GetBytes("ACXJV1024AESCODE");
 
         /// <summary>
         /// 加密
@@ -19,8 +19,8 @@ namespace CommonUtil
             var toEncryptArray = Encoding.UTF8.GetBytes(content);
 
             var aes = Aes.Create();
-            aes.Key = keyArray;
-            aes.IV = ivArray;
+            aes.Key = _keyArray;
+            aes.IV = _ivArray;
             aes.Mode = CipherMode.CBC;
             aes.Padding = PaddingMode.PKCS7;
             var cTransform = aes.CreateEncryptor();
@@ -38,8 +38,8 @@ namespace CommonUtil
         {
             var toEncryptArray = Convert.FromBase64String(content);
             var aes = Aes.Create();
-            aes.Key = keyArray;
-            aes.IV = ivArray;
+            aes.Key = _keyArray;
+            aes.IV = _ivArray;
             aes.Mode = CipherMode.CBC;
             aes.Padding = PaddingMode.PKCS7;
 

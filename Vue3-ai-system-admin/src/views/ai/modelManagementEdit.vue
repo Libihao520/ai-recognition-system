@@ -15,7 +15,7 @@ const upload = ref(null)
 const ModelClasss = getModelClasss()
 //默认表单数据
 const defaultForm = {
-  modleCls: '目标监测',
+  ModelCls: '目标监测',
   modelName: ''
 }
 //准备数据
@@ -65,7 +65,7 @@ const onSave = async (state) => {
       }
       try {
         const response = await PutModelService(file, {
-          modleCls: formModel.value.modleCls,
+          ModelCls: formModel.value.ModelCls,
           modelName: formModel.value.modelName
         })
         ElMessage.success('上传成功')
@@ -91,7 +91,7 @@ defineExpose({
   <el-drawer v-model="visibleDrawer" :title="isAdd ? '新增' : '编辑'" direction="rtl" size="50%">
     <el-form :model="formModel.value" ref="formRef" label-width="100px" v-loading="loading">
       <el-form-item label="模型类型:">
-        <el-select class="inputcss" v-model="formModel.modleCls">
+        <el-select class="inputcss" v-model="formModel.ModelCls">
           <el-option
             v-for="option in ModelClasss"
             :key="option.value"

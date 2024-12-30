@@ -1,8 +1,8 @@
 using Model.Common;
 
-namespace Model.Entitys;
+namespace Model.Entities;
 
-public class TestPapersManage : IEntity
+public class TestPapersManage : Entity
 {
     
     /// <summary>

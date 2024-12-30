@@ -1,6 +1,6 @@
 using Model.Dto.TestPaperManage;
 using Model.Dto.TestPapers;
-using Model.Entitys;
+using Model.Entities;
 using Model.Other;
 
 namespace Interface;
@@ -58,7 +58,7 @@ public interface IExercisesService
     /// <summary>
     /// 获取科目或卷名
     /// </summary>
-    /// <param name="fileLabel"></param>
+    /// <param name="subjectName"></param>
     /// <returns></returns>
-    Task<ApiResult> GetSubjectsOrFileLabel(string? fileLabel);
+    Task<ApiResult> GetSubjectsOrFileLabel(string? subjectName);
 }

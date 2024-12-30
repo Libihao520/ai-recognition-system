@@ -1,6 +1,9 @@
-namespace Service.Common;
+namespace CommonUtil;
 
-public class TimeBasedIdGeneratorUtil
+/// <summary>
+/// 生成随机Id
+/// </summary>
+public static class TimeBasedIdGeneratorUtil
 {
     // 用于在同一秒内生成唯一 ID 的计数器  
     private static int _counter = 0;

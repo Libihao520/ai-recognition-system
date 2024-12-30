@@ -1,6 +1,6 @@
 using Model.Common;
 
-namespace Model.Entitys;
+namespace Model.Entities;
 
 public class Photos
 {

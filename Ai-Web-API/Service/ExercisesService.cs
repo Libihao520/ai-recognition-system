@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Text.Json;
 using AutoMapper;
+using CommonUtil;
 using CommonUtil.Extensions;
 using CommonUtil.YoloUtil;
 using EFCoreMigrations;
@@ -10,10 +11,9 @@ using Microsoft.EntityFrameworkCore;
 using Model;
 using Model.Dto.TestPaperManage;
 using Model.Dto.TestPapers;
-using Model.Entitys;
+using Model.Entities;
 using Model.Other;
 using OfficeOpenXml;
-using Service.Common;
 using SharpDocx;
 
 namespace Service;
@@ -41,7 +41,7 @@ public class ExercisesService : IExercisesService
             trueFalse = new List<TrueFalse>(),
         };
 
-        var testPapersList = _context.testpapers.Where(x => x.subject == "数学").ToList();
+        var testPapersList = _context.TestPapers.Where(x => x.subject == "数学").ToList();
         foreach (var testPapers in testPapersList)
         {
             if (testPapers.type == (int)ExercisesType.单选题)
@@ -69,7 +69,7 @@ public class ExercisesService : IExercisesService
         //得分
         int score = 0;
 
-        var testPapersList = _context.testpapers.Where(x => x.subject == "数学").ToList();
+        var testPapersList = _context.TestPapers.Where(x => x.subject == "数学").ToList();
         var singleChoices = testPapersList.Where(q => q.type == (int)ExercisesType.单选题)
             .Select(p => new { p.TopicNumber, answer = p.answer[0], p.Grade })
             .OrderBy(s => s.TopicNumber)
@@ -191,7 +191,7 @@ public class ExercisesService : IExercisesService
         var reportCard = await _context.ReportCards.FindAsync(id);
         SubmitExercisesReq submitExercisesReq =
             JsonSerializer.Deserialize<SubmitExercisesReq>(reportCard.SubmittedOptions);
-        var testPapersList = await _context.testpapers.Where(q => q.subject == reportCard.subject).ToListAsync();
+        var testPapersList = await _context.TestPapers.Where(q => q.subject == reportCard.subject).ToListAsync();
         var user = await _context.Users.FindAsync(reportCard.CreateUserId);
 
 
@@ -263,8 +263,8 @@ public class ExercisesService : IExercisesService
             var total = await queryable.CountAsync();
 
             var listAsync = await queryable
-                .Skip((req.pagenum - 1) * req.pagesize)
-                .Take(req.pagesize)
+                .Skip((req.PageNum - 1) * req.PageSize)
+                .Take(req.PageSize)
                 .ToListAsync();
 
             var resultList = _mapper.Map<List<TestPaperManageRes>>(listAsync);
@@ -347,7 +347,7 @@ public class ExercisesService : IExercisesService
                         };
                         paperData.answer =
                             ExcelDataParser.ParseAnswerFromCellValue(worksheet.Cells[row, 8].Value?.ToString());
-                        _context.testpapers.Add(paperData);
+                        _context.TestPapers.Add(paperData);
                     }
                 }
             }
@@ -362,9 +362,9 @@ public class ExercisesService : IExercisesService
         }
     }
 
-    public async Task<ApiResult> GetSubjectsOrFileLabel(string? fileLabel)
+    public async Task<ApiResult> GetSubjectsOrFileLabel(string? subjectName)
     {
-        if (string.IsNullOrEmpty(fileLabel))
+        if (string.IsNullOrEmpty(subjectName))
         {
             var list = _context.TestPapersManages.Select(q => q.QuestionBankCourseTitle).Distinct().ToList();
             var resultList = list.Select((title, index) => new Dictionary<string, object>
@@ -376,8 +376,17 @@ public class ExercisesService : IExercisesService
         }
         else
         {
-            return ResultHelper.Success("", "");
-
+            var testPapersManages =
+                _context.TestPapersManages
+                    .Where(q => q.QuestionBankCourseTitle == subjectName)
+                    .Select(q => new { q.Id, q.FileLabel })
+                    .ToList();
+            var resultList = testPapersManages.Select((item, index) => new Dictionary<string, object>
+            {
+                { "label", item.FileLabel },
+                { "value", item.Id }
+            }).ToList();
+            return ResultHelper.Success("请求成功", resultList);
         }
     }
 }

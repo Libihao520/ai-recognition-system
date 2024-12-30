@@ -3,7 +3,7 @@ using Model.Common;
 
 namespace Model.Dto.TestPaperManage;
 
-public class GetTestPaperManageReq : paging
+public class GetTestPaperManageReq : Paging
 {
     /// <summary>
     /// 卷名

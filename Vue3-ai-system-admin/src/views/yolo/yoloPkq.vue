@@ -11,7 +11,7 @@ const total = ref(0) //总条数
 const selectcondition = ref({
   pagenum: 1, //当前页
   pagesize: 5, //每页条数
-  ModleCls: '全部',
+  ModelCls: '全部',
   ModelName:'',
   isaudit: '0'
 })
@@ -46,7 +46,7 @@ const onDelChannel = async (row, $index) => {
 }
 //重置搜索框
 const Resetsearchbox = () => {
-  selectcondition.value.ModleCls = '全部'
+  selectcondition.value.ModelCls = '全部'
   selectcondition.value.ModelName = ''
   selectcondition.value.isaudit = '0'
 }
@@ -80,7 +80,7 @@ const onCurrentChange = (page) => {
     ><el-form inline>
       <!-- 类别 -->
       <el-form-item label="模型类型：">
-        <el-select class="select" v-model="selectcondition.ModleCls">
+        <el-select class="select" v-model="selectcondition.ModelCls">
           <el-option label="全部" value="全部"></el-option>
           <el-option
             v-for="option in ModelClasss"

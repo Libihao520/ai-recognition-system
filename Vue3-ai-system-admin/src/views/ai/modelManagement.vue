@@ -11,7 +11,7 @@ const total = ref(0) //总条数
 const selectcondition = ref({
   pagenum: 1, //当前页
   pagesize: 5, //每页条数
-  modleCls: '全部',
+  ModelCls: '全部',
   modelName: ''
 })
 //转菊花
@@ -44,7 +44,7 @@ const onDelChannel = async (row, $index) => {
 }
 //重置搜索框
 const Resetsearchbox = () => {
-  selectcondition.value.modleCls = '全部'
+  selectcondition.value.ModelCls = '全部'
   selectcondition.value.modelName = ''
 }
 
@@ -78,7 +78,7 @@ const ModelClasss = getModelClasss()
     ><el-form inline>
       <!-- 类别 -->
       <el-form-item label="模型类型：">
-        <el-select class="select" v-model="selectcondition.modleCls">
+        <el-select class="select" v-model="selectcondition.ModelCls">
           <el-option
             v-for="option in ModelClasss"
             :key="option.value"
@@ -106,9 +106,9 @@ const ModelClasss = getModelClasss()
     <!-- 表单数据 -->
     <el-table v-loading="loading" :data="channelList" style="width: 100%">
       <el-table-column type="index" label="序号" width="100"></el-table-column>
-      <el-table-column prop="modleCls" label="模型类型"></el-table-column>
+      <el-table-column prop="ModelCls" label="模型类型"></el-table-column>
       <el-table-column prop="modelName" label="模型名称"></el-table-column>
-      <el-table-column prop="modelSizee" label="模型大小(MB)"></el-table-column>
+      <el-table-column prop="modelSize" label="模型大小(MB)"></el-table-column>
       <el-table-column prop="path" label="模型地址"></el-table-column>
       <el-table-column prop="createDate" label="上传时间">
         <template #default="{ row }">

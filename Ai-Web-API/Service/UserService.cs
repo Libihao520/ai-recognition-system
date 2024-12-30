@@ -11,10 +11,9 @@ using Model;
 using Model.Consts;
 using Model.Dto.photo;
 using Model.Dto.User;
-using Model.Entitys;
+using Model.Entities;
 using Model.Enum;
 using Model.Other;
-using Service.Common;
 
 namespace Service;
 
@@ -194,7 +193,7 @@ public class UserService : IUserService
             return ResultHelper.Error("用户不存在！");
         }
 
-        if (string.IsNullOrEmpty(po.photo))
+        if (string.IsNullOrEmpty(po.Photo))
         {
             return ResultHelper.Error("图片不能为空！");
         }
@@ -208,7 +207,7 @@ public class UserService : IUserService
             var newPhoto = new Photos()
             {
                 PhotosId = newPhotoId,
-                Photobase64 = po.photo
+                Photobase64 = po.Photo
             };
             _context.Photos.Add(newPhoto);
         }
@@ -221,7 +220,7 @@ public class UserService : IUserService
                 return ResultHelper.Error("找不到与用户关联的照片！");
             }
 
-            existingPhoto.Photobase64 = po.photo;
+            existingPhoto.Photobase64 = po.Photo;
         }
 
         try
