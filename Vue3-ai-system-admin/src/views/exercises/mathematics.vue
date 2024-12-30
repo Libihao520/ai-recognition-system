@@ -13,6 +13,7 @@ import {
 
 import { getmMthematics, postSubmitExercises } from '../../api/exercises'
 import { useRoute } from 'vue-router'
+import { getSubjectsOrFileLabel } from '../../api/exercises'
 
 // 使用 ref 声明响应式数据
 const singleChoice = ref([])
@@ -26,8 +27,9 @@ const route = useRoute()
 async function fetchQuestions() {
   const subjectName = route.params.subjectName
   console.log(subjectName)
+  const res = await getSubjectsOrFileLabel({subjectName:subjectName})
+  // console.log(res.data.data)
   const questions = await getmMthematics()
-  console.log(questions.data)
   singleChoice.value = questions.data.data.singleChoice.map((question) => ({
     title: question.title,
     options: question.options,
