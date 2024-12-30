@@ -49,4 +49,4 @@ export const addTestPaperManage = (file, additionalData = {}) => {
 };
 
 //获取科目或卷
-export const getSubjectsOrFileLabel = () => request.get('/Exercises/GetSubjectsOrFileLabel')
+export const getSubjectsOrFileLabel = (params) => request.get('/Exercises/GetSubjectsOrFileLabel',{params})
