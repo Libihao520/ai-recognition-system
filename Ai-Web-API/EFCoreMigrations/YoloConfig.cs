@@ -4,10 +4,10 @@ using Model.Entities;
 
 namespace EFCoreMigrations;
 
-public class YoloConfig : IEntityTypeConfiguration<Yolotbs>
+public class YoloConfig : IEntityTypeConfiguration<YoLoTbs>
 {
-    public void Configure(EntityTypeBuilder<Yolotbs> builder)
+    public void Configure(EntityTypeBuilder<YoLoTbs> builder)
     {
-        builder.ToTable("yolos");
+        builder.ToTable("YoLos");
     }
 }

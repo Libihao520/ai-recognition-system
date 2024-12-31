@@ -18,14 +18,14 @@ public interface IExercisesService
     /// </summary>
     /// <param name="req"></param>
     /// <returns></returns>
-    public Task<ApiResult> checkSubmit(SubmitExercisesReq req);
+    public Task<ApiResult> checkSubmit(SubMitExercisesReq req);
 
     /// <summary>
     /// 成绩中心获取列表
     /// </summary>
     /// <param name="req"></param>
     /// <returns></returns>
-    public Task<ApiResult> AchievementCenter(AchievementCenterReq req);
+    public Task<ApiResult> AchievementCenter(GetAchievementCenterReq req);
 
     /// <summary>
     /// 删除数据

@@ -10,13 +10,13 @@ public class Users : Entity
     /// 用户名
     /// </summary>
     [Required]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     /// <summary>
     /// 密码
     /// </summary>
     [Required]
-    public string Password { get; set; }
+    public string? PassWord { get; set; }
 
     /// <summary>
     /// 用户角色
@@ -27,7 +27,7 @@ public class Users : Entity
     /// 邮箱
     /// </summary>
     [Required]
-    public string Email { get; set; }
+    public string? Email { get; set; }
 
     /// <summary>
     /// 头像id

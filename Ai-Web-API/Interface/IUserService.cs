@@ -12,14 +12,14 @@ public interface IUserService
     /// <param name="userName"></param>
     /// <param name="passWord"></param>
     /// <returns></returns>
-    UserRes GetUser(string userName, string passWord);
+    GetUserRes GetUser(string userName, string passWord);
 
     /// <summary>
     /// 添加用户
     /// </summary>
-    /// <param name="userAdd"></param>
+    /// <param name="addUserReq"></param>
     /// <returns></returns>
-    Task<ApiResult> Add(UserAdd userAdd);
+    Task<ApiResult> Add(AddUserReq addUserReq);
 
     /// <summary>
     /// 发送邮箱验证码
@@ -38,5 +38,5 @@ public interface IUserService
     /// 更新头像
     /// </summary>
     /// <returns></returns>
-    Task<ApiResult> PutUserAvatar(PhotoAdd po, CancellationToken cancellationToken);
+    Task<ApiResult> PutUserAvatar(PhotoAddDto po, CancellationToken cancellationToken);
 }

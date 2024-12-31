@@ -9,25 +9,25 @@ using Model.Other;
 
 namespace Service;
 
-public class CustomJWTService : ICustomJWTService
+public class CustomJwtService : ICustomJwtService
 {
     private readonly JWTTokenOptions _jwtTokenOptions;
 
 
-    public CustomJWTService(IOptionsMonitor<JWTTokenOptions> jwtTokenOptions)
+    public CustomJwtService(IOptionsMonitor<JWTTokenOptions> jwtTokenOptions)
     {
         _jwtTokenOptions = jwtTokenOptions.CurrentValue;
     }
 
-    public string GetToken(UserRes user)
+    public string GetToken(GetUserRes getUser)
     {
         #region 有效载荷，想写多少写多少，但尽量避免敏感信息
 
         var claims = new[]
         {
-            new Claim("Id", user.Id.ToString()),
-            new Claim("Name", user.Name),
-            new Claim("RoleName",user.Role.ToString()),
+            new Claim("Id", getUser.Id.ToString()),
+            new Claim("Name", getUser.Name),
+            new Claim("RoleName",getUser.Role.ToString()),
         };
 
         //需要加密：需要加密key:

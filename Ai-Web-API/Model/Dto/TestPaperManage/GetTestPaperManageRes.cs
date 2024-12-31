@@ -1,6 +1,6 @@
 namespace Model.Dto.TestPaperManage;
 
-public class TestPaperManageRes
+public class GetTestPaperManageRes
 {
     /// <summary>
     /// 主键
@@ -10,7 +10,7 @@ public class TestPaperManageRes
     /// <summary>
     /// 创建人
     /// </summary>
-    public string CreateName { get; set; }
+    public string? CreateName { get; set; }
 
     /// <summary>
     /// 创建日期

@@ -28,5 +28,5 @@ public class TestPapersManage : Entity
     /// <summary>
     /// 题库
     /// </summary>
-    public List<TestPapers>? testPapers { get; set; }
+    public List<TestPapers>? TestPapers { get; set; }
 }

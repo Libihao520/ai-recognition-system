@@ -7,7 +7,7 @@ public class TestPapers : Base
     /// <summary>
     /// 科目
     /// </summary>
-    public string subject { get; set; }
+    public string? Subject { get; set; }
 
     /// <summary>
     /// 题目编号
@@ -17,7 +17,7 @@ public class TestPapers : Base
     /// <summary>
     /// 题目
     /// </summary>
-    public string Topic { get; set; }
+    public string? Topic { get; set; }
 
     /// <summary>
     /// 题目类型 0单选，1多选，2判断题

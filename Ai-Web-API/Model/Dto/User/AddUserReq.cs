@@ -2,25 +2,25 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Model.Dto.User;
 
-public class UserAdd
+public class AddUserReq
 {
     /// <summary>
     /// 用户名
     /// </summary>
     [Required]
-    public string username { get; set; }
+    public string? UserName { get; set; }
 
     /// <summary>
     /// 密码
     /// </summary>
     [Required]
-    public string Password { get; set; }
+    public string? PassWord { get; set; }
 
     /// <summary>
     /// 确认密码
     /// </summary>
     [Required]
-    public string rePassword { get; set; }
+    public string? RePassWord { get; set; }
 
     /// <summary>
     /// 邮箱

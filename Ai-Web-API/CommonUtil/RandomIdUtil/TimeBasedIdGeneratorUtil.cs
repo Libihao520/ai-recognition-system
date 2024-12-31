@@ -1,4 +1,4 @@
-namespace CommonUtil;
+namespace CommonUtil.RandomIdUtil;
 
 /// <summary>
 /// 生成随机Id

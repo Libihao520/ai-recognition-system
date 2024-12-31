@@ -20,7 +20,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<ApiResult> PutUserAvatar(PhotoAdd po, CancellationToken cancellationToken)
+    public async Task<ApiResult> PutUserAvatar(PhotoAddDto po, CancellationToken cancellationToken)
     {
         return await _userService.PutUserAvatar(po, cancellationToken);
     }

@@ -15,9 +15,9 @@ namespace WebApi.Controllers;
 public class LoginController : ControllerBase
 {
     private IUserService _userService;
-    private ICustomJWTService _jwtService;
+    private ICustomJwtService _jwtService;
 
-    public LoginController(IUserService userService, ICustomJWTService jwtService)
+    public LoginController(IUserService userService, ICustomJwtService jwtService)
     {
         _userService = userService;
         _jwtService = jwtService;
@@ -26,25 +26,25 @@ public class LoginController : ControllerBase
     /// <summary>
     /// 登录接口
     /// </summary>
-    /// <param name="userReq"></param>
+    /// <param name="getUserReq"></param>
     /// <returns></returns>
     [HttpPost]
-    public async Task<ApiResult> GetToken(UserReq userReq)
+    public async Task<ApiResult> GetToken(GetUserReq getUserReq)
     {
         var res = Task.Run(() =>
         {
-            if (string.IsNullOrEmpty(userReq.username) || string.IsNullOrEmpty(userReq.Password))
+            if (string.IsNullOrEmpty(getUserReq.UserName) || string.IsNullOrEmpty(getUserReq.PassWord))
             {
                 return ResultHelper.Error("参数不能为空");
             }
 
-            UserRes user = _userService.GetUser(userReq.username, userReq.Password);
-            if (string.IsNullOrEmpty(user.Name))
+            GetUserRes getUser = _userService.GetUser(getUserReq.UserName, getUserReq.PassWord);
+            if (string.IsNullOrEmpty(getUser.Name))
             {
                 return ResultHelper.Error("账号不存在，用户名或密码错误！");
             }
 
-            return ResultHelper.Success("登录成功！", _jwtService.GetToken(user));
+            return ResultHelper.Success("登录成功！", _jwtService.GetToken(getUser));
         });
         return await res;
     }
@@ -52,12 +52,12 @@ public class LoginController : ControllerBase
     /// <summary>
     /// 注册接口
     /// </summary>
-    /// <param name="userAdd"></param>
+    /// <param name="addUserReq"></param>
     /// <returns></returns>
     [HttpPost]
-    public async Task<ApiResult> add(UserAdd userAdd)
+    public async Task<ApiResult> add(AddUserReq addUserReq)
     {
-        return await _userService.Add(userAdd);
+        return await _userService.Add(addUserReq);
     }
 
     /// <summary>
