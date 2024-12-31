@@ -37,7 +37,7 @@ public class ExercisesController : ControllerBase
     /// <param name="req"></param>
     /// <returns></returns>
     [HttpPost]
-    public Task<ApiResult> Submit(SubmitExercisesReq req)
+    public Task<ApiResult> Submit(SubMitExercisesReq req)
     {
         return _exercisesService.checkSubmit(req);
     }
@@ -48,7 +48,7 @@ public class ExercisesController : ControllerBase
     /// <param name="req"></param>
     /// <returns></returns>
     [HttpGet]
-    public Task<ApiResult> GetAchievementCenter([FromQuery] AchievementCenterReq req)
+    public Task<ApiResult> GetAchievementCenter([FromQuery] GetAchievementCenterReq req)
     {
         return _exercisesService.AchievementCenter(req);
     }

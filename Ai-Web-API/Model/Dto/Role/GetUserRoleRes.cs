@@ -1,6 +1,6 @@
 namespace Model.Dto.Role;
 
-public class RoleRes
+public class GetUserRoleRes
 {
     /// <summary>
     /// 主键
@@ -30,5 +30,5 @@ public class RoleRes
     /// <summary>
     /// 密码
     /// </summary>
-    public string Password { get; set; }
+    public string? PassWord { get; set; }
 }

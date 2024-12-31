@@ -25,7 +25,7 @@ public class ToolController : ControllerBase
             new Users
             {
                 Name = "lbh",
-                Password = "123456",
+                PassWord = "123456",
                 CreateDate = DateTime.Now,
                 CreateUserId = 0,
                 IsDeleted = 0
@@ -33,7 +33,7 @@ public class ToolController : ControllerBase
             new Users
             {
                 Name = "yhj",
-                Password = "1234567",
+                PassWord = "1234567",
                 CreateDate = DateTime.Now,
                 CreateUserId = 1,
                 IsDeleted = 0
@@ -47,7 +47,7 @@ public class ToolController : ControllerBase
         var papers = new TestPapers()
         {
             Id = 1,
-            subject = "数学",
+            Subject = "数学",
             TopicNumber = 1,
             Topic = "计算表达式 (3×5)+(4÷2)-(6-2) 的结果，选择正确的选项",
             type = 0,
@@ -66,7 +66,7 @@ public class ToolController : ControllerBase
         {
             type = 1,
             Id = 2,
-            subject = "数学",
+            Subject = "数学",
             TopicNumber = 2,
             Topic = "以下哪些选项是关于地球的正确陈述？",
             Choice1 = "地球是太阳系中唯一已知存在生命的行星。",
@@ -84,7 +84,7 @@ public class ToolController : ControllerBase
         {
             type = 2,
             Id = 3,
-            subject = "数学",
+            Subject = "数学",
             TopicNumber = 3,
             Topic = "地球是太阳系中最大的行星。 ( )",
             Choice1 = "√",

@@ -1,5 +1,6 @@
 using AutoMapper;
 using CommonUtil;
+using CommonUtil.RandomIdUtil;
 using CommonUtil.YoloUtil;
 using EFCoreMigrations;
 using Interface;
@@ -42,7 +43,7 @@ public class YoloService : IYoloService
     /// <returns></returns>
     public async Task<ApiResult> getpkqTb(YoloDetectionQueryReq req)
     {
-        IQueryable<Yolotbs> yolotb = _context.YoloTbs.Where(p => p.IsDeleted == 0);
+        IQueryable<YoLoTbs> yolotb = _context.YoloTbs.Where(p => p.IsDeleted == 0);
         //筛选条件
         if (req.ModleCls != "全部")
         {
@@ -71,7 +72,7 @@ public class YoloService : IYoloService
         return ResultHelper.Success("获取成功！", yoloPkqResList, total);
     }
 
-    public async Task<string> PutPhoto(PhotoAdd po, CancellationToken cancellationToken)
+    public async Task<string> PutPhoto(PhotoAddDto po, CancellationToken cancellationToken)
     {
         var aiModels = await _context.AiModels.FindAsync(po.ModelId, cancellationToken);
         if (aiModels == null || string.IsNullOrEmpty(aiModels.Path))
@@ -87,7 +88,7 @@ public class YoloService : IYoloService
             var result = "";
             using (var image = Image.Load<Rgba32>(ms))
             {
-                if (aiModels.ModleCls == "图像分类")
+                if (aiModels.ModelCls == "图像分类")
                 {
                     using var yolo = new Yolo(Path.Combine(BasePath, aiModels.Path), false);
                     var runClassification = yolo.RunClassification(image);
@@ -101,7 +102,7 @@ public class YoloService : IYoloService
                     }
                 }
 
-                if (aiModels.ModleCls == "目标监测")
+                if (aiModels.ModelCls == "目标监测")
                 {
                     using var yolo = new Yolo(Path.Combine(BasePath, aiModels.Path), false);
                     var results = yolo.RunObjectDetection(image, 0.3);
@@ -109,7 +110,7 @@ public class YoloService : IYoloService
                     sbjgCount = results.Count;
                 }
 
-                if (aiModels.ModleCls == "其他模型")
+                if (aiModels.ModelCls == "其他模型")
                 {
                     return "暂未开放";
                 }
@@ -121,24 +122,24 @@ public class YoloService : IYoloService
                     byte[] imageBytes = outputMs.ToArray();
                     string base64Image = Convert.ToBase64String(imageBytes);
 
-                    var yolotbs = new Yolotbs()
+                    var yolotbs = new YoLoTbs()
                     {
-                        Cls = aiModels.ModleCls,
+                        Cls = aiModels.ModelCls,
                         Name = aiModels.ModelName,
-                        sbjgCount = sbjgCount,
+                        SbJgCount = sbjgCount,
                         IsManualReview = false,
-                        sbzqCount = 0,
-                        rgmsCount = 0,
-                        zql = 0,
-                        zhl = 0,
+                        SbZqCount = 0,
+                        RgMsCount = 0,
+                        Zql = 0,
+                        Zhl = 0,
                         CreateDate = DateTime.Now,
                         CreateUserId = 0,
                         IsDeleted = 0
                     };
-                    yolotbs.Photos = new Photos() { Photobase64 = "data:image/jpeg;base64," + base64Image };
+                    yolotbs.Photos = new Photos() { PhotoBase64 = "data:image/jpeg;base64," + base64Image };
                     _context.YoloTbs.Add(yolotbs);
                     _context.SaveChanges();
-                    if (aiModels.ModleCls == "目标监测")
+                    if (aiModels.ModelCls == "目标监测")
                     {
                         return "data:image/jpeg;base64," + base64Image;
                     }
@@ -161,7 +162,7 @@ public class YoloService : IYoloService
 
         var yoloPkqEditRes = _mapper.Map<YoloPkqEditRes>(yoloTb);
         var photos = _context.Photos.Where(u => u.PhotosId == yoloTb.PhotosId).FirstOrDefault();
-        yoloPkqEditRes.Photo = photos?.Photobase64;
+        yoloPkqEditRes.Photo = photos?.PhotoBase64;
         return yoloPkqEditRes;
     }
 
@@ -169,7 +170,7 @@ public class YoloService : IYoloService
     {
         var userCount = await _context.Users.CountAsync();
         var sbcsCount = await _context.YoloTbs.CountAsync();
-        var mbslCount = await _context.YoloTbs.SumAsync(x => x.sbjgCount);
+        var mbslCount = await _context.YoloTbs.SumAsync(x => x.SbJgCount);
         var yoloSjdpRes = new YoloSjdpRes()
         {
             userCount = userCount,
@@ -204,7 +205,7 @@ public class YoloService : IYoloService
             }
 
             //将参数映射入实体类
-            var yoloRes = _mapper.Map<Yolotbs>(req);
+            var yoloRes = _mapper.Map<YoLoTbs>(req);
             var generateId = TimeBasedIdGeneratorUtil.GenerateId();
             yoloRes.Id = generateId;
             var photId = TimeBasedIdGeneratorUtil.GenerateId();
@@ -212,7 +213,7 @@ public class YoloService : IYoloService
             var photos = new Photos()
             {
                 PhotosId = photId,
-                Photobase64 = req.Photo
+                PhotoBase64 = req.Photo
             };
             _context.YoloTbs.Add(yoloRes);
             _context.Photos.Add(photos);
@@ -226,7 +227,7 @@ public class YoloService : IYoloService
                 if (findAsync.PhotosId != null)
                 {
                     var photos = await _context.Photos.FindAsync(findAsync.PhotosId);
-                    photos.Photobase64 = req.Photo;
+                    photos.PhotoBase64 = req.Photo;
                 }
                 else
                 {
@@ -235,7 +236,7 @@ public class YoloService : IYoloService
                     var photos = new Photos()
                     {
                         PhotosId = photId,
-                        Photobase64 = req.Photo
+                        PhotoBase64 = req.Photo
                     };
                     _context.Photos.Add(photos);
                 }
@@ -290,7 +291,7 @@ public class YoloService : IYoloService
 
     #region 查询
 
-    public async Task<Yolotbs?> GetByIdAsync(int id)
+    public async Task<YoLoTbs?> GetByIdAsync(int id)
     {
         var findAsync = _context.YoloTbs.FindAsync(id);
         return await findAsync;

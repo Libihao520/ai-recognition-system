@@ -4,9 +4,9 @@ using Model.Entities;
 
 namespace EFCoreMigrations;
 
-public class PhotosConfig : IEntityTypeConfiguration<Yolotbs>
+public class PhotosConfig : IEntityTypeConfiguration<YoLoTbs>
 {
-    public void Configure(EntityTypeBuilder<Yolotbs> builder)
+    public void Configure(EntityTypeBuilder<YoLoTbs> builder)
     {
         builder.ToTable("Photos");
     }

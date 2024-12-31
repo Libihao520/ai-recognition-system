@@ -3,7 +3,7 @@ namespace Model.Dto.TestPapers;
 /// <summary>
 /// 练题系统导出Dto
 /// </summary>
-public class DownloadAchievementWordDto
+public class DownloadAchievementWordRes
 {
     public string? subject { get; set; }
 
@@ -19,16 +19,16 @@ public class DownloadAchievementWordDto
     /// <summary>
     /// 单选题
     /// </summary>
-    public List<SingleChoice> singleChoice { get; set; } = new List<SingleChoice>();
+    public List<SingleChoice>? SingleChoice { get; set; } = new List<SingleChoice>();
 
     /// <summary>
     /// 多选题
     /// </summary>
-    public List<MultipleChoice> multipleChoice { get; set; } = new List<MultipleChoice>();
+    public List<MultipleChoice>? MultipleChoice { get; set; } = new List<MultipleChoice>();
 
     /// <summary>
     /// 判断题
     /// </summary>
-    public List<TrueFalse> trueFalse { get; set; } = new List<TrueFalse>();
+    public List<TrueFalse>? TtrueFalse { get; set; } = new List<TrueFalse>();
 }
 

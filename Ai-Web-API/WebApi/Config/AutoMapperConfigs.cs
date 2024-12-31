@@ -16,44 +16,44 @@ public class AutoMapperConfigs : Profile
     {
         //左往右
         //用户
-        CreateMap<Users, UserRes>();
+        CreateMap<Users, GetUserRes>();
         //yolo
-        CreateMap<Yolotbs, YoloPkqRes>();
+        CreateMap<YoLoTbs, YoloPkqRes>();
 
-        CreateMap<YoloDetectionPutReq, Yolotbs>()
+        CreateMap<YoloDetectionPutReq, YoLoTbs>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
             .ForMember(dest => dest.PhotosId, opt => opt.Ignore());
 
-        CreateMap<Yolotbs, YoloPkqEditRes>();
+        CreateMap<YoLoTbs, YoloPkqEditRes>();
 
         //练题模块
         CreateMap<TestPapers, SingleChoice>()
-            .ForMember(dest => dest.title, opt => opt.MapFrom(src => src.Topic))
-            .ForMember(dest => dest.options,
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Topic))
+            .ForMember(dest => dest.Options,
                 opt => opt.MapFrom(src => new List<string>() { src.Choice1, src.Choice2, src.Choice3, src.Choice4 }));
 
         CreateMap<TestPapers, MultipleChoice>()
-            .ForMember(dest => dest.title, opt => opt.MapFrom(src => src.Topic))
-            .ForMember(dest => dest.options,
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Topic))
+            .ForMember(dest => dest.Options,
                 opt => opt.MapFrom(src => new List<string>() { src.Choice1, src.Choice2, src.Choice3, src.Choice4 }));
 
         CreateMap<TestPapers, TrueFalse>()
-            .ForMember(dest => dest.title, opt => opt.MapFrom(src => src.Topic))
-            .ForMember(dest => dest.options,
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Topic))
+            .ForMember(dest => dest.Options,
                 opt => opt.MapFrom(src => new List<string>() { src.Choice1, src.Choice2 }));
 
         // 题库模块
-        CreateMap<TestPapersManage, TestPaperManageRes>();
+        CreateMap<TestPapersManage, GetTestPaperManageRes>();
         
         //成绩导出
-        CreateMap<ReportCard, DownloadAchievementWordDto>();
+        CreateMap<ReportCard, DownloadAchievementWordRes>();
         //只映射名称
-        CreateMap<Users, DownloadAchievementWordDto>()
+        CreateMap<Users, DownloadAchievementWordRes>()
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
 
         CreateMap<ReportCard, AchievementCenterRes>();
         //RoleManagement
-        CreateMap<Users, RoleRes>()
+        CreateMap<Users, GetUserRoleRes>()
             .ForMember(dest => dest.Role, opt => opt.MapFrom(src => EnumConvert.ConvertRoleNameToString(src.Role)));
 
         //RoleManagement

@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using AutoMapper;
 using Azure.Core;
 using CommonUtil;
+using CommonUtil.RandomIdUtil;
 using CommonUtil.RedisUtil;
 using EFCoreMigrations;
 using Interface;
@@ -30,46 +31,46 @@ public class UserService : IUserService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public UserRes GetUser(string userName, string passWord)
+    public GetUserRes GetUser(string userName, string passWord)
     {
-        var users = _context.Users.Where(u => u.Name == userName && u.Password == passWord).FirstOrDefault();
+        var users = _context.Users.Where(u => u.Name == userName && u.PassWord == passWord).FirstOrDefault();
         if (users != null)
         {
-            return _mapper.Map<UserRes>(users);
+            return _mapper.Map<GetUserRes>(users);
         }
 
-        return new UserRes();
+        return new GetUserRes();
     }
 
-    public async Task<ApiResult> Add(UserAdd userAdd)
+    public async Task<ApiResult> Add(AddUserReq addUserReq)
     {
-        if (string.IsNullOrWhiteSpace(userAdd.Password) || string.IsNullOrWhiteSpace(userAdd.rePassword))
+        if (string.IsNullOrWhiteSpace(addUserReq.PassWord) || string.IsNullOrWhiteSpace(addUserReq.RePassWord))
         {
             return ResultHelper.Error("密码为空!");
         }
 
-        if (userAdd.Password != userAdd.rePassword)
+        if (addUserReq.PassWord != addUserReq.RePassWord)
         {
             return ResultHelper.Error("两次输入的密码不一致!");
         }
 
-        if (string.IsNullOrWhiteSpace(userAdd.Email))
+        if (string.IsNullOrWhiteSpace(addUserReq.Email))
         {
             return ResultHelper.Error("邮箱为空！");
         }
 
-        if (string.IsNullOrWhiteSpace(userAdd.username))
+        if (string.IsNullOrWhiteSpace(addUserReq.UserName))
         {
             return ResultHelper.Error("用户名为空！");
         }
 
-        if (_context.Users.Any(u => u.Name == userAdd.username && u.IsDeleted == 0))
+        if (_context.Users.Any(u => u.Name == addUserReq.UserName && u.IsDeleted == 0))
         {
             return ResultHelper.Error("用户名已被注册，请换一个！");
         }
 
-        var password = AesUtilities.Decrypt(userAdd.Password);
-        var decodeEmail = AesUtilities.Decrypt(userAdd.Email);
+        var password = AesUtilities.Decrypt(addUserReq.PassWord);
+        var decodeEmail = AesUtilities.Decrypt(addUserReq.Email);
 
         if (!IsValidEmail(decodeEmail))
         {
@@ -87,19 +88,19 @@ public class UserService : IUserService
             return ResultHelper.Error("验证码还未发送或已失效，请再发送一次！");
         }
 
-        if (userAdd.Authcode != s)
+        if (addUserReq.Authcode != s)
         {
             return ResultHelper.Error("验证码错误！");
         }
 
 
-        var users = _context.Users.Where(u => u.Name == userAdd.username).FirstOrDefault();
+        var users = _context.Users.Where(u => u.Name == addUserReq.UserName).FirstOrDefault();
         if (users == null)
         {
             Users user = new Users()
             {
-                Name = userAdd.username,
-                Password = userAdd.Password,
+                Name = addUserReq.UserName,
+                PassWord = addUserReq.PassWord,
                 Email = decodeEmail,
                 CreateDate = DateTime.Now,
                 CreateUserId = 0,
@@ -166,18 +167,18 @@ public class UserService : IUserService
         }
 
         var tPhotos = await _context.Photos.FindAsync(user.PhotosId);
-        var userRes = new UserRes()
+        var userRes = new GetUserRes()
         {
             Id = user.Id,
             Name = user.Name,
             Role = EnumConvert.ConvertRoleNameToString(user.Role),
-            Photo = tPhotos?.Photobase64,
+            Photo = tPhotos?.PhotoBase64,
             CreateDate = user.CreateDate
         };
         return ResultHelper.Success("成功！", userRes);
     }
 
-    public async Task<ApiResult> PutUserAvatar(PhotoAdd po, CancellationToken cancellationToken)
+    public async Task<ApiResult> PutUserAvatar(PhotoAddDto po, CancellationToken cancellationToken)
     {
         var httpContextUser = _httpContextAccessor.HttpContext.User;
         var userIdClaim = httpContextUser.Claims.FirstOrDefault(c => c.Type == "Id");
@@ -207,7 +208,7 @@ public class UserService : IUserService
             var newPhoto = new Photos()
             {
                 PhotosId = newPhotoId,
-                Photobase64 = po.Photo
+                PhotoBase64 = po.Photo
             };
             _context.Photos.Add(newPhoto);
         }
@@ -220,7 +221,7 @@ public class UserService : IUserService
                 return ResultHelper.Error("找不到与用户关联的照片！");
             }
 
-            existingPhoto.Photobase64 = po.Photo;
+            existingPhoto.PhotoBase64 = po.Photo;
         }
 
         try

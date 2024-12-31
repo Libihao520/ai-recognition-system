@@ -3,6 +3,7 @@ using System.Text.Json;
 using AutoMapper;
 using CommonUtil;
 using CommonUtil.Extensions;
+using CommonUtil.RandomIdUtil;
 using CommonUtil.YoloUtil;
 using EFCoreMigrations;
 using Interface;
@@ -34,51 +35,51 @@ public class ExercisesService : IExercisesService
 
     public async Task<ApiResult> GetmMthematics()
     {
-        var mathematicsRes = new MathematicsRes()
+        var mathematicsRes = new GetMathematicsRes()
         {
-            singleChoice = new List<SingleChoice>(),
-            multipleChoice = new List<MultipleChoice>(),
-            trueFalse = new List<TrueFalse>(),
+            SingleChoice = new List<SingleChoice>(),
+            MultipleChoice = new List<MultipleChoice>(),
+            TrueFalse = new List<TrueFalse>(),
         };
 
-        var testPapersList = _context.TestPapers.Where(x => x.subject == "数学").ToList();
+        var testPapersList = _context.TestPapers.Where(x => x.Subject == "数学").ToList();
         foreach (var testPapers in testPapersList)
         {
             if (testPapers.type == (int)ExercisesType.单选题)
             {
                 var map = _mapper.Map<SingleChoice>(testPapers);
-                mathematicsRes.singleChoice.Add(map);
+                mathematicsRes.SingleChoice.Add(map);
             }
             else if (testPapers.type == (int)ExercisesType.多选题)
             {
                 var map = _mapper.Map<MultipleChoice>(testPapers);
-                mathematicsRes.multipleChoice.Add(map);
+                mathematicsRes.MultipleChoice.Add(map);
             }
             else if (testPapers.type == (int)ExercisesType.判断题)
             {
                 var map = _mapper.Map<TrueFalse>(testPapers);
-                mathematicsRes.trueFalse.Add(map);
+                mathematicsRes.TrueFalse.Add(map);
             }
         }
 
         return ResultHelper.Success("获取成功！", mathematicsRes);
     }
 
-    public async Task<ApiResult> checkSubmit(SubmitExercisesReq req)
+    public async Task<ApiResult> checkSubmit(SubMitExercisesReq req)
     {
         //得分
         int score = 0;
 
-        var testPapersList = _context.TestPapers.Where(x => x.subject == "数学").ToList();
+        var testPapersList = _context.TestPapers.Where(x => x.Subject == "数学").ToList();
         var singleChoices = testPapersList.Where(q => q.type == (int)ExercisesType.单选题)
             .Select(p => new { p.TopicNumber, answer = p.answer[0], p.Grade })
             .OrderBy(s => s.TopicNumber)
             .ToList();
 
         var singleChoiceCount = singleChoices.Count();
-        for (int i = 0; i < Math.Min(singleChoices.Count, req.singleChoice.Count); i++)
+        for (int i = 0; i < Math.Min(singleChoices.Count, req.SingleChoice.Count); i++)
         {
-            if (singleChoices[i].answer == req.singleChoice[i])
+            if (singleChoices[i].answer == req.SingleChoice[i])
             {
                 score = score + singleChoices[i].Grade;
                 singleChoiceCount++;
@@ -91,9 +92,9 @@ public class ExercisesService : IExercisesService
             .OrderBy(s => s.TopicNumber)
             .ToList();
         int multipleChoiceCount = 0;
-        for (int i = 0; i < Math.Min(multipleChoices.Count, req.multipleChoice.Count); i++)
+        for (int i = 0; i < Math.Min(multipleChoices.Count, req.MultipleChoice.Count); i++)
         {
-            if (multipleChoices[i].CorrectAnswer.SequenceEqual(req.multipleChoice[i]))
+            if (multipleChoices[i].CorrectAnswer.SequenceEqual(req.MultipleChoice[i]))
             {
                 score = score + multipleChoices[i].Grade;
                 multipleChoiceCount++;
@@ -106,9 +107,9 @@ public class ExercisesService : IExercisesService
             .OrderBy(p => p.TopicNumber)
             .ToList();
         int trueFalseCount = 0;
-        for (int i = 0; i < Math.Min(testPapersEnumerable.Count, req.trueFalse.Count); i++)
+        for (int i = 0; i < Math.Min(testPapersEnumerable.Count, req.TrueFalse.Count); i++)
         {
-            if (testPapersEnumerable[i].Answer == req.trueFalse[i])
+            if (testPapersEnumerable[i].Answer == req.TrueFalse[i])
             {
                 score = score + testPapersEnumerable[i].Grade;
                 trueFalseCount++;
@@ -141,7 +142,7 @@ public class ExercisesService : IExercisesService
         return ResultHelper.Success("成功！", @$"本次答题得分为：{score} ,具体情况前往成绩中心查看！");
     }
 
-    public async Task<ApiResult> AchievementCenter(AchievementCenterReq req)
+    public async Task<ApiResult> AchievementCenter(GetAchievementCenterReq req)
     {
         var query = from reportCards in _context.ReportCards.Where(p => p.IsDeleted == 0)
             join Users in _context.Users on reportCards.CreateUserId equals Users.Id into usersGroup
@@ -159,8 +160,8 @@ public class ExercisesService : IExercisesService
 
         var total = await query.CountAsync();
         var paginatedResult = await query
-            .Skip((req.pagenum - 1) * req.pagesize)
-            .Take(req.pagesize)
+            .Skip((req.PageNum - 1) * req.PageSize)
+            .Take(req.PageSize)
             .ToListAsync();
 
         return ResultHelper.Success("查询成功", paginatedResult, total);
@@ -189,13 +190,13 @@ public class ExercisesService : IExercisesService
     public async Task<byte[]> DownloadWord(long id)
     {
         var reportCard = await _context.ReportCards.FindAsync(id);
-        SubmitExercisesReq submitExercisesReq =
-            JsonSerializer.Deserialize<SubmitExercisesReq>(reportCard.SubmittedOptions);
-        var testPapersList = await _context.TestPapers.Where(q => q.subject == reportCard.subject).ToListAsync();
+        SubMitExercisesReq subMitExercisesReq =
+            JsonSerializer.Deserialize<SubMitExercisesReq>(reportCard.SubmittedOptions);
+        var testPapersList = await _context.TestPapers.Where(q => q.Subject == reportCard.subject).ToListAsync();
         var user = await _context.Users.FindAsync(reportCard.CreateUserId);
 
 
-        var model = _mapper.Map<DownloadAchievementWordDto>(reportCard);
+        var model = _mapper.Map<DownloadAchievementWordRes>(reportCard);
         model = _mapper.Map(user, model);
 
         foreach (var testPapers in testPapersList)
@@ -203,24 +204,24 @@ public class ExercisesService : IExercisesService
             if (testPapers.type == (int)ExercisesType.单选题)
             {
                 var map = _mapper.Map<SingleChoice>(testPapers);
-                map.answer = testPapers.answer[0].ToLetter();
-                map.subAnswer = submitExercisesReq.singleChoice[testPapers.TopicNumber - 1].ToLetter();
-                model.singleChoice.Add(map);
+                map.Answer = testPapers.answer[0].ToLetter();
+                map.SubAnswer = subMitExercisesReq.SingleChoice[testPapers.TopicNumber - 1].ToLetter();
+                model.SingleChoice.Add(map);
             }
             else if (testPapers.type == (int)ExercisesType.多选题)
             {
                 var map = _mapper.Map<MultipleChoice>(testPapers);
-                map.answer = string.Join(", ", testPapers.answer.Select(a => a.ToLetter().ToString()));
-                map.subAnswer = string.Join(", ",
-                    submitExercisesReq.multipleChoice[testPapers.TopicNumber - 1].Select(a => a.ToLetter().ToString()));
-                model.multipleChoice.Add(map);
+                map.Answer = string.Join(", ", testPapers.answer.Select(a => a.ToLetter().ToString()));
+                map.SubAnswer = string.Join(", ",
+                    subMitExercisesReq.MultipleChoice[testPapers.TopicNumber - 1].Select(a => a.ToLetter().ToString()));
+                model.MultipleChoice.Add(map);
             }
             else if (testPapers.type == (int)ExercisesType.判断题)
             {
                 var map = _mapper.Map<TrueFalse>(testPapers);
-                map.answer = testPapers.answer[0] == 1 ? "正确" : "错误";
-                map.subAnswer = submitExercisesReq.singleChoice[testPapers.TopicNumber - 1] == 1 ? "正确" : "错误";
-                model.trueFalse.Add(map);
+                map.Answer = testPapers.answer[0] == 1 ? "正确" : "错误";
+                map.SubAnswer = subMitExercisesReq.SingleChoice[testPapers.TopicNumber - 1] == 1 ? "正确" : "错误";
+                model.TtrueFalse.Add(map);
             }
         }
 
@@ -267,7 +268,7 @@ public class ExercisesService : IExercisesService
                 .Take(req.PageSize)
                 .ToListAsync();
 
-            var resultList = _mapper.Map<List<TestPaperManageRes>>(listAsync);
+            var resultList = _mapper.Map<List<GetTestPaperManageRes>>(listAsync);
 
             return ResultHelper.Success("查询成功", resultList, total);
         }
@@ -334,7 +335,7 @@ public class ExercisesService : IExercisesService
                         var paperData = new TestPapers()
                         {
                             TopicNumber = row - 1,
-                            subject = req.QuestionBankCourseTitle,
+                            Subject = req.QuestionBankCourseTitle,
                             type = (worksheet.Cells[row, 2].Value is int cellValueIntForType) ? cellValueIntForType : 0,
                             Topic = worksheet.Cells[row, 3].Value?.ToString(),
                             Choice1 = worksheet.Cells[row, 4].Value?.ToString(),

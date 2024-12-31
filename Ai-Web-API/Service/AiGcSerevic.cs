@@ -1,6 +1,7 @@
 using AutoMapper;
 using Azure.Core;
 using CommonUtil;
+using CommonUtil.RandomIdUtil;
 using CommonUtil.RequesUtil;
 using EFCoreMigrations;
 using Interface;
@@ -16,13 +17,13 @@ using MySqlConnector;
 
 namespace Service;
 
-public class AigcSerevic : IAigcSerevice
+public class AiGcSerevic : IAiGcService
 {
     private MyDbContext _context;
     private readonly IMapper _mapper;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public AigcSerevic(MyDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+    public AiGcSerevic(MyDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
     {
         _context = context;
         _mapper = mapper;
@@ -43,7 +44,7 @@ public class AigcSerevic : IAigcSerevice
 
             if (!string.IsNullOrEmpty(req.ModelCls) && req.ModelCls.ToUpper() != "全部")
             {
-                query = query.Where(m => m.ModleCls == req.ModelCls);
+                query = query.Where(m => m.ModelCls == req.ModelCls);
             }
             
             var totalCount = await query.CountAsync();
@@ -119,10 +120,10 @@ public class AigcSerevic : IAigcSerevice
         var aiModels = new AiModels()
         {
             ModelName = req.ModelName,
-            ModleCls = req.ModelCls,
+            ModelCls = req.ModelCls,
             Id = TimeBasedIdGeneratorUtil.GenerateId(),
             Path = relativeFilePath, // 设置文件路径到数据库记录中
-            ModelSizee = fileSizeInMb,
+            ModelSize = fileSizeInMb,
             CreateDate = DateTime.Now,
             IsDeleted = 0,
             CreateUserId = createUserId,

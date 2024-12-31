@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace CommonUtil;
+namespace CommonUtil.RandomIdUtil;
 
 /// <summary>
 /// 生成随机验证码（QQ邮箱注册）

@@ -2,7 +2,7 @@ using Model.Dto.User;
 
 namespace Interface;
 
-public interface ICustomJWTService
+public interface ICustomJwtService
 {
-    string GetToken(UserRes user);
+    string GetToken(GetUserRes getUser);
 }

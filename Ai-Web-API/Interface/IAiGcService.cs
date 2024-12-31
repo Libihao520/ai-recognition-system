@@ -4,7 +4,7 @@ using Model.Other;
 
 namespace Interface;
 
-public interface IAigcSerevice
+public interface IAiGcService
 {
     /// <summary>
     /// 查询所有模型

@@ -11,17 +11,17 @@ namespace WebApi.Controllers;
 [Route("api/[controller]/[action]")]
 public class AigcController : ControllerBase
 {
-    private readonly IAigcSerevice _aigcSerevice;
+    private readonly IAiGcService _aiGcService;
 
-    public AigcController(IAigcSerevice aigcSerevice)
+    public AigcController(IAiGcService aiGcService)
     {
-        _aigcSerevice = aigcSerevice;
+        _aiGcService = aiGcService;
     }
 
     [HttpGet]
     public Task<ApiResult> GetModelService([FromQuery] GetModelReq req)
     {
-        return _aigcSerevice.GetModelService(req);
+        return _aiGcService.GetModelService(req);
     }
 
     [HttpPost]
@@ -29,12 +29,12 @@ public class AigcController : ControllerBase
     [RequestSizeLimit(262144000)] // 设置整个HTTP请求的最大大小为250MB
     public async Task<ApiResult> PutModelService([FromForm] PutModelReq req)
     {
-        return await _aigcSerevice.PutModelService(req);
+        return await _aiGcService.PutModelService(req);
     }
 
     [HttpDelete]
     public Task<ApiResult> DelModelService(long id)
     {
-        return _aigcSerevice.DelModelService(id);
+        return _aiGcService.DelModelService(id);
     }
 }

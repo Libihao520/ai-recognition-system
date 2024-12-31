@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using AutoMapper;
 using CommonUtil;
+using CommonUtil.RandomIdUtil;
 using EFCoreMigrations;
 using Interface;
 using Microsoft.AspNetCore.Http;
@@ -30,7 +31,7 @@ public class RoleManagementService : IRoleManagementService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<ApiResult> GetUserRole(RoleReq req)
+    public async Task<ApiResult> GetUserRole(GetUserRoleReq req)
     {
         if (req.Id == null)
         {
@@ -43,11 +44,11 @@ public class RoleManagementService : IRoleManagementService
             var total = await userstb.CountAsync();
 
             var paginatedResult = await userstb
-                .Skip((req.pagenum - 1) * req.pagesize) // 跳过前面的记录  
-                .Take(req.pagesize) // 取接下来的指定数量的记录  
+                .Skip((req.PageNum - 1) * req.PageSize) // 跳过前面的记录  
+                .Take(req.PageSize) // 取接下来的指定数量的记录  
                 .ToListAsync(); // 转换为列表  
 
-            var resList = _mapper.Map<List<RoleRes>>(paginatedResult);
+            var resList = _mapper.Map<List<GetUserRoleRes>>(paginatedResult);
             return ResultHelper.Success("查询成功", resList, total);
         }
         else
@@ -58,8 +59,8 @@ public class RoleManagementService : IRoleManagementService
                 return ResultHelper.Error("获取用户信息失败！");
             }
 
-            var res = _mapper.Map<RoleRes>(usersEnumerable);
-            res.Password = AesUtilities.Decrypt(res.Password);
+            var res = _mapper.Map<GetUserRoleRes>(usersEnumerable);
+            res.PassWord = AesUtilities.Decrypt(res.PassWord);
             return ResultHelper.Success("查询成功", res);
         }
     }
@@ -105,11 +106,11 @@ public class RoleManagementService : IRoleManagementService
                 {
                     Id = TimeBasedIdGeneratorUtil.GenerateId(),
                     Name = res.Name,
-                    Password = res.Password,
+                    PassWord = res.PassWord,
                     Email = res.Email,
                     CreateDate = DateTime.Now,
                     CreateUserId = createUserId,
-                    Role = res.role,
+                    Role = res.Role,
                     IsDeleted = 0
                 };
                 _context.Users.Add(insterUser);
@@ -125,9 +126,9 @@ public class RoleManagementService : IRoleManagementService
                 }
                 else
                 {
-                    user.Password = res.Password;
+                    user.PassWord = res.PassWord;
                     user.Email = res.Email;
-                    user.Role = res.role;
+                    user.Role = res.Role;
                     await _context.SaveChangesAsync();
                     return ResultHelper.Success("请求成功！", "密码更新完成");
                 }
@@ -170,7 +171,7 @@ public class RoleManagementService : IRoleManagementService
                         {
                             Id = TimeBasedIdGeneratorUtil.GenerateId(),
                             Name = userName,
-                            Password = userPassword,
+                            PassWord = userPassword,
                             Email = userEmail,
                             CreateDate = DateTime.Now,
                             CreateUserId = createUserId,

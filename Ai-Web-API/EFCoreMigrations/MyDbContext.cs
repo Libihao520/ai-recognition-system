@@ -13,7 +13,7 @@ public class MyDbContext : DbContext
     /// <summary>
     /// yolo识别记录表
     /// </summary>
-    public DbSet<Yolotbs> YoloTbs { get; set; }
+    public DbSet<YoLoTbs> YoloTbs { get; set; }
 
     /// <summary>
     /// 图片base64

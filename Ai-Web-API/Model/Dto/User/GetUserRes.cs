@@ -3,13 +3,14 @@ using Model.Enum;
 
 namespace Model.Dto.User;
 
-public class UserRes
+public class GetUserRes
 {
     /// <summary>
     /// id
     /// </summary>
     [Required]
     public long Id { get; set; }
+
     /// <summary>
     /// 创建人Id
     /// </summary>
@@ -32,21 +33,21 @@ public class UserRes
     /// 用户名
     /// </summary>
     [Required]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     /// <summary>
     /// 密码
     /// </summary>
     [Required]
-    public string Password { get; set; }
+    public string? PassWord { get; set; }
 
     /// <summary>
     /// 用户角色
     /// </summary>
-    public string Role { get; set; } 
-    
-        /// <summary>
-        /// 照片(base 64)
-        /// </summary>
+    public string? Role { get; set; }
+
+    /// <summary>
+    /// 照片(base 64)
+    /// </summary>
     public string? Photo { get; set; }
 }

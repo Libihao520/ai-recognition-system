@@ -7,7 +7,7 @@ namespace Interface;
 
 public interface IRoleManagementService
 {
-    Task<ApiResult> GetUserRole(RoleReq req);
+    Task<ApiResult> GetUserRole(GetUserRoleReq req);
 
     Task<ApiResult> DeleteUserRoleAsync(long id);
 

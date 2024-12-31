@@ -1,6 +1,6 @@
 namespace Model.Dto.photo;
 
-public class PhotoAdd
+public class PhotoAddDto
 {
     public long? ModelId { get; set; }
     public string? Photo { get; set; }

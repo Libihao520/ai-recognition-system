@@ -12,7 +12,7 @@ public class AiModels : Entity
     /// <summary>
     /// 模型类型
     /// </summary>
-    public string? ModleCls { get; set; }
+    public string? ModelCls { get; set; }
 
     /// <summary>
     /// 模型名称
@@ -22,5 +22,5 @@ public class AiModels : Entity
     /// <summary>
     /// 模型大小
     /// </summary>
-    public float? ModelSizee { get; set; }
+    public float? ModelSize { get; set; }
 }

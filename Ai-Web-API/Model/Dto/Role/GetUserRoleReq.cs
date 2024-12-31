@@ -1,19 +1,12 @@
-﻿namespace Model.Dto.Role;
+﻿using Model.Common;
+
+namespace Model.Dto.Role;
 
 /// <summary>
 /// 角色管理获取用户请求
 /// </summary>
-public class RoleReq
+public class GetUserRoleReq : Paging
 {
-    /// <summary>
-    /// 当前页码
-    /// </summary>
-    public int pagenum { get; set; }
-
-    /// <summary>
-    /// 每页条数
-    /// </summary>
-    public int pagesize { get; set; }
     /// <summary>
     /// 用户id
     /// </summary>
