@@ -5,12 +5,12 @@ namespace Model.Dto.TestPapers;
 /// </summary>
 public class DownloadAchievementWordRes
 {
-    public string? subject { get; set; }
+    public string? Subject { get; set; }
 
     /// <summary>
     /// 总分
     /// </summary>
-    public int totalPoints { get; set; }
+    public int TotalPoints { get; set; }
 
     public string? Name { get; set; }
 
@@ -29,6 +29,6 @@ public class DownloadAchievementWordRes
     /// <summary>
     /// 判断题
     /// </summary>
-    public List<TrueFalse>? TtrueFalse { get; set; } = new List<TrueFalse>();
+    public List<TrueFalse>? TrueFalse { get; set; } = new List<TrueFalse>();
 }
 

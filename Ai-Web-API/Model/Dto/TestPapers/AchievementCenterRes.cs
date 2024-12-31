@@ -7,12 +7,12 @@ public class AchievementCenterRes
     /// <summary>
     /// 科目
     /// </summary>
-    public string? subject { get; set; }
+    public string? Subject { get; set; }
 
     /// <summary>
     /// 总分
     /// </summary>
-    public int totalPoints { get; set; }
+    public int TotalPoints { get; set; }
 
     /// <summary>
     /// 创建日期
