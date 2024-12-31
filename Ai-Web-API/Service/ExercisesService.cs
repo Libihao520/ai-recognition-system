@@ -127,9 +127,9 @@ public class ExercisesService : IExercisesService
 
             CreateUserId = createUserId,
 
-            subject = "数学",
+            Subject = "数学",
             //总分
-            totalPoints = score,
+            TotalPoints = score,
             //总数
             NumberOfQuestions = singleChoices.Count + multipleChoices.Count + testPapersEnumerable.Count,
             // 答对数
@@ -150,8 +150,8 @@ public class ExercisesService : IExercisesService
             select new AchievementCenterRes
             {
                 Id = reportCards.Id,
-                subject = reportCards.subject,
-                totalPoints = reportCards.totalPoints,
+                Subject = reportCards.Subject,
+                TotalPoints = reportCards.TotalPoints,
                 CreateDate = reportCards.CreateDate,
                 NumberOfQuestions = reportCards.NumberOfQuestions,
                 CorrectQuantity = reportCards.CorrectQuantity,
@@ -192,7 +192,7 @@ public class ExercisesService : IExercisesService
         var reportCard = await _context.ReportCards.FindAsync(id);
         SubMitExercisesReq subMitExercisesReq =
             JsonSerializer.Deserialize<SubMitExercisesReq>(reportCard.SubmittedOptions);
-        var testPapersList = await _context.TestPapers.Where(q => q.Subject == reportCard.subject).ToListAsync();
+        var testPapersList = await _context.TestPapers.Where(q => q.Subject == reportCard.Subject).ToListAsync();
         var user = await _context.Users.FindAsync(reportCard.CreateUserId);
 
 
@@ -221,7 +221,7 @@ public class ExercisesService : IExercisesService
                 var map = _mapper.Map<TrueFalse>(testPapers);
                 map.Answer = testPapers.answer[0] == 1 ? "正确" : "错误";
                 map.SubAnswer = subMitExercisesReq.SingleChoice[testPapers.TopicNumber - 1] == 1 ? "正确" : "错误";
-                model.TtrueFalse.Add(map);
+                model.TrueFalse.Add(map);
             }
         }
 
@@ -236,7 +236,7 @@ public class ExercisesService : IExercisesService
         using var fileStream = new FileStream(Path.Combine(directoryName, @$"{generateId}结果.docx"), FileMode.Open,
             FileAccess.Read);
         using (var ms = new MemoryStream())
-        {
+        { 
             await fileStream.CopyToAsync(ms);
             ms.Seek(0, SeekOrigin.Begin);
             return ms.ToArray();

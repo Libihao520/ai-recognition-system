@@ -52,7 +52,7 @@ const emit = defineEmits(['sucess'])
 const onSave = async (state) => {
   const putFrom = ref({})
   putFrom.value = JSON.parse(JSON.stringify(formModel.value))
-  putFrom.value.password = encrypt(formModel.value.password)
+  putFrom.value.passWord = encrypt(formModel.value.passWord)
 
   if (state == '取消') {
     visibleDrawer.value = false
@@ -86,7 +86,7 @@ defineExpose({
         <el-input class="inputcss" v-model="formModel.email" placeholder="请输入邮箱"></el-input>
       </el-form-item>
       <el-form-item label="密码:" prop="title">
-        <el-input class="inputcss" v-model="formModel.password" placeholder="请输入密码"></el-input>
+        <el-input class="inputcss" v-model="formModel.passWord" placeholder="请输入密码"></el-input>
       </el-form-item>
       <el-form-item class="selectcss" label="角色:" prop="role">
         <el-select v-model="formModel.role" placeholder="请选择角色">

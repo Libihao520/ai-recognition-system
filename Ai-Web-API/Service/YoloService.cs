@@ -45,9 +45,9 @@ public class YoloService : IYoloService
     {
         IQueryable<YoLoTbs> yolotb = _context.YoloTbs.Where(p => p.IsDeleted == 0);
         //筛选条件
-        if (req.ModleCls != "全部")
+        if (req.ModelCls != "全部")
         {
-            yolotb = yolotb.Where(p => p.Cls == req.ModleCls);
+            yolotb = yolotb.Where(p => p.Cls == req.ModelCls);
         }
 
         if (!string.IsNullOrEmpty(req.ModelName))
