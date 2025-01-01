@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { Edit, Delete } from '@element-plus/icons-vue'
 import { formatTime } from '@/utils/format.js'
-import { getTestPaperManage } from '../../api/exercises'
+import { getTestPaperManage, downloadUserImportTemplateService } from '../../api/exercises'
 import testPapersManageEdit from './testPapersManageEdit.vue'
 
 const channelList = ref([])
@@ -28,7 +28,7 @@ const testPapersManageEditRef = ref()
 
 //添加逻辑
 const onAddTblist = () => {
-    testPapersManageEditRef.value.open({})
+  testPapersManageEditRef.value.open({})
 }
 //编辑逻辑
 const onEditChannel = (row) => {
@@ -70,13 +70,17 @@ const onCurrentChange = (page) => {
   selectcondition.value.pagenum = page
   getTableList()
 }
+
+//下载导入模板
+const downloadExcelTemplate = () => {
+  downloadUserImportTemplateService()
+}
 </script>
 <template>
-  <page-containel title="模型管理"
-    >
+  <page-containel title="模型管理">
     <template #extra>
-        <el-button type="success" @click="downloadExcelTemplate">下载导入模板</el-button>
-        <el-button type="primary" @click="onAddTblist">批量导入题目</el-button>
+      <el-button type="success" @click="downloadExcelTemplate">下载导入模板</el-button>
+      <el-button type="primary" @click="onAddTblist">批量导入题目</el-button>
     </template>
     <el-form inline>
       <el-form-item label="卷名:">
@@ -141,7 +145,10 @@ const onCurrentChange = (page) => {
     />
     <!-- 添加编辑抽屉 -->
     <!-- //success监听 -->
-    <testPapersManage-edit ref="testPapersManageEditRef" @success="onSuccess"></testPapersManage-edit>
+    <testPapersManage-edit
+      ref="testPapersManageEditRef"
+      @success="onSuccess"
+    ></testPapersManage-edit>
   </page-containel>
 </template>
 <style lang="scss" scoped>
