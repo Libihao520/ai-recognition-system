@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Model.Dto.TestPaperManage;
 using Model.Dto.TestPapers;
 using Model.Entities;
@@ -61,4 +62,6 @@ public interface IExercisesService
     /// <param name="subjectName"></param>
     /// <returns></returns>
     Task<ApiResult> GetSubjectsOrFileLabel(string? subjectName);
+
+    Task<ApiResult> GenerateImprotTemplate();
 }

@@ -93,4 +93,10 @@ public class ExercisesController : ControllerBase
     {
         return await _exercisesService.GetSubjectsOrFileLabel(subjectName);
     }
+
+    [HttpGet("getfilepathModel")]
+    public async Task<ApiResult> GenerateImprotTemplate()
+    {
+        return await _exercisesService.GenerateImprotTemplate();
+    }
 }
