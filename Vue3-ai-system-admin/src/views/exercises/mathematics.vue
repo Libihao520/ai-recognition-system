@@ -23,12 +23,15 @@ const answers = ref([]) // 单选题答案
 const multipleAnswers = ref([]) // 多选题答案（数组形式，存储选中的所有选项）
 const trueFalseAnswers = ref([]) // 判断题答案（true 或 false）
 const route = useRoute()
+const FileLabels = ref([])
 // 异步方法获取题目
 async function fetchQuestions() {
   const subjectName = route.params.subjectName
-  console.log(subjectName)
-  const res = await getSubjectsOrFileLabel({subjectName:subjectName})
-  // console.log(res.data.data)
+  FileLabels.value = []
+  const res = await getSubjectsOrFileLabel({ subjectName: subjectName })
+  res.data.data.forEach((item) => {
+    FileLabels.value.push({ label: item.label, value: item.value })
+  })
   const questions = await getmMthematics()
   singleChoice.value = questions.data.data.singleChoice.map((question) => ({
     title: question.title,
@@ -50,6 +53,8 @@ async function fetchQuestions() {
   multipleAnswers.value = multipleChoice.value.map(() => [])
   trueFalseAnswers.value = trueFalse.value.map(() => null)
 }
+// 组件创建时调用 fetchQuestions
+fetchQuestions()
 
 // 检查是否有未回答的题目
 function hasUnansweredQuestions() {
@@ -78,8 +83,6 @@ async function submit() {
   ElMessageBox.alert(questions.data.data, '提示', { confirmButtonText: '明白' })
 }
 
-// 组件创建时调用 fetchQuestions
-fetchQuestions()
 // 使用watch监听路由参数subjectName的变化
 watch(
   () => route.params.subjectName,
@@ -90,6 +93,9 @@ watch(
     }
   }
 )
+const SelectFileLabel = (fileLabel) => {
+  console.log(fileLabel)
+}
 </script>  
 <template>
   <page-containel title="数学题">
@@ -98,6 +104,13 @@ watch(
         title="注意：本网页包含单选题、多选题和判断题，在完成答题后点击提交按钮！"
         type="warning"
       />
+      <el-form-item>
+        <div v-for="FileLabel in FileLabels" :key="FileLabel.value">
+          <el-button type="info" plain @click="SelectFileLabel(FileLabel.value)">{{
+            FileLabel.label
+          }}</el-button>
+        </div>
+      </el-form-item>
       <h2>单选题</h2>
       <div v-for="(question, index) in singleChoice" :key="index">
         <p>{{ question.topicNumber + '. ' + question.title }}</p>
