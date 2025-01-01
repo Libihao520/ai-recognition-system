@@ -94,9 +94,27 @@ public class ExercisesController : ControllerBase
         return await _exercisesService.GetSubjectsOrFileLabel(subjectName);
     }
 
-    [HttpGet("getfilepathModel")]
-    public async Task<ApiResult> GenerateImprotTemplate()
+    [HttpGet]
+    public async Task<IActionResult> DownloadExcelTemplate()
     {
-        return await _exercisesService.GenerateImprotTemplate();
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "ExcelTemplate", "题库导入模板.xlsx");
+        // 检查文件是否存在  
+        if (!System.IO.File.Exists(filePath))
+        {
+            return NotFound("File not found");
+        }
+
+        // 读取文件内容  
+        var memory = new MemoryStream();
+        using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+        {
+            await stream.CopyToAsync(memory);
+        }
+
+        memory.Position = 0;
+
+        // 返回文件内容作为HTTP响应  
+        return File(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            Path.GetFileName(filePath));
     }
 }
