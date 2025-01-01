@@ -392,36 +392,4 @@ public class ExercisesService : IExercisesService
             return ResultHelper.Success("请求成功", resultList);
         }
     }
-
-    public async Task<ApiResult> GenerateImprotTemplate()
-    {
-        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        try
-        {
-            string filename = "题库导入模版" + TimeBasedIdGeneratorUtil.GenerateId() + ".xlsx";
-            string saveDirectory = Path.Combine(Directory.GetCurrentDirectory(), "ExcelFiles");
-            Directory.CreateDirectory(saveDirectory);
-            var pathfile = Path.Combine(saveDirectory, filename);
-
-            using (var package = new ExcelPackage(new FileInfo(pathfile)))
-            {
-                var worksheet = package.Workbook.Worksheets.Add("Sheet1");
-
-                worksheet.Cells[1, 1].Value = "题目";
-                worksheet.Cells[1, 2].Value = "选项A";
-                worksheet.Cells[1, 3].Value = "选项B";
-                worksheet.Cells[1, 4].Value = "选项C";
-                worksheet.Cells[1, 5].Value = "选项D";
-                worksheet.Cells[1, 6].Value = "正确答案";
-                worksheet.Cells[1, 7].Value = "本题分数";
-                package.Save();
-            }
-
-            return ResultHelper.Success("模板生成成功", pathfile);
-        }
-        catch (Exception e)
-        {
-            return ResultHelper.Error($"模版生成失败");
-        }
-    }
 }

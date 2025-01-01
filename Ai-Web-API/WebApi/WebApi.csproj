@@ -40,6 +40,10 @@
 	  <None Update="Model\animal.onnx">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+
+	  <None Update="ExcelTemplate\题库导入模板.xlsx">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 	<ItemGroup>

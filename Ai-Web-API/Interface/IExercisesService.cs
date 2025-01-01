@@ -62,6 +62,4 @@ public interface IExercisesService
     /// <param name="subjectName"></param>
     /// <returns></returns>
     Task<ApiResult> GetSubjectsOrFileLabel(string? subjectName);
-
-    Task<ApiResult> GenerateImprotTemplate();
 }
