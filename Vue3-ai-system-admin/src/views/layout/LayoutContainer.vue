@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from 'vue'
 import {
   Odometer,
   FolderOpened,
@@ -29,7 +30,7 @@ import { getSubjectsOrFileLabel } from '../../api/exercises'
 
 const userStore = useUserStore()
 const router = useRouter()
-const subjects = []
+const subjects = ref([])
 const getTableList = async () => {
   const res = await getSubjectsOrFileLabel()
   subjects.value = []
@@ -85,7 +86,7 @@ const handleCommand = async (key) => {
             <el-icon><Notebook /></el-icon>
             <span>题库管理</span>
           </el-menu-item>
-          <div v-for="subject in subjects.value" :key="subject.value">
+          <div v-for="subject in subjects" :key="subject.value">
             <el-menu-item :index="'/exercises/mathematics/' + subject.label">
               <el-icon><Tickets /></el-icon>
               <span>{{ subject.label }}</span>
