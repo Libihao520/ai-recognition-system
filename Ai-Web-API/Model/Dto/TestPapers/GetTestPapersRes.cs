@@ -3,7 +3,7 @@ namespace Model.Dto.TestPapers;
 /// <summary>
 /// 获取题目
 /// </summary>
-public class GetMathematicsRes
+public class GetTestPapersRes
 {
     /// <summary>
     /// 单选题

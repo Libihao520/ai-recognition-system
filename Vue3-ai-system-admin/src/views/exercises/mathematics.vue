@@ -11,7 +11,7 @@ import {
   ElMessage
 } from 'element-plus'
 
-import { getmMthematics, postSubmitExercises } from '../../api/exercises'
+import { getTestPapers, postSubmitExercises } from '../../api/exercises'
 import { useRoute } from 'vue-router'
 import { getSubjectsOrFileLabel } from '../../api/exercises'
 
@@ -24,15 +24,22 @@ const multipleAnswers = ref([]) // 多选题答案（数组形式，存储选中
 const trueFalseAnswers = ref([]) // 判断题答案（true 或 false）
 const route = useRoute()
 const FileLabels = ref([])
-// 异步方法获取题目
-async function fetchQuestions() {
+
+//获取试卷
+const getFileLabel = async () => {
   const subjectName = route.params.subjectName
   FileLabels.value = []
   const res = await getSubjectsOrFileLabel({ subjectName: subjectName })
   res.data.data.forEach((item) => {
     FileLabels.value.push({ label: item.label, value: item.value })
   })
-  const questions = await getmMthematics()
+}
+getFileLabel()
+// 异步方法获取题目
+async function fetchQuestions(fileLabelId) {
+  console.log(fileLabelId)
+  const questions = await getTestPapers({Id:fileLabelId})
+  console.log(questions)
   singleChoice.value = questions.data.data.singleChoice.map((question) => ({
     title: question.title,
     options: question.options,
@@ -53,8 +60,6 @@ async function fetchQuestions() {
   multipleAnswers.value = multipleChoice.value.map(() => [])
   trueFalseAnswers.value = trueFalse.value.map(() => null)
 }
-// 组件创建时调用 fetchQuestions
-fetchQuestions()
 
 // 检查是否有未回答的题目
 function hasUnansweredQuestions() {
@@ -88,13 +93,14 @@ watch(
   () => route.params.subjectName,
   (newVal, oldVal) => {
     if (newVal !== oldVal) {
-      // 当subjectName变化时，重新调用fetchQuestions获取对应题目
-      fetchQuestions()
+      // 当subjectName变化时，重新调用getFileLabel获取对应试卷，并清空题库
+      getFileLabel()
     }
   }
 )
-const SelectFileLabel = (fileLabel) => {
-  console.log(fileLabel)
+const SelectFileLabel = (fileLabelId) => {
+  // console.log(fileLabelId)
+  fetchQuestions(fileLabelId)
 }
 </script>  
 <template>

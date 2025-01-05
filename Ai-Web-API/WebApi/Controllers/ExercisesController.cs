@@ -26,9 +26,9 @@ public class ExercisesController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    public Task<ApiResult> GetmMthematics()
+    public Task<ApiResult> GetTestPapers([FromQuery] GetTestPapersReq req)
     {
-        return _exercisesService.GetmMthematics();
+        return _exercisesService.GetTestPapers(req);
     }
 
     /// <summary>

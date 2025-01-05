@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 //获取数学题目
-export const getmMthematics = () => request.get('/Exercises/GetmMthematics')
+export const getTestPapers = (params) => request.get('/Exercises/GetTestPapers',{params})
 
 //提交
 export const postSubmitExercises = (data) =>

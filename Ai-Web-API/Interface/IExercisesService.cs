@@ -12,7 +12,7 @@ public interface IExercisesService
     /// 获取题目
     /// </summary>
     /// <returns></returns>
-    public Task<ApiResult> GetmMthematics();
+    public Task<ApiResult> GetTestPapers(GetTestPapersReq req);
 
     /// <summary>
     /// 成绩提交

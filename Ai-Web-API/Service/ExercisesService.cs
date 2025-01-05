@@ -35,16 +35,16 @@ public class ExercisesService : IExercisesService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<ApiResult> GetmMthematics()
+    public async Task<ApiResult> GetTestPapers(GetTestPapersReq req)
     {
-        var mathematicsRes = new GetMathematicsRes()
+        var mathematicsRes = new GetTestPapersRes()
         {
             SingleChoice = new List<SingleChoice>(),
             MultipleChoice = new List<MultipleChoice>(),
             TrueFalse = new List<TrueFalse>(),
         };
 
-        var testPapersList = _context.TestPapers.Where(x => x.Subject == "数学").ToList();
+        var testPapersList = _context.TestPapers.Where(x => x.testPapersManageId == req.Id).ToList();
         foreach (var testPapers in testPapersList)
         {
             if (testPapers.type == (int)ExercisesType.单选题)
@@ -334,11 +334,22 @@ public class ExercisesService : IExercisesService
 
                     for (int row = 2; row <= rowCount; row++)
                     {
+                        ExercisesType testPapersType;
+                        if (Enum.TryParse<ExercisesType>(worksheet.Cells[row, 2].Value.ToString(),
+                                out ExercisesType result))
+                        {
+                            testPapersType = result;
+                        }
+                        else
+                        {
+                            return ResultHelper.Error($"导入失败，题目类型无法匹配！");
+                        }
+
                         var paperData = new TestPapers()
                         {
                             TopicNumber = row - 1,
                             Subject = req.QuestionBankCourseTitle,
-                            type = (worksheet.Cells[row, 2].Value is int cellValueIntForType) ? cellValueIntForType : 0,
+                            type = (int)testPapersType,
                             Topic = worksheet.Cells[row, 3].Value?.ToString(),
                             Choice1 = worksheet.Cells[row, 4].Value?.ToString(),
                             Choice2 = worksheet.Cells[row, 5].Value?.ToString(),

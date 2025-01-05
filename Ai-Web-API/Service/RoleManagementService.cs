@@ -20,8 +20,8 @@ namespace Service;
 
 public class RoleManagementService : IRoleManagementService
 {
-    private MyDbContext _context;
-    private IMapper _mapper;
+    private readonly MyDbContext _context;
+    private readonly IMapper _mapper;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     public RoleManagementService(MyDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
