@@ -5,6 +5,7 @@ using Interface;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Model.Dto.User;
+using Model.Options;
 using Model.Other;
 
 namespace Service;

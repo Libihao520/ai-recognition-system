@@ -1,17 +1,20 @@
 using System.Net.Mail;
+using Microsoft.Extensions.Options;
+using Model.Options;
 
 namespace CommonUtil;
 
 /// <summary>
 /// 邮件发送工具类
 /// </summary>
-public static class EmailUtil
+public class EmailUtil
 {
-    //填写你自己需要设置的发件人邮箱
-    private static string _myEmail = "1074775789@qq.com";
+    private readonly EmailOptions _emailOptions;
 
-    //发件人邮箱授权码
-    private static string _myKey = "phktrrjaxylxhgbe";
+    public EmailUtil(IOptionsMonitor<EmailOptions> emailOptions)
+    {
+        _emailOptions = emailOptions.CurrentValue;
+    }
 
     /// <summary>
     /// 发送邮件
@@ -22,7 +25,7 @@ public static class EmailUtil
     /// <param name="cc">抄送(多人用;隔开)</param>
     /// <param name="bcc">密抄(多人用;隔开)</param>
     /// <returns></returns>
-    public static string NetSendEmail(string strMailText, string strTitle, string to, string cc = "", string bcc = "")
+    public string NetSendEmail(string strMailText, string strTitle, string to, string cc = "", string bcc = "")
     {
         try
         {
@@ -33,7 +36,7 @@ public static class EmailUtil
         }
         catch (Exception ex)
         {
-            return ex.Message;
+            throw new Exception(ex.Message, ex);
         }
     }
 
@@ -46,7 +49,7 @@ public static class EmailUtil
     /// <param name="cc">抄送</param>
     /// <param name="bcc">密抄</param>
     /// <returns></returns>
-    public static string NetSendEmail(string strMailText, string strTitle, List<string> to, List<string> cc,
+    public string NetSendEmail(string strMailText, string strTitle, List<string> to, List<string> cc,
         List<string> bcc = null, string path = "")
     {
         try
@@ -54,7 +57,7 @@ public static class EmailUtil
             System.Net.Mail.MailMessage mailMessage = new System.Net.Mail.MailMessage();
             mailMessage.Subject = strTitle;
             mailMessage.Body = strMailText;
-            mailMessage.From = new System.Net.Mail.MailAddress(_myEmail);
+            mailMessage.From = new System.Net.Mail.MailAddress(_emailOptions.MyEmail);
             if (to == null || to.Count == 0)
             {
                 return "请填写收件人";
@@ -90,10 +93,10 @@ public static class EmailUtil
             mailMessage.Priority = System.Net.Mail.MailPriority.Normal;
             mailMessage.IsBodyHtml = true;
             System.Net.Mail.SmtpClient smtpClient = new System.Net.Mail.SmtpClient();
-            smtpClient.Port = 25;
+            smtpClient.Port = 587; // 使用587端口，通常用于SMTP over TLS
+            smtpClient.EnableSsl = true; // 启用SSL加密
 
-            // 填写你自己需要设置的发件人邮箱, 以及授权码
-            smtpClient.Credentials = new System.Net.NetworkCredential(_myEmail, _myKey);
+            smtpClient.Credentials = new System.Net.NetworkCredential(_emailOptions.MyEmail, _emailOptions.MyKey);
             smtpClient.Host = "smtp.qq.com";
             if (!string.IsNullOrEmpty(path))
             {
@@ -101,11 +104,11 @@ public static class EmailUtil
             }
 
             smtpClient.Send(mailMessage);
-            return "";
+            return "发送成功！";
         }
         catch (Exception ex)
         {
-            return ex.Message;
+            throw new Exception("发送邮件时出错: " + ex.Message, ex);
         }
     }
 }

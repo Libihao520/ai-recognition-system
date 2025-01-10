@@ -23,12 +23,15 @@ public class UserService : IUserService
     private readonly IMapper _mapper;
     private MyDbContext _context;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly EmailUtil _emailUtil;
 
-    public UserService(IMapper mapper, MyDbContext context, IHttpContextAccessor httpContextAccessor)
+    public UserService(IMapper mapper, MyDbContext context, IHttpContextAccessor httpContextAccessor,
+        EmailUtil emailUtil)
     {
         _mapper = mapper;
         _context = context;
         _httpContextAccessor = httpContextAccessor;
+        _emailUtil = emailUtil;
     }
 
     public GetUserRes GetUser(string userName, string passWord)
@@ -140,13 +143,19 @@ public class UserService : IUserService
             return ResultHelper.Error("该邮箱的上一条验证码还未失效,请查看您的邮箱继续激活！");
         }
 
-        //将验证码写入缓存，并设置过期时间
-        string randomId = RandomIdGenerator.GenerateRandomId(6);
-        CacheManager.Set(string.Format(RedisKey.UserActiveCode, decodeEmail), randomId, TimeSpan.FromMinutes(30));
-
-        //发送邮箱
-        EmailUtil.NetSendEmail($"欢迎注册AI识别系统,您的验证码是：{randomId},验证码有效期至-{DateTime.Now.AddMinutes(30)}", "AI识别系统注册",
-            decodeEmail);
+        try
+        {
+            string randomId = RandomIdGenerator.GenerateRandomId(6);
+            //发送邮箱
+            _emailUtil.NetSendEmail($"欢迎注册AI识别系统,您的验证码是：{randomId},验证码有效期至-{DateTime.Now.AddMinutes(30)}", "AI识别系统注册",
+                decodeEmail);
+            //将验证码写入缓存，并设置过期时间
+            CacheManager.Set(string.Format(RedisKey.UserActiveCode, decodeEmail), randomId, TimeSpan.FromMinutes(30));
+        }
+        catch (Exception e)
+        {
+            return ResultHelper.Error(e.Message);
+        }
 
         return ResultHelper.Success("发送成功，尽快验证！", $"验证码已经发送到您的邮箱{decodeEmail}！有效期30分钟");
     }

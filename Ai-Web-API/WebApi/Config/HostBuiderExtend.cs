@@ -1,8 +1,10 @@
 using System.Text;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using CommonUtil;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Model.Options;
 using Model.Other;
 
 namespace WebApi.Config;
@@ -22,7 +24,10 @@ public static class HostBuiderExtend
         builder.Services.AddAutoMapper(typeof(AutoMapperConfigs));
         //读取appsettings的JWTTokenOptions，注册JWT
         builder.Services.Configure<JWTTokenOptions>(builder.Configuration.GetSection("JWTTokenOptions"));
-
+        //注册邮箱配置
+        builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("EmailOptions"));
+        
+        builder.Services.AddSingleton<EmailUtil>();
         #region JWT校验
 
         //第二步，增加鉴权逻辑
