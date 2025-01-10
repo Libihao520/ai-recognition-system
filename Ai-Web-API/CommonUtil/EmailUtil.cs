@@ -49,7 +49,6 @@ public class EmailUtil
     /// <param name="cc">抄送</param>
     /// <param name="bcc">密抄</param>
     /// <returns></returns>
-        private int _eamilSwitchFlag = 0;
     public string NetSendEmail(string strMailText, string strTitle, List<string> to, List<string> cc,
         List<string> bcc = null, string path = "")
     {
@@ -58,17 +57,18 @@ public class EmailUtil
             System.Net.Mail.MailMessage mailMessage = new System.Net.Mail.MailMessage();
             mailMessage.Subject = strTitle;
             mailMessage.Body = strMailText;
-            int currentFlag = Interlocked.CompareExchange(ref _eamilSwitchFlag, 1 - _eamilSwitchFlag, _eamilSwitchFlag);
-
-            if (currentFlag==0)
+            var emailAndKeys = _emailOptions.EmailAndKeys;
+            int emailCount = emailAndKeys.Count;
+            if (emailCount == 0)
             {
-                mailMessage.From = new System.Net.Mail.MailAddress(_emailOptions.MyEmail);
+                throw new InvalidOperationException("未配置任何邮件账户信息。");
             }
-            else
-            {
-                mailMessage.From = new System.Net.Mail.MailAddress(_emailOptions.MyEmail2);
-            } 
-            
+
+            Random random = new Random();
+            int randomNumber = random.Next(0, emailCount);
+            var emailOptionsEmailAndKey = emailAndKeys[randomNumber];
+            mailMessage.From = new System.Net.Mail.MailAddress(emailOptionsEmailAndKey.MyEmail);
+
             if (to == null || to.Count == 0)
             {
                 return "请填写收件人";
@@ -107,14 +107,10 @@ public class EmailUtil
             smtpClient.Port = 587; // 使用587端口，通常用于SMTP over TLS
             smtpClient.EnableSsl = true; // 启用SSL加密
 
-            if (currentFlag==0)
-            {
-                smtpClient.Credentials = new System.Net.NetworkCredential(_emailOptions.MyEmail, _emailOptions.MyKey);
-            }
-            else
-            {
-                smtpClient.Credentials = new System.Net.NetworkCredential(_emailOptions.MyEmail2, _emailOptions.MyKey2);
-            }
+
+            smtpClient.Credentials =
+                new System.Net.NetworkCredential(emailOptionsEmailAndKey.MyEmail, emailOptionsEmailAndKey.MyKey);
+
             smtpClient.Host = "smtp.qq.com";
             if (!string.IsNullOrEmpty(path))
             {
