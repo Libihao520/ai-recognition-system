@@ -8,6 +8,7 @@ using CommonUtil.RedisUtil;
 using EFCoreMigrations;
 using Interface;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Model;
 using Model.Consts;
 using Model.Dto.photo;
@@ -20,18 +21,20 @@ namespace Service;
 
 public class UserService : IUserService
 {
+    private readonly ILogger<UserService> _logger;
     private readonly IMapper _mapper;
     private MyDbContext _context;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly EmailUtil _emailUtil;
 
     public UserService(IMapper mapper, MyDbContext context, IHttpContextAccessor httpContextAccessor,
-        EmailUtil emailUtil)
+        EmailUtil emailUtil, ILogger<UserService> logger)
     {
         _mapper = mapper;
         _context = context;
         _httpContextAccessor = httpContextAccessor;
         _emailUtil = emailUtil;
+        _logger = logger;
     }
 
     public GetUserRes GetUser(string userName, string passWord)
@@ -154,7 +157,7 @@ public class UserService : IUserService
         }
         catch (Exception e)
         {
-            return ResultHelper.Error(e.Message);
+            return ResultHelper.Error("邮箱发送失败，请稍后再试！");
         }
 
         return ResultHelper.Success("发送成功，尽快验证！", $"验证码已经发送到您的邮箱{decodeEmail}！有效期30分钟");
