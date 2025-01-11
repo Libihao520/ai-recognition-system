@@ -72,7 +72,7 @@ public class ExercisesService : IExercisesService
         //得分
         int score = 0;
 
-        var testPapersList = _context.TestPapers.Where(x => x.Subject == "数学").ToList();
+        var testPapersList = _context.TestPapers.Where(x => x.testPapersManageId == req.TestPapersManageId).ToList();
         var singleChoices = testPapersList.Where(q => q.type == (int)ExercisesType.单选题)
             .Select(p => new { p.TopicNumber, answer = p.answer[0], p.Grade })
             .OrderBy(s => s.TopicNumber)
@@ -137,7 +137,9 @@ public class ExercisesService : IExercisesService
             // 答对数
             CorrectQuantity = multipleChoiceCount + trueFalseCount + singleChoiceCount,
             // 提交的答案
-            SubmittedOptions = JsonSerializer.Serialize(req)
+            SubmittedOptions = JsonSerializer.Serialize(req),
+
+            TestPapersManageId = req.TestPapersManageId
         };
         _context.ReportCards.Add(reportCard1);
         _context.SaveChanges();
@@ -194,7 +196,8 @@ public class ExercisesService : IExercisesService
         var reportCard = await _context.ReportCards.FindAsync(id);
         SubMitExercisesReq subMitExercisesReq =
             JsonSerializer.Deserialize<SubMitExercisesReq>(reportCard.SubmittedOptions);
-        var testPapersList = await _context.TestPapers.Where(q => q.Subject == reportCard.Subject).ToListAsync();
+        var testPapersList = await _context.TestPapers.Where(q => q.testPapersManageId == reportCard.TestPapersManageId)
+            .ToListAsync();
         var user = await _context.Users.FindAsync(reportCard.CreateUserId);
 
 
@@ -347,7 +350,8 @@ public class ExercisesService : IExercisesService
 
                         var paperData = new TestPapers()
                         {
-                            TopicNumber = row - 1,
+                            TopicNumber =
+                                int.Parse(worksheet.Cells[row, 1].Value.ToString()),
                             Subject = req.QuestionBankCourseTitle,
                             type = (int)testPapersType,
                             Topic = worksheet.Cells[row, 3].Value?.ToString(),

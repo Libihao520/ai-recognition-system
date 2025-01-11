@@ -32,4 +32,9 @@ public class ReportCard : Entity
     /// 提交的答案
     /// </summary>
     public string? SubmittedOptions { get; set; }
+
+    /// <summary>
+    /// 试卷ID
+    /// </summary>
+    public long? TestPapersManageId { get; set; }
 }
