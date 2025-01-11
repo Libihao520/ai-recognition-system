@@ -9,7 +9,7 @@ using Model.Other;
 namespace WebApi.Controllers;
 
 [ApiController]
-/*[Authorize]*/
+[Authorize]
 [Route("api/[controller]/[action]")]
 public class ExercisesController : ControllerBase
 

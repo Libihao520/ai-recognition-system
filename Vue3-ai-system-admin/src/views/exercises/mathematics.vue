@@ -24,6 +24,7 @@ const multipleAnswers = ref([]) // 多选题答案（数组形式，存储选中
 const trueFalseAnswers = ref([]) // 判断题答案（true 或 false）
 const route = useRoute()
 const FileLabels = ref([])
+const TestPapersManageId = ref()
 
 //获取试卷
 const getFileLabel = async () => {
@@ -37,8 +38,9 @@ const getFileLabel = async () => {
 getFileLabel()
 // 异步方法获取题目
 async function fetchQuestions(fileLabelId) {
+  TestPapersManageId.value = fileLabelId
   console.log(fileLabelId)
-  const questions = await getTestPapers({Id:fileLabelId})
+  const questions = await getTestPapers({ Id: fileLabelId })
   console.log(questions)
   singleChoice.value = questions.data.data.singleChoice.map((question) => ({
     title: question.title,
@@ -81,6 +83,7 @@ async function submit() {
   }
 
   const questions = await postSubmitExercises({
+    TestPapersManageId: TestPapersManageId.value,
     singleChoice: answers.value,
     multipleChoice: multipleAnswers.value,
     trueFalse: trueFalseAnswers.value
