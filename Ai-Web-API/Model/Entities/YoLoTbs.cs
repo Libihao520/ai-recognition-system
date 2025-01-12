@@ -24,6 +24,11 @@ public class YoLoTbs : Entity
     public int SbJgCount { get; set; }
 
     /// <summary>
+    /// 识别结果
+    /// </summary>
+    public string? SbJg { get; set; }
+
+    /// <summary>
     /// 是否人工审核
     /// </summary>
     [Required]
