@@ -48,5 +48,6 @@
 
 	<ItemGroup>
 	  <Folder Include="ExcelTemplate\" />
+	  <Folder Include="TempExcelFiles\" />
 	</ItemGroup>
 </Project>
