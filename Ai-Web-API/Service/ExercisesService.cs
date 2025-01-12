@@ -71,50 +71,51 @@ public class ExercisesService : IExercisesService
     {
         //得分
         int score = 0;
-
+        int correctQuantity = 0;
         var testPapersList = _context.TestPapers.Where(x => x.testPapersManageId == req.TestPapersManageId).ToList();
         var singleChoices = testPapersList.Where(q => q.type == (int)ExercisesType.单选题)
-            .Select(p => new { p.TopicNumber, answer = p.answer[0], p.Grade })
+            .Select(p => new { p.Id, p.TopicNumber, answer = p.answer[0], p.Grade })
             .OrderBy(s => s.TopicNumber)
             .ToList();
 
-        var singleChoiceCount = singleChoices.Count();
-        for (int i = 0; i < Math.Min(singleChoices.Count, req.SingleChoice.Count); i++)
+        foreach (var keyValuePair in req.SingleChoice)
         {
-            if (singleChoices[i].answer == req.SingleChoice[i])
+            var singleChoice = singleChoices.Where(q => q.Id == keyValuePair.Key).FirstOrDefault();
+            if (singleChoice != null && singleChoice.answer == keyValuePair.Value)
             {
-                score = score + singleChoices[i].Grade;
-                singleChoiceCount++;
+                score = score + singleChoice.Grade;
+                correctQuantity++;
             }
         }
-
+        
         // 处理多选题
         var multipleChoices = testPapersList.Where(m => m.type == (int)ExercisesType.多选题)
-            .Select(m => new { m.TopicNumber, CorrectAnswer = m.answer, m.Grade })
+            .Select(m => new {m.Id, m.TopicNumber, CorrectAnswer = m.answer, m.Grade })
             .OrderBy(s => s.TopicNumber)
             .ToList();
-        int multipleChoiceCount = 0;
-        for (int i = 0; i < Math.Min(multipleChoices.Count, req.MultipleChoice.Count); i++)
+        foreach (var keyValuePair in req.MultipleChoice)
         {
-            if (multipleChoices[i].CorrectAnswer.SequenceEqual(req.MultipleChoice[i]))
+            var multipleChoice = multipleChoices.Where(q => q.Id == keyValuePair.Key).FirstOrDefault();
+            if (multipleChoice.CorrectAnswer.SequenceEqual(keyValuePair.Value))
             {
-                score = score + multipleChoices[i].Grade;
-                multipleChoiceCount++;
+                score = score + multipleChoice.Grade;
+                correctQuantity++;
             }
         }
 
         //处理判断题
-        var testPapersEnumerable = testPapersList.Where(p => p.type == (int)ExercisesType.判断题)
-            .Select(p => new { p.TopicNumber, Answer = p.answer[0] == 1 ? "true" : "false", p.Grade })
+        var trueFalseChoices = testPapersList.Where(p => p.type == (int)ExercisesType.判断题)
+            .Select(p => new { p.Id,p.TopicNumber, Answer = p.answer[0] == 1 ? "true" : "false", p.Grade })
             .OrderBy(p => p.TopicNumber)
             .ToList();
-        int trueFalseCount = 0;
-        for (int i = 0; i < Math.Min(testPapersEnumerable.Count, req.TrueFalse.Count); i++)
+        
+        foreach (var keyValuePair in req.TrueFalseChoice)
         {
-            if (testPapersEnumerable[i].Answer == req.TrueFalse[i])
+            var trueFalseChoice = trueFalseChoices.Where(q => q.Id == keyValuePair.Key).FirstOrDefault();
+            if (trueFalseChoice.Answer ==keyValuePair.Value)
             {
-                score = score + testPapersEnumerable[i].Grade;
-                trueFalseCount++;
+                score = score + trueFalseChoice.Grade;
+                correctQuantity++;
             }
         }
 
@@ -133,9 +134,9 @@ public class ExercisesService : IExercisesService
             //总分
             TotalPoints = score,
             //总数
-            NumberOfQuestions = singleChoices.Count + multipleChoices.Count + testPapersEnumerable.Count,
+            NumberOfQuestions = singleChoices.Count + multipleChoices.Count + trueFalseChoices.Count,
             // 答对数
-            CorrectQuantity = multipleChoiceCount + trueFalseCount + singleChoiceCount,
+            CorrectQuantity = correctQuantity,
             // 提交的答案
             SubmittedOptions = JsonSerializer.Serialize(req),
 

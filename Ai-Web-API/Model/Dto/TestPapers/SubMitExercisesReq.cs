@@ -6,7 +6,7 @@ public class SubMitExercisesReq
     /// 试卷ID
     /// </summary>
     public long? TestPapersManageId { get; set; }
-    public List<int>? SingleChoice { get; set; }
-    public List<List<int>>? MultipleChoice { get; set; }
-    public List<string>? TrueFalse { get; set; }
+    public Dictionary<long,int> SingleChoice { get; set; }
+    public Dictionary<long,List<int>> MultipleChoice { get; set; }
+    public Dictionary<long,string> TrueFalseChoice { get; set; }
 }
