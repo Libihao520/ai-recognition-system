@@ -39,37 +39,62 @@ getFileLabel()
 // 异步方法获取题目
 async function fetchQuestions(fileLabelId) {
   TestPapersManageId.value = fileLabelId
-  console.log(fileLabelId)
   const questions = await getTestPapers({ Id: fileLabelId })
-  console.log(questions)
   singleChoice.value = questions.data.data.singleChoice.map((question) => ({
+    id: question.id,
     title: question.title,
     options: question.options,
     topicNumber: question.topicNumber
   }))
   multipleChoice.value = questions.data.data.multipleChoice.map((question) => ({
+    id: question.id,
     title: question.title,
     options: question.options,
     topicNumber: question.topicNumber
   }))
   trueFalse.value = questions.data.data.trueFalse.map((question) => ({
+    id: question.id,
     title: question.title,
     topicNumber: question.topicNumber
   }))
 
-  // 初始化答案数组，确保每个问题都有一个对应的答案位置
-  answers.value = singleChoice.value.map(() => null)
-  multipleAnswers.value = multipleChoice.value.map(() => [])
-  trueFalseAnswers.value = trueFalse.value.map(() => null)
+  // 初始化答案对象，使用题目ID作为键
+  const singleChoiceAnswers = {}
+  singleChoice.value.forEach((q) => {
+    singleChoiceAnswers[q.id] = null
+  })
+  answers.value = singleChoiceAnswers
+
+  const multipleChoiceAnswers = {}
+  multipleChoice.value.forEach((q) => {
+    multipleChoiceAnswers[q.id] = []
+  })
+  multipleAnswers.value = multipleChoiceAnswers
+
+  const trueFalseChoiceAnswers = {}
+  trueFalse.value.forEach((q) => {
+    trueFalseChoiceAnswers[q.id] = null
+  })
+  trueFalseAnswers.value = trueFalseChoiceAnswers
 }
 
 // 检查是否有未回答的题目
 function hasUnansweredQuestions() {
-  return (
-    answers.value.includes(null) ||
-    multipleAnswers.value.some((answers) => answers.length === 0) ||
-    trueFalseAnswers.value.includes(null)
+  // 检查单选题
+  const hasUnansweredSingleChoice = Object.values(answers.value).includes(null)
+
+  // 检查多选题
+  const hasUnansweredMultipleChoice = Object.values(multipleAnswers.value).some(
+    (answersArray) => answersArray.length === 0
   )
+
+  //检查判断题
+  const hasMissingTrueFalseAnswer = Object.keys(trueFalseAnswers.value).some(
+    (key) => trueFalseAnswers.value[key] == null
+  )
+
+  // 返回是否有任何未回答的题目
+  return hasUnansweredSingleChoice || hasUnansweredMultipleChoice || hasMissingTrueFalseAnswer
 }
 // 提交答案的方法
 async function submit() {
@@ -86,7 +111,7 @@ async function submit() {
     TestPapersManageId: TestPapersManageId.value,
     singleChoice: answers.value,
     multipleChoice: multipleAnswers.value,
-    trueFalse: trueFalseAnswers.value
+    trueFalseChoice: trueFalseAnswers.value
   })
   ElMessageBox.alert(questions.data.data, '提示', { confirmButtonText: '明白' })
 }
@@ -102,7 +127,6 @@ watch(
   }
 )
 const SelectFileLabel = (fileLabelId) => {
-  // console.log(fileLabelId)
   fetchQuestions(fileLabelId)
 }
 </script>  
@@ -121,9 +145,9 @@ const SelectFileLabel = (fileLabelId) => {
         </div>
       </el-form-item>
       <h2>单选题</h2>
-      <div v-for="(question, index) in singleChoice" :key="index">
+      <div v-for="question in singleChoice" :key="question.id">
         <p>{{ question.topicNumber + '. ' + question.title }}</p>
-        <el-radio-group v-model="answers[index]">
+        <el-radio-group v-model="answers[question.id]">
           <el-radio
             v-for="(option, optionIndex) in question.options"
             :key="optionIndex"
@@ -136,9 +160,9 @@ const SelectFileLabel = (fileLabelId) => {
       <!-- 多选题部分 -->
       <div v-if="multipleChoice.length">
         <h2>多选题</h2>
-        <div v-for="(question, index) in multipleChoice" :key="index">
+        <div v-for="question in multipleChoice" :key="question.id">
           <p>{{ question.topicNumber + '. ' + question.title }}</p>
-          <el-checkbox-group v-model="multipleAnswers[index]">
+          <el-checkbox-group v-model="multipleAnswers[question.id]">
             <el-checkbox
               v-for="(option, optionIndex) in question.options"
               :key="optionIndex"
@@ -152,9 +176,9 @@ const SelectFileLabel = (fileLabelId) => {
       <!-- 判断题部分 -->
       <div v-if="trueFalse.length">
         <h2>判断题</h2>
-        <div v-for="(question, index) in trueFalse" :key="index">
+        <div v-for="question in trueFalse" :key="question.id">
           <p>{{ question.topicNumber + '. ' + question.title }}</p>
-          <el-radio-group v-model="trueFalseAnswers[index]">
+          <el-radio-group v-model="trueFalseAnswers[question.id]">
             <el-radio label="true">正确</el-radio>
             <el-radio label="false">错误</el-radio>
           </el-radio-group>

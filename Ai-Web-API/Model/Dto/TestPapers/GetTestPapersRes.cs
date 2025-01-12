@@ -23,6 +23,7 @@ public class GetTestPapersRes
 
 public class SingleChoice
 {
+    public long Id { get; set; }
     public string? Title { get; set; }
 
     public List<string>? Options { get; set; }
@@ -36,6 +37,7 @@ public class SingleChoice
 
 public class MultipleChoice
 {
+    public long Id { get; set; }
     public string? Title { get; set; }
     public List<string>? Options { get; set; }
 
@@ -48,6 +50,7 @@ public class MultipleChoice
 
 public class TrueFalse
 {
+    public long Id { get; set; }
     public string? Title { get; set; }
     public List<string>? Options { get; set; }
 
