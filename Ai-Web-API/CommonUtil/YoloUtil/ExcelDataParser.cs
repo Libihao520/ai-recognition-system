@@ -68,11 +68,11 @@ public class ExcelDataParser
                 case "a":
                     return 0;
                 case "b":
-                    return 2;
+                    return 1;
                 case "c":
-                    return 3;
+                    return 2;
                 case "d":
-                    return 4;
+                    return 3;
                 default:
                     throw new ArgumentException("Invalid single character input.");
             }
