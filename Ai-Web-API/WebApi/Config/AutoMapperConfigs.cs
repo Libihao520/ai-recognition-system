@@ -1,4 +1,5 @@
 using AutoMapper;
+using CommonUtil;
 using Model.Dto.AiModel;
 using Model.Dto.Role;
 using Model.Dto.TestPaperManage;
@@ -18,7 +19,8 @@ public class AutoMapperConfigs : Profile
         //用户
         CreateMap<Users, GetUserRes>();
         //yolo
-        CreateMap<YoLoTbs, YoloPkqRes>();
+        CreateMap<YoLoTbs, YoloPkqRes>()
+            .ForMember(dest => dest.CreateName, opt => opt.MapFrom(src => (src.CreateUserId)));;
 
         CreateMap<YoloDetectionPutReq, YoLoTbs>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
@@ -43,7 +45,8 @@ public class AutoMapperConfigs : Profile
                 opt => opt.MapFrom(src => new List<string>() { src.Choice1, src.Choice2 }));
 
         // 题库模块
-        CreateMap<TestPapersManage, GetTestPaperManageRes>();
+        CreateMap<TestPapersManage, GetTestPaperManageRes>()
+            .ForMember(dest => dest.CreateName, opt => opt.MapFrom(src => (src.CreateUserId)));;;
         
         //成绩导出
         CreateMap<ReportCard, DownloadAchievementWordRes>();
@@ -59,6 +62,6 @@ public class AutoMapperConfigs : Profile
         //RoleManagement
         CreateMap<AiModels, GetModelRes>()
             //desc目标对象--将源对象AiModels的CreateUserId属性的值作为目标对象GetModelRes的CreateName属性的值
-            .ForMember(dest => dest.CreateName, opt => opt.MapFrom(sec => (sec.CreateUserId)));
+            .ForMember(dest => dest.CreateName, opt => opt.MapFrom(src => (src.CreateUserId)));
     }
 }

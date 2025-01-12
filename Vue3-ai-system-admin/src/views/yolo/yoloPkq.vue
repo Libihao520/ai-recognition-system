@@ -119,7 +119,8 @@ const onCurrentChange = (page) => {
       <el-table-column prop="cls" label="模型类型"></el-table-column>
       <el-table-column prop="name" label="模型名称"></el-table-column>
       <el-table-column prop="sbjgCount" label="数量"></el-table-column>
-      <el-table-column prop="createDate" label="时间">
+      <el-table-column prop="sbJg" label="识别结果"></el-table-column>
+      <el-table-column prop="createDate" label="创建时间">
         <template #default="{ row }">
           {{ formatTime(row.createDate) }}
         </template>
@@ -129,6 +130,7 @@ const onCurrentChange = (page) => {
           {{ row.isManualReview == true ? '已审核' : '未审核' }}</template
         >
       </el-table-column>
+      <el-table-column prop="createName" label="创建人"></el-table-column>
       <el-table-column label="操作" width="150">
         <!-- row就是channelList的一项，$index是下标 -->
         <template #default="{ row, $index }">

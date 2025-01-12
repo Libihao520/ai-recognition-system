@@ -106,7 +106,7 @@ const ModelClasss = getModelClasss()
     <!-- 表单数据 -->
     <el-table v-loading="loading" :data="channelList" style="width: 100%">
       <el-table-column type="index" label="序号" width="100"></el-table-column>
-      <el-table-column prop="ModelCls" label="模型类型"></el-table-column>
+      <el-table-column prop="modelCls" label="模型类型"></el-table-column>
       <el-table-column prop="modelName" label="模型名称"></el-table-column>
       <el-table-column prop="modelSize" label="模型大小(MB)"></el-table-column>
       <el-table-column prop="path" label="模型地址"></el-table-column>
