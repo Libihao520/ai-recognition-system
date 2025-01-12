@@ -87,10 +87,10 @@ public class ExercisesService : IExercisesService
                 correctQuantity++;
             }
         }
-        
+
         // 处理多选题
         var multipleChoices = testPapersList.Where(m => m.type == (int)ExercisesType.多选题)
-            .Select(m => new {m.Id, m.TopicNumber, CorrectAnswer = m.answer, m.Grade })
+            .Select(m => new { m.Id, m.TopicNumber, CorrectAnswer = m.answer, m.Grade })
             .OrderBy(s => s.TopicNumber)
             .ToList();
         foreach (var keyValuePair in req.MultipleChoice)
@@ -105,14 +105,14 @@ public class ExercisesService : IExercisesService
 
         //处理判断题
         var trueFalseChoices = testPapersList.Where(p => p.type == (int)ExercisesType.判断题)
-            .Select(p => new { p.Id,p.TopicNumber, Answer = p.answer[0] == 1 ? "true" : "false", p.Grade })
+            .Select(p => new { p.Id, p.TopicNumber, Answer = p.answer[0] == 1 ? "true" : "false", p.Grade })
             .OrderBy(p => p.TopicNumber)
             .ToList();
-        
+
         foreach (var keyValuePair in req.TrueFalseChoice)
         {
             var trueFalseChoice = trueFalseChoices.Where(q => q.Id == keyValuePair.Key).FirstOrDefault();
-            if (trueFalseChoice.Answer ==keyValuePair.Value)
+            if (trueFalseChoice.Answer == keyValuePair.Value)
             {
                 score = score + trueFalseChoice.Grade;
                 correctQuantity++;
@@ -339,7 +339,7 @@ public class ExercisesService : IExercisesService
                     for (int row = 2; row <= rowCount; row++)
                     {
                         ExercisesType testPapersType;
-                        if (Enum.TryParse<ExercisesType>(worksheet.Cells[row, 2].Value.ToString(),
+                        if (Enum.TryParse<ExercisesType>(worksheet.Cells[row, 1].Value.ToString(),
                                 out ExercisesType result))
                         {
                             testPapersType = result;
@@ -351,21 +351,21 @@ public class ExercisesService : IExercisesService
 
                         var paperData = new TestPapers()
                         {
-                            TopicNumber =
-                                int.Parse(worksheet.Cells[row, 1].Value.ToString()),
+                            Id = TimeBasedIdGeneratorUtil.GenerateId(),
+                            TopicNumber = row - 1,
                             Subject = req.QuestionBankCourseTitle,
                             type = (int)testPapersType,
-                            Topic = worksheet.Cells[row, 3].Value?.ToString(),
-                            Choice1 = worksheet.Cells[row, 4].Value?.ToString(),
-                            Choice2 = worksheet.Cells[row, 5].Value?.ToString(),
-                            Choice3 = worksheet.Cells[row, 6].Value?.ToString(),
-                            Choice4 = worksheet.Cells[row, 7].Value?.ToString(),
+                            Topic = worksheet.Cells[row, 2].Value?.ToString(),
+                            Choice1 = worksheet.Cells[row, 3].Value?.ToString(),
+                            Choice2 = worksheet.Cells[row, 4].Value?.ToString(),
+                            Choice3 = worksheet.Cells[row, 5].Value?.ToString(),
+                            Choice4 = worksheet.Cells[row, 6].Value?.ToString(),
                             answer = new List<int>(),
-                            Grade = int.Parse(worksheet.Cells[row, 9].Value?.ToString() ?? string.Empty),
+                            Grade = int.Parse(worksheet.Cells[row, 8].Value?.ToString() ?? string.Empty),
                             testPapersManageId = newRecord.Id
                         };
                         paperData.answer =
-                            ExcelDataParser.ParseAnswerFromCellValue(worksheet.Cells[row, 8].Value?.ToString());
+                            ExcelDataParser.ParseAnswerFromCellValue(worksheet.Cells[row, 7].Value?.ToString());
                         _context.TestPapers.Add(paperData);
                     }
                 }
