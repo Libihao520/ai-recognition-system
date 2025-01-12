@@ -4,6 +4,7 @@ using CommonUtil.RandomIdUtil;
 using CommonUtil.YoloUtil;
 using EFCoreMigrations;
 using Interface;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
@@ -27,14 +28,18 @@ public class YoloService : IYoloService
 {
     private readonly IMapper _mapper;
     private MyDbContext _context;
-
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly UserInformationUtil _informationUtil;
+    
     private static readonly string? BasePath =
         Directory.GetCurrentDirectory();
 
-    public YoloService(MyDbContext context, IMapper mapper)
+    public YoloService(MyDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor, UserInformationUtil informationUtil)
     {
         _context = context;
         _mapper = mapper;
+        _httpContextAccessor = httpContextAccessor;
+        _informationUtil = informationUtil;
     }
 
     /// <summary>
@@ -69,11 +74,20 @@ public class YoloService : IYoloService
 
         var yoloPkqResList = _mapper.Map<List<YoloPkqRes>>(paginatedResult);
 
+        foreach (var yoloPkqRese in yoloPkqResList)
+        {
+            if (yoloPkqRese.CreateName != null)
+                yoloPkqRese.CreateName =
+                    await _informationUtil.GetUserNameByIdAsync(long.Parse(yoloPkqRese.CreateName));
+        }
         return ResultHelper.Success("获取成功！", yoloPkqResList, total);
     }
 
     public async Task<string> PutPhoto(PhotoAddDto po, CancellationToken cancellationToken)
     {
+        var user = _httpContextAccessor.HttpContext.User;
+        var createUserId = long.Parse(user.Claims.FirstOrDefault(c => c.Type == "Id").Value);
+
         var aiModels = await _context.AiModels.FindAsync(po.ModelId, cancellationToken);
         if (aiModels == null || string.IsNullOrEmpty(aiModels.Path))
         {
@@ -127,13 +141,14 @@ public class YoloService : IYoloService
                         Cls = aiModels.ModelCls,
                         Name = aiModels.ModelName,
                         SbJgCount = sbjgCount,
+                        SbJg = result,
                         IsManualReview = false,
                         SbZqCount = 0,
                         RgMsCount = 0,
                         Zql = 0,
                         Zhl = 0,
                         CreateDate = DateTime.Now,
-                        CreateUserId = 0,
+                        CreateUserId = createUserId,
                         IsDeleted = 0
                     };
                     yolotbs.Photos = new Photos() { PhotoBase64 = "data:image/jpeg;base64," + base64Image };

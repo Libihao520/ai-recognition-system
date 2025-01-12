@@ -16,6 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\EFCoreMigrations\EFCoreMigrations.csproj" />
       <ProjectReference Include="..\Model\Model.csproj" />
     </ItemGroup>
 

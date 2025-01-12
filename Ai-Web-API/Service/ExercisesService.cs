@@ -27,12 +27,14 @@ public class ExercisesService : IExercisesService
     private MyDbContext _context;
     private readonly IMapper _mapper;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly UserInformationUtil _informationUtil;
 
-    public ExercisesService(MyDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+    public ExercisesService(MyDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor, UserInformationUtil informationUtil)
     {
         _context = context;
         _mapper = mapper;
         _httpContextAccessor = httpContextAccessor;
+        _informationUtil = informationUtil;
     }
 
     public async Task<ApiResult> GetTestPapers(GetTestPapersReq req)
@@ -254,9 +256,6 @@ public class ExercisesService : IExercisesService
         try
         {
             var queryable = _context.TestPapersManages.Where(t => t.IsDeleted == 0).AsQueryable();
-            //string.IsNullOrEmpty()判断是否空，空返回true,有值是false
-            //!string.IsNullOrEmpty()判断是否空，空返回false,有值是true
-            //if(true){才执行}
             if (!string.IsNullOrEmpty(req.FileLabel))
             {
                 queryable = queryable.Where(t => t.FileLabel.Contains(req.FileLabel));
@@ -276,6 +275,12 @@ public class ExercisesService : IExercisesService
 
             var resultList = _mapper.Map<List<GetTestPaperManageRes>>(listAsync);
 
+            foreach (var getTestPaperManageRes in resultList)
+            {
+                if (getTestPaperManageRes.CreateName != null)
+                    getTestPaperManageRes.CreateName =
+                        await _informationUtil.GetUserNameByIdAsync(long.Parse(getTestPaperManageRes.CreateName));
+            }
             return ResultHelper.Success("查询成功", resultList, total);
         }
 

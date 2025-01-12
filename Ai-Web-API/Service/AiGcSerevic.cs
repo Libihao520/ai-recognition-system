@@ -22,17 +22,18 @@ public class AiGcSerevic : IAiGcService
     private MyDbContext _context;
     private readonly IMapper _mapper;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly UserInformationUtil _informationUtil;
 
-    public AiGcSerevic(MyDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+    public AiGcSerevic(MyDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor, UserInformationUtil informationUtil)
     {
         _context = context;
         _mapper = mapper;
         _httpContextAccessor = httpContextAccessor;
+        _informationUtil = informationUtil;
     }
 
     public async Task<ApiResult> GetModelService(GetModelReq req)
     {
-        // TODO 查询实体类用automap映射到GetModelRes，返回给前端（req如果有传类型和模型名称，就过滤，类型精准过滤，模型是模糊查询）
         try
         {
             var query = _context.AiModels.Where(q => q.IsDeleted == 0).AsQueryable();
@@ -55,7 +56,12 @@ public class AiGcSerevic : IAiGcService
                 .ToListAsync();
 
             var resultList = _mapper.Map<List<GetModelRes>>(paginatedResult);
-
+            foreach (var getModelRes in resultList)
+            {
+                if (getModelRes.CreateName != null)
+                    getModelRes.CreateName =
+                        await _informationUtil.GetUserNameByIdAsync(long.Parse(getModelRes.CreateName));
+            }
             return ResultHelper.Success("查询成功", resultList, totalCount);
         }
         catch (Exception e)

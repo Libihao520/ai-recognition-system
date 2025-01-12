@@ -23,9 +23,19 @@ public class YoloPkqEditRes
     public int sbjgCount { get; set; }
 
     /// <summary>
+    /// 识别结果
+    /// </summary>
+    public string? SbJg { get; set; }
+
+    /// <summary>
     /// 创建时间
     /// </summary>
     public DateTime CreateDate { get; set; }
+
+    /// <summary>
+    /// 创建人
+    /// </summary>
+    public string? CreateName { get; set; }
 
     /// <summary>
     /// 照片(base 64)

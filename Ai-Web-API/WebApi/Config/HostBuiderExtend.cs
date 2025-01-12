@@ -28,6 +28,8 @@ public static class HostBuiderExtend
         builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("EmailOptions"));
         
         builder.Services.AddSingleton<EmailUtil>();
+        //获取用户信息工具
+        builder.Services.AddSingleton<UserInformationUtil>();
         #region JWT校验
 
         //第二步，增加鉴权逻辑
@@ -49,7 +51,7 @@ public static class HostBuiderExtend
                         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenOptions.SecurityKey)) //拿到SecurityKey 
                 };
             });
-        #endregion
+        #endregion 
         //添加跨域策略
         builder.Services.AddCors(options =>
         {

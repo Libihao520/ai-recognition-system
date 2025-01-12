@@ -16,16 +16,26 @@ public class YoloPkqRes
     /// 模型名称
     /// </summary>
     public string Name { get; set; }
-    
+
     /// <summary>
     /// 识别结果数量
     /// </summary>
     public int sbjgCount { get; set; }
 
     /// <summary>
+    /// 识别结果
+    /// </summary>
+    public string? SbJg { get; set; }
+
+    /// <summary>
     /// 创建时间
     /// </summary>
     public DateTime CreateDate { get; set; }
+
+    /// <summary>
+    /// 创建人
+    /// </summary>
+    public string? CreateName { get; set; }
 
     /// <summary>
     /// 是否人工审核
