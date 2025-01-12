@@ -211,7 +211,7 @@ public class ExercisesService : IExercisesService
             {
                 var map = _mapper.Map<SingleChoice>(testPapers);
                 map.Answer = testPapers.answer[0].ToLetter();
-                map.SubAnswer = subMitExercisesReq.SingleChoice[testPapers.TopicNumber - 1].ToLetter();
+                map.SubAnswer = subMitExercisesReq.SingleChoice[testPapers.Id].ToLetter();
                 model.SingleChoice.Add(map);
             }
             else if (testPapers.type == (int)ExercisesType.多选题)
@@ -219,14 +219,14 @@ public class ExercisesService : IExercisesService
                 var map = _mapper.Map<MultipleChoice>(testPapers);
                 map.Answer = string.Join(", ", testPapers.answer.Select(a => a.ToLetter().ToString()));
                 map.SubAnswer = string.Join(", ",
-                    subMitExercisesReq.MultipleChoice[testPapers.TopicNumber - 1].Select(a => a.ToLetter().ToString()));
+                    subMitExercisesReq.MultipleChoice[testPapers.Id].Select(a => a.ToLetter().ToString()));
                 model.MultipleChoice.Add(map);
             }
             else if (testPapers.type == (int)ExercisesType.判断题)
             {
                 var map = _mapper.Map<TrueFalse>(testPapers);
                 map.Answer = testPapers.answer[0] == 1 ? "正确" : "错误";
-                map.SubAnswer = subMitExercisesReq.SingleChoice[testPapers.TopicNumber - 1] == 1 ? "正确" : "错误";
+                map.SubAnswer = subMitExercisesReq.TrueFalseChoice[testPapers.Id] == "true" ? "正确" : "错误";
                 model.TrueFalse.Add(map);
             }
         }
