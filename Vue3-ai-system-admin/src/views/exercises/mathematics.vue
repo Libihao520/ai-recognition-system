@@ -15,7 +15,7 @@ import { getTestPapers, postSubmitExercises } from '../../api/exercises'
 import { useRoute } from 'vue-router'
 import { getSubjectsOrFileLabel } from '../../api/exercises'
 
-// 使用 ref 声明响应式数据
+const loading = ref(false)
 const singleChoice = ref([])
 const multipleChoice = ref([])
 const trueFalse = ref([])
@@ -25,6 +25,7 @@ const trueFalseAnswers = ref([]) // 判断题答案（true 或 false）
 const route = useRoute()
 const FileLabels = ref([])
 const TestPapersManageId = ref()
+const Title = ref()
 
 //获取试卷
 const getFileLabel = async () => {
@@ -34,10 +35,13 @@ const getFileLabel = async () => {
   res.data.data.forEach((item) => {
     FileLabels.value.push({ label: item.label, value: item.value })
   })
+  Title.value = route.params.subjectName + '-' + res.data.data[0].label
+  fetchQuestions(res.data.data[0].value)
 }
 getFileLabel()
 // 异步方法获取题目
 async function fetchQuestions(fileLabelId) {
+  loading.value = true
   TestPapersManageId.value = fileLabelId
   const questions = await getTestPapers({ Id: fileLabelId })
   singleChoice.value = questions.data.data.singleChoice.map((question) => ({
@@ -76,6 +80,7 @@ async function fetchQuestions(fileLabelId) {
     trueFalseChoiceAnswers[q.id] = null
   })
   trueFalseAnswers.value = trueFalseChoiceAnswers
+  loading.value = false
 }
 
 // 检查是否有未回答的题目
@@ -126,20 +131,22 @@ watch(
     }
   }
 )
-const SelectFileLabel = (fileLabelId) => {
-  fetchQuestions(fileLabelId)
+const SelectFileLabel = (FileLabel) => {
+  Title.value = route.params.subjectName + '-' + FileLabel.label
+  fetchQuestions(FileLabel.value)
 }
 </script>  
 <template>
-  <page-containel title="数学题">
-    <el-container>
+  <page-containel :title="Title">
+    <el-container v-loading="loading">
       <el-alert
         title="注意：本网页包含单选题、多选题和判断题，在完成答题后点击提交按钮！"
         type="warning"
       />
-      <el-form-item>
+      <el-form-item title="111">
+        请选择卷名：
         <div v-for="FileLabel in FileLabels" :key="FileLabel.value">
-          <el-button type="info" plain @click="SelectFileLabel(FileLabel.value)">{{
+          <el-button type="info" plain @click="SelectFileLabel(FileLabel)">{{
             FileLabel.label
           }}</el-button>
         </div>
@@ -184,10 +191,23 @@ const SelectFileLabel = (fileLabelId) => {
           </el-radio-group>
         </div>
       </div>
-      <el-footer>
-        <el-button type="primary" @click="submit">提交</el-button>
+      <el-footer class="custom-footer">
+        <el-button class="custom-button" type="primary" @click="submit">提交</el-button>
       </el-footer>
     </el-container>
   </page-containel>
 </template>
 
+<style lang="scss" scoped>
+.custom-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+}
+
+.custom-button {
+  padding: 15px 30px;
+  font-size: 18px;
+}
+</style>
