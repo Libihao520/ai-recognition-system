@@ -29,7 +29,8 @@ public class ExercisesService : IExercisesService
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly UserInformationUtil _informationUtil;
 
-    public ExercisesService(MyDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor, UserInformationUtil informationUtil)
+    public ExercisesService(MyDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor,
+        UserInformationUtil informationUtil)
     {
         _context = context;
         _mapper = mapper;
@@ -152,6 +153,7 @@ public class ExercisesService : IExercisesService
     public async Task<ApiResult> AchievementCenter(GetAchievementCenterReq req)
     {
         var query = from reportCards in _context.ReportCards.Where(p => p.IsDeleted == 0)
+                .OrderByDescending(q => q.CreateDate)
             join Users in _context.Users on reportCards.CreateUserId equals Users.Id into usersGroup
             from userItem in usersGroup.DefaultIfEmpty()
             select new AchievementCenterRes
@@ -281,6 +283,7 @@ public class ExercisesService : IExercisesService
                     getTestPaperManageRes.CreateName =
                         await _informationUtil.GetUserNameByIdAsync(long.Parse(getTestPaperManageRes.CreateName));
             }
+
             return ResultHelper.Success("查询成功", resultList, total);
         }
 

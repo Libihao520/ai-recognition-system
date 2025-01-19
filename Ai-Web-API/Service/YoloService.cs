@@ -48,7 +48,7 @@ public class YoloService : IYoloService
     /// <returns></returns>
     public async Task<ApiResult> getpkqTb(YoloDetectionQueryReq req)
     {
-        IQueryable<YoLoTbs> yolotb = _context.YoloTbs.Where(p => p.IsDeleted == 0);
+        IQueryable<YoLoTbs> yolotb = _context.YoloTbs.Where(p => p.IsDeleted == 0).OrderByDescending(q=>q.CreateDate);
         //筛选条件
         if (req.ModelCls != "全部")
         {
