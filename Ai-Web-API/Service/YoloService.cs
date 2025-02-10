@@ -48,7 +48,7 @@ public class YoloService : IYoloService
     /// <returns></returns>
     public async Task<ApiResult> getpkqTb(YoloDetectionQueryReq req)
     {
-        IQueryable<YoLoTbs> yolotb = _context.YoloTbs.Where(p => p.IsDeleted == 0).OrderByDescending(q=>q.CreateDate);
+        IQueryable<YoLoTbs> yolotb = _context.YoLoTbs.Where(p => p.IsDeleted == 0).OrderByDescending(q=>q.CreateDate);
         //筛选条件
         if (req.ModelCls != "全部")
         {
@@ -152,7 +152,7 @@ public class YoloService : IYoloService
                         IsDeleted = 0
                     };
                     yolotbs.Photos = new Photos() { PhotoBase64 = "data:image/jpeg;base64," + base64Image };
-                    _context.YoloTbs.Add(yolotbs);
+                    _context.YoLoTbs.Add(yolotbs);
                     _context.SaveChanges();
                     if (aiModels.ModelCls == "目标监测")
                     {
@@ -169,7 +169,7 @@ public class YoloService : IYoloService
 
     public async Task<YoloPkqEditRes> GetPkqEdtTb(long id)
     {
-        var yoloTb = await _context.YoloTbs.FindAsync(id);
+        var yoloTb = await _context.YoLoTbs.FindAsync(id);
         if (yoloTb == null)
         {
             return null;
@@ -184,8 +184,8 @@ public class YoloService : IYoloService
     public async Task<YoloSjdpRes> Getsjdp()
     {
         var userCount = await _context.Users.CountAsync();
-        var sbcsCount = await _context.YoloTbs.CountAsync();
-        var mbslCount = await _context.YoloTbs.SumAsync(x => x.SbJgCount);
+        var sbcsCount = await _context.YoLoTbs.CountAsync();
+        var mbslCount = await _context.YoLoTbs.SumAsync(x => x.SbJgCount);
         var yoloSjdpRes = new YoloSjdpRes()
         {
             userCount = userCount,
@@ -230,13 +230,13 @@ public class YoloService : IYoloService
                 PhotosId = photId,
                 PhotoBase64 = req.Photo
             };
-            _context.YoloTbs.Add(yoloRes);
+            _context.YoLoTbs.Add(yoloRes);
             _context.Photos.Add(photos);
         }
         // 否则更新
         else
         {
-            var findAsync = await _context.YoloTbs.FindAsync(req.Id);
+            var findAsync = await _context.YoLoTbs.FindAsync(req.Id);
             if (findAsync != null)
             {
                 if (findAsync.PhotosId != null)
@@ -285,7 +285,7 @@ public class YoloService : IYoloService
         try
         {
             // 根据id查找yoloTb对象
-            var yoloTb = await _context.YoloTbs.FindAsync(id);
+            var yoloTb = await _context.YoLoTbs.FindAsync(id);
             // 不为空则执行软删除并且保存到数据库中
             if (yoloTb != null)
             {
@@ -308,7 +308,7 @@ public class YoloService : IYoloService
 
     public async Task<YoLoTbs?> GetByIdAsync(int id)
     {
-        var findAsync = _context.YoloTbs.FindAsync(id);
+        var findAsync = _context.YoLoTbs.FindAsync(id);
         return await findAsync;
     }
 

@@ -10,7 +10,7 @@ public class Users : Entity
     /// 用户名
     /// </summary>
     [Required]
-    public string? Name { get; set; }
+    public string Name { get; set; }
 
     /// <summary>
     /// 密码
