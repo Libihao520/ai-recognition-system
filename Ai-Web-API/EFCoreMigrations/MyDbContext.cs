@@ -13,13 +13,13 @@ public class MyDbContext : DbContext
     /// <summary>
     /// yolo识别记录表
     /// </summary>
-    public DbSet<YoLoTbs> YoloTbs { get; set; }
+    public DbSet<YoLoTbs> YoLoTbs { get; set; }
 
     /// <summary>
     /// 图片base64
     /// </summary>
     public DbSet<Photos> Photos { get; set; }
-    
+
     /// <summary>
     /// 成绩中心
     /// </summary>
@@ -59,5 +59,11 @@ public class MyDbContext : DbContext
         //数据库连接字符串
         optionsBuilder.UseMySql("server=47.107.226.106;port=3306;database=aitest;user=root;password=1qazZAQ!hhh333;",
             new MySqlServerVersion(new Version(8, 0, 33)));
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        // 自动加载所有配置类
+        modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
     }
 }

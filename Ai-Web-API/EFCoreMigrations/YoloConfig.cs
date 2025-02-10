@@ -8,6 +8,6 @@ public class YoloConfig : IEntityTypeConfiguration<YoLoTbs>
 {
     public void Configure(EntityTypeBuilder<YoLoTbs> builder)
     {
-        builder.ToTable("YoLos");
+        builder.ToTable("YoLoTbs");
     }
 }

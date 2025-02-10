@@ -4,10 +4,13 @@ using Model.Entities;
 
 namespace EFCoreMigrations;
 
- class UsersConfig:IEntityTypeConfiguration<Users>
+class UsersConfig : IEntityTypeConfiguration<Users>
 {
     public void Configure(EntityTypeBuilder<Users> builder)
     {
-        builder.ToTable("Users");
+        builder.ToTable("Users")
+            .HasIndex(e => e.Name)
+            .IsUnique()
+            .HasDatabaseName("IX_Users_UniqueName");
     }
 }
