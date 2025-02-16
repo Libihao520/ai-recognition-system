@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Model;
 using Model.Dto.Role;
 using Model.Dto.User;
@@ -20,15 +21,18 @@ namespace Service;
 
 public class RoleManagementService : IRoleManagementService
 {
+    private readonly ILogger<RoleManagementService> _logger;
     private readonly MyDbContext _context;
     private readonly IMapper _mapper;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public RoleManagementService(MyDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+    public RoleManagementService(MyDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor,
+        ILogger<RoleManagementService> logger)
     {
         _context = context;
         _mapper = mapper;
         _httpContextAccessor = httpContextAccessor;
+        _logger = logger;
     }
 
     public async Task<ApiResult> GetUserRole(GetUserRoleReq req)
@@ -134,9 +138,15 @@ public class RoleManagementService : IRoleManagementService
                 }
             }
         }
-        catch (Exception e)
+        catch (DbUpdateConcurrencyException concurrencyException)
         {
-            return ResultHelper.Error("更新密码时发生错误");
+            _logger.LogError(concurrencyException, "用户数据操作更新时发生并发冲突");
+            return ResultHelper.Error("数据已被修改，请刷新后重试。");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "用户数据更新时发生错误");
+            return ResultHelper.Error("未知错误，请刷新后重试！");
         }
     }
 
