@@ -54,8 +54,10 @@ function onExamples() {
   console.log(ModelName)
   if (ModelName.value == '1813709254033409') {
     imgUrl.value = getPkqImage()
-  } else {
+  } else if(ModelName.value == '1813709254033410') {
     imgUrl.value = getAnimalImage()
+  }else{
+    ElMessage.error('未设置示例图片！')
   }
 }
 
