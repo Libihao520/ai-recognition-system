@@ -5,6 +5,12 @@ namespace Model.Common;
 public abstract class Entity : Base
 {
     /// <summary>
+    /// 版本
+    /// </summary>
+    [Timestamp]
+    public byte[] RowVersion { get; set; }
+
+    /// <summary>
     /// 创建人Id
     /// </summary>
     [Required]
