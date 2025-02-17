@@ -63,9 +63,8 @@ const handleFileChange = async (event) => {
   if (file) {
     try {
       const response = await uploadUserFileService(file, {
-        // userId: '12345'
       })
-      console.log('导入成功', response)
+      ElMessage.success( response.data.data)
     } catch (error) {
       console.error('上传失败', error)
     } finally {
