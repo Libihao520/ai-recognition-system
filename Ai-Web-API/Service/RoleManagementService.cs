@@ -7,6 +7,7 @@ using Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Model;
@@ -15,6 +16,7 @@ using Model.Dto.User;
 using Model.Entities;
 using Model.Enum;
 using Model.Other;
+using MySqlConnector;
 using OfficeOpenXml;
 
 namespace Service;
@@ -152,31 +154,32 @@ public class RoleManagementService : IRoleManagementService
     public async Task<ApiResult> ImportUsersFromExcel(IFormFile file)
     {
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        //异步事务
+        using var transaction = await _context.Database.BeginTransactionAsync();
 
         var user = _httpContextAccessor.HttpContext.User;
         var createUserId = long.Parse(user.Claims.FirstOrDefault(c => c.Type == "Id").Value);
-
-        try
+        var usersToAdd = new List<Users>();
+        using (var stream = new MemoryStream())
         {
-            using (var stream = new MemoryStream())
+            await file.CopyToAsync(stream);
+            stream.Position = 0; // 重置流的位置到起始点  
+
+            using (var package = new ExcelPackage(stream))
             {
-                await file.CopyToAsync(stream);
-                stream.Position = 0; // 重置流的位置到起始点  
+                var worksheet = package.Workbook.Worksheets[0];
+                var rowCount = worksheet.Dimension.Rows;
 
-                using (var package = new ExcelPackage(stream))
+                for (int row = 2; row <= rowCount; row++)
                 {
-                    var worksheet = package.Workbook.Worksheets[0];
-                    var rowCount = worksheet.Dimension.Rows;
+                    var userName = worksheet.Cells[row, 1].Text;
+                    AuthorizeRoleName role;
+                    role = EnumConvert.ConvertStringToRoleName(worksheet.Cells[row, 2].Text);
+                    var userEmail = AesUtilities.Encrypt(worksheet.Cells[row, 3].Text);
+                    var userPassword = AesUtilities.Encrypt(worksheet.Cells[row, 4].Text);
 
-                    for (int row = 2; row <= rowCount; row++)
-                    {
-                        var userName = worksheet.Cells[row, 1].Text;
-                        AuthorizeRoleName role;
-                        role = EnumConvert.ConvertStringToRoleName(worksheet.Cells[row, 2].Text);
-                        var userEmail = worksheet.Cells[row, 3].Text;
-                        var userPassword = AesUtilities.Encrypt(worksheet.Cells[row, 4].Text);
-
-                        Users insterUser = new Users()
+                    usersToAdd.Add(
+                        new Users()
                         {
                             Id = TimeBasedIdGeneratorUtil.GenerateId(),
                             Name = userName,
@@ -186,16 +189,28 @@ public class RoleManagementService : IRoleManagementService
                             CreateUserId = createUserId,
                             Role = role,
                             IsDeleted = 0
-                        };
-                        _context.Users.Add(insterUser);
-                    }
+                        }
+                    );
                 }
             }
-
-            _context.SaveChanges();
         }
-        catch (Exception e)
+
+        try
         {
+            await _context.Users.AddRangeAsync(usersToAdd);
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+        }
+        catch (DbUpdateException ex) when (ex.InnerException is MySqlException { Number: 1062 })
+        {
+            await transaction.RollbackAsync();
+            _logger.LogError("导入数据包含重复记录");
+            return ResultHelper.Error("存在重复用户名，请检查Excel数据");
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            _logger.LogError(ex, "用户导入失败");
             return ResultHelper.Error("导入失败！");
         }
 
@@ -223,7 +238,7 @@ public class RoleManagementService : IRoleManagementService
                 {
                     worksheet.Cells[row, 1].Value = user.Id;
                     worksheet.Cells[row, 2].Value = user.Name;
-                    worksheet.Cells[row, 3].Value = user.Email;
+                    worksheet.Cells[row, 3].Value = AesUtilities.Decrypt(user.Email);
                     worksheet.Cells[row, 4].Value = user.CreateDate;
 
                     row++;
