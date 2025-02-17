@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { Edit, Delete } from '@element-plus/icons-vue'
 import { formatTime } from '@/utils/format.js'
-import { getTestPaperManage, downloadUserImportTemplateService } from '../../api/exercises'
+import { getTestPaperManage, downloadUserImportTemplateService,ChangeHasAnsweringStartedService } from '../../api/exercises'
 import testPapersManageEdit from './testPapersManageEdit.vue'
 
 const channelList = ref([])
@@ -39,6 +39,12 @@ const onEditChannel = (row) => {
 const onDelChannel = async (row, $index) => {
   console.log(row.id)
   const res = await DelModelService(row.id)
+  getTableList()
+}
+
+//开启关闭作答逻辑
+const onChangeHasAnsweringStarted = async (row, $index) => {
+  const res = await ChangeHasAnsweringStartedService(row.id)
   getTableList()
 }
 //重置搜索框
@@ -110,14 +116,18 @@ const downloadExcelTemplate = () => {
       <el-table-column type="index" label="序号" width="100"></el-table-column>
       <el-table-column prop="fileLabel" label="卷名"></el-table-column>
       <el-table-column prop="questionBankCourseTitle" label="科目"></el-table-column>
-      <el-table-column prop="HasAnsweringStarted" label="是否开启作答"></el-table-column>
+      <el-table-column prop="hasAnsweringStarted" label="是否开启作答">
+        <template #default="{ row }">
+          {{ row.hasAnsweringStarted ? '是' : '否' }}
+        </template>
+      </el-table-column>
       <el-table-column prop="createDate" label="上传时间">
         <template #default="{ row }">
           {{ formatTime(row.createDate) }}
         </template>
       </el-table-column>
       <el-table-column prop="createName" label="上传人"></el-table-column>
-      <el-table-column label="操作" width="150">
+      <el-table-column label="操作" width="100">
         <!-- row就是channelList的一项，$index是下标 -->
         <template #default="{ row, $index }">
           <el-button
@@ -127,6 +137,13 @@ const downloadExcelTemplate = () => {
             type="danger"
             @click="onDelChannel(row, $index)"
           ></el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="开启作答" width="110">
+        <template #default="{ row, $index }">
+          <el-switch v-model="row.hasAnsweringStarted"
+          @click="onChangeHasAnsweringStarted(row, $index)"
+          />
         </template>
       </el-table-column>
     </el-table>

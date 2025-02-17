@@ -88,12 +88,32 @@ public class ExercisesController : ControllerBase
         return await _exercisesService.AddTestPaperManage(req);
     }
 
+    /// <summary>
+    /// 获取科目或卷名
+    /// </summary>
+    /// <param name="subjectName"></param>
+    /// <returns></returns>
     [HttpGet]
     public async Task<ApiResult> GetSubjectsOrFileLabel([FromQuery] string? subjectName)
     {
         return await _exercisesService.GetSubjectsOrFileLabel(subjectName);
     }
 
+    /// <summary>
+    /// 开启作答
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet]
+    public async Task<ApiResult> ChangeHasAnsweringStarted([FromQuery] long id)
+    {
+        return await _exercisesService.ChangeHasAnsweringStarted(id);
+    }
+
+    /// <summary>
+    /// 下载导入模板
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     public async Task<IActionResult> DownloadExcelTemplate()
     {

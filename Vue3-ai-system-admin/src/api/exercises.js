@@ -66,3 +66,7 @@ export const downloadUserImportTemplateService = () => {
     window.URL.revokeObjectURL(url);
   });
 };
+
+//开启作答
+export const ChangeHasAnsweringStartedService = (id) =>
+  request.get('/Exercises/ChangeHasAnsweringStarted', { params: { id } })

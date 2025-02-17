@@ -328,7 +328,7 @@ public class ExercisesService : IExercisesService
                 CreateUserId = createUserId,
                 CreateDate = DateTime.Now,
                 IsDeleted = 0,
-                HasAnsweringStarted = null
+                HasAnsweringStarted = false
             };
             _context.TestPapersManages.Add(newRecord);
 
@@ -393,7 +393,9 @@ public class ExercisesService : IExercisesService
     {
         if (string.IsNullOrEmpty(subjectName))
         {
-            var list = _context.TestPapersManages.Select(q => q.QuestionBankCourseTitle).Distinct().ToList();
+            var list = _context.TestPapersManages
+                .Where(q => q.HasAnsweringStarted == true)
+                .Select(q => q.QuestionBankCourseTitle).Distinct().ToList();
             var resultList = list.Select((title, index) => new Dictionary<string, object>
             {
                 { "label", title },
@@ -405,7 +407,7 @@ public class ExercisesService : IExercisesService
         {
             var testPapersManages =
                 _context.TestPapersManages
-                    .Where(q => q.QuestionBankCourseTitle == subjectName)
+                    .Where(q => q.QuestionBankCourseTitle == subjectName && q.HasAnsweringStarted == true)
                     .Select(q => new { q.Id, q.FileLabel })
                     .ToList();
             var resultList = testPapersManages.Select((item, index) => new Dictionary<string, object>
@@ -414,6 +416,21 @@ public class ExercisesService : IExercisesService
                 { "value", item.Id }
             }).ToList();
             return ResultHelper.Success("请求成功", resultList);
+        }
+    }
+
+    public async Task<ApiResult> ChangeHasAnsweringStarted(long id)
+    {
+        var testPapersManage = await _context.TestPapersManages.FindAsync(id);
+        if (testPapersManage != null)
+        {
+            testPapersManage.HasAnsweringStarted = !testPapersManage.HasAnsweringStarted;
+            await _context.SaveChangesAsync();
+            return ResultHelper.Success("请求成功！", "修改成功！");
+        }
+        else
+        {
+            return ResultHelper.Error("请刷新后重试！");
         }
     }
 }
