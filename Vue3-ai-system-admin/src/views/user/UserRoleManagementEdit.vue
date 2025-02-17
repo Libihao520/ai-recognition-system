@@ -53,6 +53,7 @@ const onSave = async (state) => {
   const putFrom = ref({})
   putFrom.value = JSON.parse(JSON.stringify(formModel.value))
   putFrom.value.passWord = encrypt(formModel.value.passWord)
+  putFrom.value.email = encrypt(formModel.value.email)
 
   if (state == '取消') {
     visibleDrawer.value = false

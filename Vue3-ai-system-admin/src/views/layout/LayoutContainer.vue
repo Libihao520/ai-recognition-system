@@ -150,7 +150,7 @@ const handleCommand = async (key) => {
             <el-icon><Crop /></el-icon>
             <span>更换头像</span>
           </el-menu-item>
-          <el-menu-item index="/user/MyBlog" v-if="userStore.user.role === '管理员'">
+          <el-menu-item index="/user/MyBlog" v-if="userStore.user.role === '超级管理员'">
             <el-icon><EditPen /></el-icon>
             <span>我的博客</span>
           </el-menu-item>

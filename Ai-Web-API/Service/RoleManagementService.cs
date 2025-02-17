@@ -64,7 +64,6 @@ public class RoleManagementService : IRoleManagementService
             }
 
             var res = _mapper.Map<GetUserRoleRes>(usersEnumerable);
-            res.PassWord = AesUtilities.Decrypt(res.PassWord);
             return ResultHelper.Success("查询成功", res);
         }
     }
