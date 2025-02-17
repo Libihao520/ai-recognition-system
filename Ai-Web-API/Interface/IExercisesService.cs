@@ -62,4 +62,11 @@ public interface IExercisesService
     /// <param name="subjectName"></param>
     /// <returns></returns>
     Task<ApiResult> GetSubjectsOrFileLabel(string? subjectName);
+
+    /// <summary>
+    /// 开启作答
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    Task<ApiResult> ChangeHasAnsweringStarted(long id);
 }

@@ -21,6 +21,11 @@ public class GetTestPaperManageRes
     /// 卷名
     /// </summary>
     public string? FileLabel { get; set; }
+    
+    /// <summary>
+    /// 是否开始作答
+    /// </summary>
+    public bool HasAnsweringStarted { get; set; }
 
     /// <summary>
     /// 科目
