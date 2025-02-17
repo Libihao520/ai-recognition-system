@@ -20,7 +20,7 @@ public class AutoMapperConfigs : Profile
         CreateMap<Users, GetUserRes>();
         //yolo
         CreateMap<YoLoTbs, YoloPkqRes>()
-            .ForMember(dest => dest.CreateName, opt => opt.MapFrom(src => (src.CreateUserId)));;
+            .ForMember(dest => dest.CreateName, opt => opt.MapFrom(src => (src.CreateUserId)));
 
         CreateMap<YoloDetectionPutReq, YoLoTbs>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
@@ -46,8 +46,8 @@ public class AutoMapperConfigs : Profile
 
         // 题库模块
         CreateMap<TestPapersManage, GetTestPaperManageRes>()
-            .ForMember(dest => dest.CreateName, opt => opt.MapFrom(src => (src.CreateUserId)));;;
-        
+            .ForMember(dest => dest.CreateName, opt => opt.MapFrom(src => (src.CreateUserId)));
+
         //成绩导出
         CreateMap<ReportCard, DownloadAchievementWordRes>();
         //只映射名称
@@ -57,7 +57,13 @@ public class AutoMapperConfigs : Profile
         CreateMap<ReportCard, AchievementCenterRes>();
         //RoleManagement
         CreateMap<Users, GetUserRoleRes>()
-            .ForMember(dest => dest.Role, opt => opt.MapFrom(src => EnumConvert.ConvertRoleNameToString(src.Role)));
+            .ForMember(dest => dest.Role, opt =>
+                opt.MapFrom(src => EnumConvert.ConvertRoleNameToString(src.Role)))
+            .AfterMap((src, dest) =>
+            {
+                dest.PassWord = AesUtilities.Decrypt(src.PassWord);
+                dest.Email = AesUtilities.Decrypt(src.Email);
+            });
 
         //RoleManagement
         CreateMap<AiModels, GetModelRes>()

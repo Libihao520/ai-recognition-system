@@ -16,7 +16,7 @@ public class Users : Entity
     /// 密码
     /// </summary>
     [Required]
-    public string? PassWord { get; set; }
+    public string PassWord { get; set; }
 
     /// <summary>
     /// 用户角色
@@ -27,7 +27,7 @@ public class Users : Entity
     /// 邮箱
     /// </summary>
     [Required]
-    public string? Email { get; set; }
+    public string Email { get; set; }
 
     /// <summary>
     /// 头像id
