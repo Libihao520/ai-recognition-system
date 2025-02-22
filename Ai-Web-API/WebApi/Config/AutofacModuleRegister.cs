@@ -1,5 +1,6 @@
 using System.Reflection;
 using Autofac;
+using CommonUtil.AiGcUtil;
 
 namespace WebApi.Config;
 
@@ -12,5 +13,9 @@ public class AutofacModuleRegister : Autofac.Module
         Assembly interfaceAssembly = Assembly.Load("Interface");
         Assembly serviceAssembly = Assembly.Load("Service");
         builder.RegisterAssemblyTypes(interfaceAssembly, serviceAssembly).AsImplementedInterfaces();
+
+        builder.RegisterType<SparkRequestUtil>()
+            .AsSelf()
+            .SingleInstance();
     }
 }

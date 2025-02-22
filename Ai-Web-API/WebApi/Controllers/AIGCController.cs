@@ -37,4 +37,10 @@ public class AigcController : ControllerBase
     {
         return _aiGcService.DelModelService(id);
     }
+
+    [HttpGet]
+    public Task<ApiResult> QuestionsAndAnswers([FromQuery]string q)
+    {
+        return _aiGcService.QuestionsAndAnswers(q);
+    }
 }

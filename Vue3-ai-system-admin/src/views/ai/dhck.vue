@@ -1,100 +1,145 @@
 <template>
+  <page-containel>
     <div id="app">
-      <el-container style="height: 100vh;">
+      <el-container style="height: 80%">
         <!-- 标题栏 -->
         <el-header>
-          <div class="header-content">与GPT对话窗口</div>
+          <div class="header-content">与讯飞星火Spark Max对话窗口</div>
         </el-header>
         <!-- 主体内容区，包含对话记录和输入框 -->
         <el-main>
           <div class="chat-history-wrapper" ref="chatHistoryWrapper">
             <div class="chat-history" v-for="(message, index) in chatMessages" :key="index">
-              <el-row :class="message.role === 'user'? 'user-message' : 'gpt-message'">
-                <el-col :span="24">
-                  <span class="message-role">{{ message.role }}</span>
+              <div :class="message.role === 'user' ? 'user-message' : 'gpt-message'">
+                <el-avatar :src="gpt" v-if="message.role === 'gpt'" />
+                <div :class="message.role === 'user' ? 'user-content' : 'gpt-content'">
+                  <!-- <span class="message-role">{{ message.role }}</span> -->
                   <span class="message-content">{{ message.content }}</span>
-                </el-col>
-              </el-row>
+                </div>
+                <div class="avatar-container"  v-if="message.role === 'user'">
+                  <el-avatar :src="userStore.user.photo || avatar" />
+                </div>
+              </div>
             </div>
           </div>
-          <el-row class="input-row" style="margin-top: 10px;">
+          <el-row class="input-row" style="margin-top: 15px">
             <el-input
               v-model="newMessage"
               placeholder="请输入消息"
               clearable
               @keyup.enter="sendMessage"
-              style="width: 80%;"
+              style="width: 80%"
             />
+
             <el-button type="primary" @click="sendMessage">发送</el-button>
           </el-row>
         </el-main>
       </el-container>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        chatMessages: [], // 存储对话消息，每条消息包含role（角色，比如 'user'表示用户，'gpt'表示GPT回复）和content（消息内容）
-        newMessage: '', // 用于绑定输入框输入的新消息
-      };
-    },
-    methods: {
-      sendMessage() {
-        if (this.newMessage.trim() === '') return; // 如果输入为空则不发送
-        // 将用户输入的消息添加到对话记录中，角色为'user'
-        this.chatMessages.push({
-          role: 'user',
-          content: this.newMessage,
-        });
-        this.newMessage = '';
-  
-        // 模拟添加GPT回复，真实情况需调用后端接口获取回复
-        setTimeout(() => {
-          this.chatMessages.push({
-            role: 'gpt',
-            content: '这是模拟的GPT回复内容，你需替换为真实接口获取的数据哦',
-          });
-          // 消息添加后手动触发滚动到底部
-          this.$nextTick(() => {
-            this.$refs.chatHistoryWrapper.scrollTop = this.$refs.chatHistoryWrapper.scrollHeight;
-          });
-        }, 1000);
-      },
-    },
-  };
-  </script>
-  
-  <style scoped>
-  #app {
-    font-family: Arial, sans-serif;
-  }
-  .el-header {
-    background-color: #409EFF;
-    color: white;
-    text-align: center;
-    line-height: 50px;
-  }
-  .chat-history-wrapper {
-    height: calc(80vh - 100px);
-    overflow-y: auto;
-  }
-  .chat-history {
-    margin-bottom: 10px;
-  }
-  .user-message {
-    justify-content: flex-end;
-  }
-  .gpt-message {
-    justify-content: flex-start;
-  }
-  .message-role {
-    font-weight: bold;
-    margin-right: 5px;
-  }
-  .input-row {
-    justify-content: center;
-    align-items: center;
-  }
-  </style>
+  </page-containel>
+</template>
+
+<script setup>
+import { ref, nextTick } from 'vue'
+import { QuestionsAndAnswers } from '../../api/Aigc'
+import { useUserStore } from '@/stores'
+import { onMounted } from 'vue'
+import gpt from '@/assets/gpt.png'
+
+// 定义响应式数据
+const chatMessages = ref([]) // 存储对话消息
+const newMessage = ref('') // 输入框绑定的新消息
+const chatHistoryWrapper = ref(null) // 用于滚动操作的 DOM 引用
+const userStore = useUserStore()
+
+onMounted(() => {
+  userStore.getUser()
+})
+// 定义方法
+const sendMessage = async () => {
+  if (newMessage.value.trim() === '') return // 如果输入为空则不发送
+
+  // 添加用户消息
+  chatMessages.value.push({
+    role: 'user',
+    content: newMessage.value
+  })
+
+  console.log(newMessage.value)
+  const res = await QuestionsAndAnswers(newMessage.value)
+  chatMessages.value.push({
+    role: 'gpt',
+    content: res.data.data
+  })
+  newMessage.value = ''
+
+  // 滚动到底部
+  nextTick(() => {
+    if (chatHistoryWrapper.value) {
+      chatHistoryWrapper.value.scrollTop = chatHistoryWrapper.value.scrollHeight
+    }
+  })
+}
+</script>
+
+<style scoped>
+#app {
+  font-family: Arial, sans-serif;
+}
+
+.el-header {
+  background-color: #409eff;
+  color: white;
+  text-align: center;
+  line-height: 50px;
+}
+
+.chat-history-wrapper {
+  height: calc(80vh - 240px);
+  overflow-y: auto;
+}
+
+.chat-history {
+  margin-bottom: 10px;
+}
+
+.user-message {
+  display: flex;
+  justify-content: flex-end; /* 用户消息靠右 */
+}
+
+.gpt-message {
+  display: flex;
+  justify-content: flex-start; /* 系统消息靠左 */
+}
+
+.user-content {
+  background-color: #409eff;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  display: inline-block;
+  max-width: 70%;
+  text-align: left; /* 用户消息内容左对齐 */
+}
+
+.gpt-content {
+  background-color: #f0f0f0;
+  color: black;
+  padding: 10px;
+  border-radius: 10px;
+  display: inline-block;
+  max-width: 70%;
+  text-align: left; /* 系统消息内容左对齐 */
+}
+
+.message-role {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.input-row {
+  justify-content: center;
+  align-items: center;
+}
+</style>

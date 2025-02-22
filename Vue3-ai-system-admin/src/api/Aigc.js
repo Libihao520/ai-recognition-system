@@ -19,3 +19,6 @@ export const PutModelService = (file, additionalData = {}) => {
 //删除
 export const DelModelService = (id) =>
   request.delete('/Aigc/DelModelService', { params: { id } })
+
+  export const QuestionsAndAnswers = (q) =>
+  request.get('/Aigc/QuestionsAndAnswers', { params: { q } })

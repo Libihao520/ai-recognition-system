@@ -23,4 +23,11 @@ public interface IAiGcService
     /// </summary>
     /// <returns></returns>
     Task<ApiResult> DelModelService(long id);
+
+    /// <summary>
+    /// 在线问答
+    /// </summary>
+    /// <param name="q"></param>
+    /// <returns></returns>
+    Task<ApiResult> QuestionsAndAnswers(string q);
 }
