@@ -3,7 +3,7 @@ import { useUserStore } from '@/stores'
 import { ElMessage } from 'element-plus'
 import router from '../router'
 
-const baseURL = 'http://127.0.0.1:5157/api'
+const baseURL = import.meta.env.VITE_APP_API_URL
 
 const instance = axios.create({
   //基础地址，超时时间
