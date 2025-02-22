@@ -16,7 +16,6 @@ public static class HostBuiderExtend
         builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
         builder.Host.ConfigureContainer<ContainerBuilder>(builder =>
         {
-
             //注册接口和实现层
             builder.RegisterModule(new AutofacModuleRegister());
         });
@@ -28,14 +27,20 @@ public static class HostBuiderExtend
         builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("EmailOptions"));
         //AI模块配置
         builder.Services.Configure<AiGcOptions>(builder.Configuration.GetSection("AiGcOptions"));
-        
+
         builder.Services.AddSingleton<EmailUtil>();
         //获取用户信息工具
         builder.Services.AddSingleton<UserInformationUtil>();
+
         #region JWT校验
 
         //第二步，增加鉴权逻辑
         JWTTokenOptions tokenOptions = new JWTTokenOptions();
+        if (string.IsNullOrEmpty(tokenOptions.SecurityKey))
+        {
+            throw new InvalidOperationException("JWT SecurityKey is not configured.");
+        }
+
         builder.Configuration.Bind("JWTTokenOptions", tokenOptions);
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) //Scheme
             .AddJwtBearer(options => //这里是配置的鉴权的逻辑
@@ -53,11 +58,14 @@ public static class HostBuiderExtend
                         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenOptions.SecurityKey)) //拿到SecurityKey 
                 };
             });
-        #endregion 
+
+        #endregion
+
         //添加跨域策略
         builder.Services.AddCors(options =>
         {
-            options.AddPolicy("CorsPolicy", opt => opt.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("X-Pagination"));
+            options.AddPolicy("CorsPolicy",
+                opt => opt.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("X-Pagination"));
         });
     }
 }
