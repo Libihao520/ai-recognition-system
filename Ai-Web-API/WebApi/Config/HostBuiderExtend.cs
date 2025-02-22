@@ -36,12 +36,12 @@ public static class HostBuiderExtend
 
         //第二步，增加鉴权逻辑
         JWTTokenOptions tokenOptions = new JWTTokenOptions();
+        builder.Configuration.Bind("JWTTokenOptions", tokenOptions);
         if (string.IsNullOrEmpty(tokenOptions.SecurityKey))
         {
             throw new InvalidOperationException("JWT SecurityKey is not configured.");
         }
 
-        builder.Configuration.Bind("JWTTokenOptions", tokenOptions);
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) //Scheme
             .AddJwtBearer(options => //这里是配置的鉴权的逻辑
             {
