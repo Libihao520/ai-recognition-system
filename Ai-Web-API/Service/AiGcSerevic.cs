@@ -1,6 +1,9 @@
+using System.Net.Http.Headers;
+using System.Text;
 using AutoMapper;
 using Azure.Core;
 using CommonUtil;
+using CommonUtil.AiGcUtil;
 using CommonUtil.RandomIdUtil;
 using CommonUtil.RequesUtil;
 using EFCoreMigrations;
@@ -14,6 +17,7 @@ using Model.Dto.AiModel;
 using Model.Entities;
 using Model.Other;
 using MySqlConnector;
+using Newtonsoft.Json.Linq;
 
 namespace Service;
 
@@ -23,13 +27,16 @@ public class AiGcSerevic : IAiGcService
     private readonly IMapper _mapper;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly UserInformationUtil _informationUtil;
+    private readonly SparkRequestUtil _sparkRequestUtil;
 
-    public AiGcSerevic(MyDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor, UserInformationUtil informationUtil)
+    public AiGcSerevic(MyDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor,
+        UserInformationUtil informationUtil, SparkRequestUtil sparkRequestUtil)
     {
         _context = context;
         _mapper = mapper;
         _httpContextAccessor = httpContextAccessor;
         _informationUtil = informationUtil;
+        _sparkRequestUtil = sparkRequestUtil;
     }
 
     public async Task<ApiResult> GetModelService(GetModelReq req)
@@ -47,7 +54,7 @@ public class AiGcSerevic : IAiGcService
             {
                 query = query.Where(m => m.ModelCls == req.ModelCls);
             }
-            
+
             var totalCount = await query.CountAsync();
 
             var paginatedResult = await query
@@ -62,6 +69,7 @@ public class AiGcSerevic : IAiGcService
                     getModelRes.CreateName =
                         await _informationUtil.GetUserNameByIdAsync(long.Parse(getModelRes.CreateName));
             }
+
             return ResultHelper.Success("查询成功", resultList, totalCount);
         }
         catch (Exception e)
@@ -183,5 +191,11 @@ public class AiGcSerevic : IAiGcService
         {
             return ResultHelper.Error("删除模型出现异常，请稍后重试");
         }
+    }
+
+    public async Task<ApiResult> QuestionsAndAnswers(string q)
+    {
+        var requestAsync = await _sparkRequestUtil.RequestAsync(q);
+        return ResultHelper.Success("请求成功！", requestAsync);
     }
 }

@@ -21,7 +21,7 @@ namespace CommonUtil
         /// </summary>
         /// <param name="emailOptions">邮件配置选项的监视器，用于获取当前的邮件配置值</param>
         /// <param name="logger">用于记录邮件发送相关操作的日志记录器</param>
-        public EmailUtil(IOptionsMonitor<EmailOptions> emailOptions, ILogger<EmailUtil> logger)
+        public EmailUtil(IOptionsMonitor< EmailOptions> emailOptions, ILogger<EmailUtil> logger)
         {
             _logger = logger;
             _emailOptions = emailOptions.CurrentValue;

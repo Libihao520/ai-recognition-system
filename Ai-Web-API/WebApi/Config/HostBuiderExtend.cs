@@ -26,6 +26,8 @@ public static class HostBuiderExtend
         builder.Services.Configure<JWTTokenOptions>(builder.Configuration.GetSection("JWTTokenOptions"));
         //注册邮箱配置
         builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("EmailOptions"));
+        //AI模块配置
+        builder.Services.Configure<AiGcOptions>(builder.Configuration.GetSection("AiGcOptions"));
         
         builder.Services.AddSingleton<EmailUtil>();
         //获取用户信息工具
