@@ -34,6 +34,18 @@ public static class HostBuiderExtend
 
         #region JWT校验
 
+        //检查配置
+        var configPath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
+        Console.WriteLine($"Config file path: {configPath}");
+        if (File.Exists(configPath))
+        {
+            Console.WriteLine($"Config file content: {File.ReadAllText(configPath)}");
+        }
+        else
+        {
+            Console.WriteLine("Config file not found!");
+        }
+
         //第二步，增加鉴权逻辑
         JWTTokenOptions tokenOptions = new JWTTokenOptions();
         builder.Configuration.Bind("JWTTokenOptions", tokenOptions);
