@@ -1,6 +1,10 @@
 # 乐思赋能平台
 [![star](https://gitee.com/libihao520/ai-recognition-system/badge/star.svg?theme=dark)](https://gitee.com/libihao520/ai-recognition-system/stargazers)
 [![fork](https://gitee.com/libihao520/ai-recognition-system/badge/fork.svg?theme=dark)](https://gitee.com/libihao520/ai-recognition-system/members)
+## 演示地址
+http://47.107.226.106:8080/login
+ - 账号：lbhlbh
+ - 密码：123456
 ## 功能模块
 
 1.  登录注册
