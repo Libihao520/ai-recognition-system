@@ -43,12 +43,15 @@
 
 ### 练题系统
 ```
-练题系统包含单选题、多选题和判断题，
-在完成答题后点击提交按钮，后台会自动计算分数，并将答题情况保存到成绩中心。
+题库管理：支持用户下载模板，按模板导入单选题、多选题、判断题。
 ```
-![image](readmePhoto/ltxt1.png)
+![image](readmePhoto/Training%20system.png)
 ```
-在成绩中心，可以管理各用户的答题情况，点击操作列的删除按钮，可以删除该次答题记录。
+在线答题：展示导入试题，用户可选题组卷答题并提交。
+```
+![image](readmePhoto/math.png)
+```
+成绩中心：管理各用户的答题情况，点击操作列的删除按钮，可以删除该次答题记录。
 点击下载按钮，会自动下载该次答题的详细记录。如下图
 ```
 ![image](readmePhoto/ltxt2.png)
@@ -59,14 +62,27 @@
 
 ### AI模块
 ```
-在AI模块的识别入口，选择模型，上传图片（或者点击示例，将上传示例图片）！
+模型管理：可检查和上传模型。
+```
+![image](readmePhoto/modularity%20management.png)
+```
+在线识别：选择模型，上传图片（或者点击示例，将上传示例图片）！
 点击开始识别，将会对上传的图片进行AI识别。如下图
 ```
 ![image](readmePhoto/ai1.png)
+
 ```
-在AI模块的识别入口识别完成的图片会保存到监测记录中！
+识别记录：对在线识别结果进行审核,以及人工手动添加识别记录。
 ```
-![image](readmePhoto/ai2.png)
+![image](readmePhoto/identify%20the%20result.png)
+
+![iamge](readmePhoto/ADD.png)
+
+```
+AI大模型：深度集成讯飞星火 spark max 强大的自然语言处理能力
+```
+![image](readmePhoto/AI666.png)
+
 ### 工具箱
 ```
 工具箱的二维码生成功能，可根据字符串生成二维码，如下图！
