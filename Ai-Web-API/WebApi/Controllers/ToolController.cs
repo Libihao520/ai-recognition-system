@@ -55,7 +55,7 @@ public class ToolController : ControllerBase
             new AiModels()
             {
                 Id = 1813709254033409,
-                Path = @$"Model\pkq.onnx",
+                Path = @$"Model/pkq.onnx",
                 ModelCls = "目标监测",
                 ModelName = "皮卡丘识别",
                 ModelSize = 43,
@@ -66,7 +66,7 @@ public class ToolController : ControllerBase
             new AiModels()
             {
                 Id = 1813709254033410,
-                Path = @$"Model\animal.onnx",
+                Path = @$"Model/animal.onnx",
                 ModelCls = "图像分类",
                 ModelName = "动物识别",
                 ModelSize = 214,
