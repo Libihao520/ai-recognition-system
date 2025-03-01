@@ -198,4 +198,12 @@ public class AiGcSerevic : IAiGcService
         var requestAsync = await _sparkRequestUtil.RequestAsync(q);
         return ResultHelper.Success("请求成功！", requestAsync);
     }
+    
+    public async IAsyncEnumerable<string> QuestionsAndAnswersStream(string q)
+    {
+        await foreach (var chunk in _sparkRequestUtil.RequestStreamAsync(q))
+        {
+            yield return chunk; 
+        }
+    }
 }

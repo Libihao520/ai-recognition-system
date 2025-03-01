@@ -38,9 +38,33 @@ public class AigcController : ControllerBase
         return _aiGcService.DelModelService(id);
     }
 
+    /// <summary>
+    ///  在线问答
+    /// </summary>
+    /// <param name="q"></param>
+    /// <returns></returns>
     [HttpGet]
-    public Task<ApiResult> QuestionsAndAnswers([FromQuery]string q)
+    public Task<ApiResult> QuestionsAndAnswers([FromQuery] string q)
     {
         return _aiGcService.QuestionsAndAnswers(q);
+    }
+
+    /// <summary>
+    /// 在线问答（流式传输）
+    /// </summary>
+    /// <param name="q"></param>
+    [HttpGet]
+    public async Task QuestionsAndAnswersStream([FromQuery] string q)
+    {
+        var response = Response;
+        response.Headers.Add("Content-Type", "text/event-stream");
+
+        // 这里的 _aiGcService.QuestionsAndAnswersSSE 是一个假设的方法，需要您根据实际需求实现
+        await foreach (var message in _aiGcService.QuestionsAndAnswersStream(q))
+        {
+            // SSE 的消息格式是 "data: <message>\n\n"
+            await response.WriteAsync($"data: {message}\n\n");
+            await response.Body.FlushAsync(); // 确保消息被立即发送
+        }
     }
 }

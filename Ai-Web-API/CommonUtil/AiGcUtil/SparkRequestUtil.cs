@@ -2,7 +2,8 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using Model;
 using Model.Options;
-using Model.UtilData;
+using Model.UtilData.Response;
+using Model.UtilData.StreamResponse;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -54,6 +55,71 @@ public class SparkRequestUtil
             else
             {
                 return "业务繁忙，请稍后再试！";
+            }
+        }
+    }
+
+    public async IAsyncEnumerable<string> RequestStreamAsync(string q)
+    {
+        using (var client = new HttpClient())
+        {
+            client.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _aiGcOptions.token);
+            client.DefaultRequestHeaders.Accept.Add(
+                new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+            var requestData = new
+            {
+                model = "generalv3.5",
+                messages = new[]
+                {
+                    new
+                    {
+                        role = "user",
+                        content = q
+                    }
+                },
+                stream = true
+            };
+            var jsonContent = new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8,
+                "application/json");
+
+            // 创建 HttpRequestMessage
+            using (var request = new HttpRequestMessage(HttpMethod.Post, _aiGcOptions.url))
+            {
+                request.Content = jsonContent;
+
+                // 发送请求并等待响应头 HttpCompletionOption.ResponseHeadersRead
+                // 流式处理响应体 
+                using (var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
+                {
+                    response.EnsureSuccessStatusCode();
+
+                    using (var stream = await response.Content.ReadAsStreamAsync())
+                    using (var reader = new StreamReader(stream))
+                    {
+                        while (!reader.EndOfStream)
+                        {
+                            var line = await reader.ReadLineAsync();
+                            if (!string.IsNullOrEmpty(line))
+                            {
+                                Console.WriteLine(line);
+                                line = line.Substring("data: ".Length).Trim();
+                                if (line == "[DONE]")
+                                {
+                                    yield break; // 结束流式传输
+                                }
+
+                                var responseData = JsonConvert.DeserializeObject<SparkResponseStreamData>(line);
+                                if (responseData != null && responseData.Choices != null &&
+                                    responseData.Choices.Count > 0)
+                                {
+                                    yield return responseData.Choices[0].Delta?.Content ?? string.Empty;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
