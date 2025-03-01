@@ -30,4 +30,11 @@ public interface IAiGcService
     /// <param name="q"></param>
     /// <returns></returns>
     Task<ApiResult> QuestionsAndAnswers(string q);
+
+    /// <summary>
+    /// 在线问答（流式传输）
+    /// </summary>
+    /// <param name="q"></param>
+    /// <returns></returns>
+    IAsyncEnumerable<string> QuestionsAndAnswersStream(string q);
 }

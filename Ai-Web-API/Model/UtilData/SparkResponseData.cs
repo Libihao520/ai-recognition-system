@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Model.UtilData;
+namespace Model.UtilData.Response;
 
 public class SparkResponseData
 {
