@@ -1,5 +1,11 @@
 <template>
   <page-containel>
+    <template #extra>
+      <div class="stream-switch-container">
+        流式返回：
+        <el-switch v-model="startStream" inline-prompt active-text="是" inactive-text="否" />
+      </div>
+    </template>
     <div id="app">
       <el-container style="height: 80%">
         <!-- 标题栏 -->
@@ -16,7 +22,7 @@
                   <!-- <span class="message-role">{{ message.role }}</span> -->
                   <span class="message-content">{{ message.content }}</span>
                 </div>
-                <div class="avatar-container"  v-if="message.role === 'user'">
+                <div class="avatar-container" v-if="message.role === 'user'">
                   <el-avatar :src="userStore.user.photo || avatar" />
                 </div>
               </div>
@@ -40,8 +46,8 @@
 </template>
 
 <script setup>
-import { ref, nextTick } from 'vue'
-import { QuestionsAndAnswers } from '../../api/Aigc'
+import { ref, nextTick, reactive } from 'vue'
+import { QuestionsAndAnswers, QuestionsAndAnswersStream } from '../../api/Aigc'
 import { useUserStore } from '@/stores'
 import { onMounted } from 'vue'
 import gpt from '@/assets/gpt.png'
@@ -51,10 +57,12 @@ const chatMessages = ref([]) // 存储对话消息
 const newMessage = ref('') // 输入框绑定的新消息
 const chatHistoryWrapper = ref(null) // 用于滚动操作的 DOM 引用
 const userStore = useUserStore()
+const startStream = ref(false)
 
 onMounted(() => {
   userStore.getUser()
 })
+
 // 定义方法
 const sendMessage = async () => {
   if (newMessage.value.trim() === '') return // 如果输入为空则不发送
@@ -65,20 +73,53 @@ const sendMessage = async () => {
     content: newMessage.value
   })
 
-  console.log(newMessage.value)
-  const res = await QuestionsAndAnswers(newMessage.value)
-  chatMessages.value.push({
-    role: 'gpt',
-    content: res.data.data
-  })
-  newMessage.value = ''
+  // 清空输入框
+  const userMessage = newMessage.value
 
-  // 滚动到底部
-  nextTick(() => {
-    if (chatHistoryWrapper.value) {
-      chatHistoryWrapper.value.scrollTop = chatHistoryWrapper.value.scrollHeight
+  if (startStream.value === false) {
+    //非流式
+    const res = await QuestionsAndAnswers(newMessage.value)
+    chatMessages.value.push({
+      role: 'gpt',
+      content: res.data.data
+    })
+    // 滚动到底部
+    nextTick(() => {
+      if (chatHistoryWrapper.value) {
+        chatHistoryWrapper.value.scrollTop = chatHistoryWrapper.value.scrollHeight
+      }
+    })
+  } else {
+    //流式
+    const gptMessage = reactive({ role: 'gpt', content: '' })
+    chatMessages.value.push(gptMessage)
+
+    // 发送 SSE 请求
+    const eventSource = QuestionsAndAnswersStream(userMessage, (data) => {
+      // 逐字显示消息
+      let index = 0
+      const intervalId = setInterval(() => {
+        if (index < data.length) {
+          gptMessage.content += data[index] // 逐个字符添加到内容中
+          index++
+
+          // 确保 DOM 更新后滚动到底部
+          nextTick(() => {
+            if (chatHistoryWrapper.value) {
+              chatHistoryWrapper.value.scrollTop = chatHistoryWrapper.value.scrollHeight
+            }
+          })
+        } else {
+          clearInterval(intervalId) // 停止定时器
+        }
+      }, 50) // 每 50 毫秒显示一个字符
+    })
+    // 当 SSE 连接关闭时，清理资源
+    eventSource.onerror = () => {
+      eventSource.close()
     }
-  })
+  }
+  newMessage.value = ''
 }
 </script>
 
