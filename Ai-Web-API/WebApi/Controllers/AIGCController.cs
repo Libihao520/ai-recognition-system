@@ -1,7 +1,12 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 using Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Model.Dto.AiModel;
+using Model.Options;
 using Model.Other;
 
 namespace WebApi.Controllers;
@@ -12,10 +17,12 @@ namespace WebApi.Controllers;
 public class AigcController : ControllerBase
 {
     private readonly IAiGcService _aiGcService;
+    private readonly JWTTokenOptions _jwtTokenOptions;
 
-    public AigcController(IAiGcService aiGcService)
+    public AigcController(IAiGcService aiGcService, IOptionsMonitor<JWTTokenOptions> jwtTokenOptions)
     {
         _aiGcService = aiGcService;
+        _jwtTokenOptions = jwtTokenOptions.CurrentValue;
     }
 
     [HttpGet]
@@ -54,8 +61,17 @@ public class AigcController : ControllerBase
     /// </summary>
     /// <param name="q"></param>
     [HttpGet]
-    public async Task QuestionsAndAnswersStream([FromQuery] string q)
+    [AllowAnonymous]
+    public async Task QuestionsAndAnswersStream([FromQuery] string q, string token)
     {
+        //  验证 token
+        if (string.IsNullOrEmpty(token) || !ValidateToken(token))
+        {
+            Response.StatusCode = StatusCodes.Status401Unauthorized;
+            await Response.WriteAsync("Unauthorized");
+            return;
+        }
+
         var response = Response;
         response.Headers.Add("Content-Type", "text/event-stream");
 
@@ -65,6 +81,34 @@ public class AigcController : ControllerBase
             // SSE 的消息格式是 "data: <message>\n\n"
             await response.WriteAsync($"data: {message}\n\n");
             await response.Body.FlushAsync(); // 确保消息被立即发送
+        }
+    }
+
+    // 手动验证 token 的方法
+    private bool ValidateToken(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.UTF8.GetBytes(_jwtTokenOptions.SecurityKey);
+
+        try
+        {
+            // 验证 token
+            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = _jwtTokenOptions.Issuer,
+                ValidAudience = _jwtTokenOptions.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(key)
+            }, out SecurityToken validatedToken);
+
+            return true; // token 有效
+        }
+        catch
+        {
+            return false; // token 无效
         }
     }
 }
