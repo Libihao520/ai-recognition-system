@@ -1,49 +1,55 @@
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Net.Mime;
-using Interface;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.PixelFormats;
 using QRCoder;
-
-namespace Service;
+using Interface;
 
 public class GjxService : IGjxService
 {
     public async Task<string> GetEwm(string txt)
     {
-        //创建一个QRCodeGenerator的实例，这是QRCoder库中用于生成QR码的核心类
+        // 创建二维码生成器
         var qrCodeGenerator = new QRCodeGenerator();
-
-        //CreateQrCode()中第一个参数是文本内容（这里我放的是我csdn的链接）
-        //第二个参数是错误矫正等级
-        QRCodeData qrCodeData = qrCodeGenerator.CreateQrCode(
-            txt,
-            QRCodeGenerator.ECCLevel.H);
-
-        //使用前面生成的qrCodeData来创建一个QRCode的实例，这个实例将用于生成实际的二维码图像
+        QRCodeData qrCodeData = qrCodeGenerator.CreateQrCode(txt, QRCodeGenerator.ECCLevel.H);
         QRCode qrCode = new QRCode(qrCodeData);
 
-        //GetGraphic方法的参数指定了二维码的像素大小、前景色、背景色以及是否要绘制一个白色的边框。
-        //在这个例子中，每个QR码模块的大小被设置为15像素，前景色为黑色，背景色为白色，并且绘制了白色边框
-        Bitmap bitmap = qrCode.GetGraphic(15,
-            Color.Black,
-            Color.White, true);
+        // 设置每个模块的像素大小
+        int moduleSize = 15; // 每个模块的像素大小，可以根据需要调整
 
-        // 将Bitmap保存到内存流中
-        using (MemoryStream memoryStream = new MemoryStream())
+        // 计算图像的宽度和高度
+        int qrCodeSize = qrCodeData.ModuleMatrix.Count * moduleSize;
+
+        // 使用ImageSharp创建图像
+        using (var bitmap = new Image<Rgba32>(qrCodeSize, qrCodeSize))
         {
-            // 保存图像到流中，使用PNG格式
-            bitmap.Save(memoryStream, ImageFormat.Png);
+            // 填充二维码数据
+            for (int x = 0; x < qrCodeData.ModuleMatrix.Count; x++)
+            {
+                for (int y = 0; y < qrCodeData.ModuleMatrix.Count; y++)
+                {
+                    // 获取当前模块的颜色
+                    Rgba32 moduleColor = qrCodeData.ModuleMatrix[x][y] ? Color.Black : Color.White;
 
-            // 将流的位置重置到开始位置，以便读取其内容
-            memoryStream.Position = 0;
+                    // 填充模块区域
+                    for (int i = 0; i < moduleSize; i++)
+                    {
+                        for (int j = 0; j < moduleSize; j++)
+                        {
+                            bitmap[x * moduleSize + i, y * moduleSize + j] = moduleColor;
+                        }
+                    }
+                }
+            }
 
-            // 读取流中的所有字节
-            byte[] byteImage = memoryStream.ToArray();
-
-            // 将字节数组转换为Base64字符串
-            string base64String = Convert.ToBase64String(byteImage);
-
-            return "data:image/png;base64,"+base64String;
+            // 将图像保存到内存流中
+            using (var memoryStream = new MemoryStream())
+            {
+                bitmap.Save(memoryStream, new PngEncoder());
+                memoryStream.Position = 0;
+                byte[] byteImage = memoryStream.ToArray();
+                string base64String = Convert.ToBase64String(byteImage);
+                return "data:image/png;base64," + base64String;
+            }
         }
     }
 }
