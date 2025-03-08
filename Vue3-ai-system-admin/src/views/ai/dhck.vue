@@ -57,7 +57,7 @@ const chatMessages = ref([]) // 存储对话消息
 const newMessage = ref('') // 输入框绑定的新消息
 const chatHistoryWrapper = ref(null) // 用于滚动操作的 DOM 引用
 const userStore = useUserStore()
-const startStream = ref(false)
+const startStream = ref(true)
 
 onMounted(() => {
   userStore.getUser()
@@ -90,34 +90,43 @@ const sendMessage = async () => {
       }
     })
   } else {
-    //流式
+    // 流式处理
     const gptMessage = reactive({ role: 'gpt', content: '' })
     chatMessages.value.push(gptMessage)
 
-    // 发送 SSE 请求
-    const eventSource = QuestionsAndAnswersStream(userMessage, (data) => {
-      // 逐字显示消息
-      let index = 0
-      const intervalId = setInterval(() => {
-        if (index < data.length) {
-          gptMessage.content += data[index] // 逐个字符添加到内容中
-          index++
+    // 创建消息处理队列
+    const messageQueue = []
+    let isProcessingQueue = false
 
-          // 确保 DOM 更新后滚动到底部
+    // 异步字符处理函数
+    const processQueue = async () => {
+      if (isProcessingQueue || messageQueue.length === 0) return
+      isProcessingQueue = true
+      
+      while (messageQueue.length > 0) {
+        const currentText = messageQueue.shift()
+        for (const char of currentText) {
+          gptMessage.content += char
+          // 添加微小延迟保证UI更新
+          await new Promise(resolve => 
+            setTimeout(resolve, 30)
+          )
+          // 滚动到底部
           nextTick(() => {
-            if (chatHistoryWrapper.value) {
-              chatHistoryWrapper.value.scrollTop = chatHistoryWrapper.value.scrollHeight
-            }
+            chatHistoryWrapper.value.scrollTop = chatHistoryWrapper.value.scrollHeight
           })
-        } else {
-          clearInterval(intervalId) // 停止定时器
         }
-      }, 50) // 每 50 毫秒显示一个字符
-    })
-    // 当 SSE 连接关闭时，清理资源
-    eventSource.onerror = () => {
-      eventSource.close()
+      }
+      isProcessingQueue = false
     }
+
+    // 发送 SSE 请求
+    QuestionsAndAnswersStream(userMessage, (data) => {
+      // 将新数据加入队列
+      messageQueue.push(data)
+      // 触发处理
+      processQueue()
+    })
   }
   newMessage.value = ''
 }
