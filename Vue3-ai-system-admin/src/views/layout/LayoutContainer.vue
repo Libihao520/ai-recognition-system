@@ -187,7 +187,7 @@ const handleCommand = async (key) => {
       <el-main>
         <router-view></router-view>
       </el-main>
-      <el-footer>AI识别 ©2024 Created by 爱吃香蕉的阿豪 & 栖止</el-footer>
+      <el-footer>乐思赋能平台 ©2025 Created by lsbc</el-footer>
     </el-container>
   </el-container>
 </template>
