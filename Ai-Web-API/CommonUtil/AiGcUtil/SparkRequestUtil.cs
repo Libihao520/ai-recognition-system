@@ -103,7 +103,6 @@ public class SparkRequestUtil
                             var line = await reader.ReadLineAsync();
                             if (!string.IsNullOrEmpty(line))
                             {
-                                Console.WriteLine(line);
                                 line = line.Substring("data: ".Length).Trim();
                                 if (line == "[DONE]")
                                 {
@@ -114,7 +113,9 @@ public class SparkRequestUtil
                                 if (responseData != null && responseData.Choices != null &&
                                     responseData.Choices.Count > 0)
                                 {
-                                    yield return responseData.Choices[0].Delta?.Content ?? string.Empty;
+                                    var content = responseData.Choices[0].Delta?.Content ?? string.Empty;
+                                    content = content.Replace("\n", "\\n");
+                                    yield return content;
                                 }
                             }
                         }
