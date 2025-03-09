@@ -20,7 +20,7 @@
                 <el-avatar :src="gpt" v-if="message.role === 'gpt'" />
                 <div :class="message.role === 'user' ? 'user-content' : 'gpt-content'">
                   <!-- <span class="message-role">{{ message.role }}</span> -->
-                  <span class="message-content">{{ message.content }}</span>
+                  <span class="message-content" v-html="renderMarkdown(message.content, message.role)"></span>
                 </div>
                 <div class="avatar-container" v-if="message.role === 'user'">
                   <el-avatar :src="userStore.user.photo || avatar" />
@@ -51,6 +51,18 @@ import { QuestionsAndAnswers, QuestionsAndAnswersStream } from '../../api/Aigc'
 import { useUserStore } from '@/stores'
 import { onMounted } from 'vue'
 import gpt from '@/assets/gpt.png'
+import { marked } from 'marked'
+import hljs from 'highlight.js'
+import 'highlight.js/styles/github.css' // 选择你喜欢的样式
+
+// 配置 marked 使用 highlight.js 进行代码高亮
+marked.setOptions({
+  highlight: function (code, language) {
+    const validLanguage = hljs.getLanguage(language) ? language : 'plaintext'
+    return hljs.highlight(validLanguage, code).value
+  },
+  breaks: true // 将单行换行符转换为 <br> 标签
+})
 
 // 定义响应式数据
 const chatMessages = ref([]) // 存储对话消息
@@ -62,6 +74,15 @@ const startStream = ref(true)
 onMounted(() => {
   userStore.getUser()
 })
+
+// 渲染 Markdown 内容
+const renderMarkdown = (content, role) => {
+  if (role === 'gpt') {
+    return marked(content)
+  } else {
+    return content // 用户消息直接返回原始内容
+  }
+}
 
 // 定义方法
 const sendMessage = async () => {
@@ -102,15 +123,14 @@ const sendMessage = async () => {
     const processQueue = async () => {
       if (isProcessingQueue || messageQueue.length === 0) return
       isProcessingQueue = true
-      
+
       while (messageQueue.length > 0) {
         const currentText = messageQueue.shift()
         for (const char of currentText) {
           gptMessage.content += char
+
           // 添加微小延迟保证UI更新
-          await new Promise(resolve => 
-            setTimeout(resolve, 30)
-          )
+          await new Promise((resolve) => setTimeout(resolve, 30))
           // 滚动到底部
           nextTick(() => {
             chatHistoryWrapper.value.scrollTop = chatHistoryWrapper.value.scrollHeight
@@ -123,7 +143,8 @@ const sendMessage = async () => {
     // 发送 SSE 请求
     QuestionsAndAnswersStream(userMessage, (data) => {
       // 将新数据加入队列
-      messageQueue.push(data)
+      const originalMessage = data.replace(/\\n/g, '\n')
+      messageQueue.push(originalMessage)
       // 触发处理
       processQueue()
     })
