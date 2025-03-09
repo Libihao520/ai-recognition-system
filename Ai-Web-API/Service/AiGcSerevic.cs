@@ -27,16 +27,16 @@ public class AiGcSerevic : IAiGcService
     private readonly IMapper _mapper;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly UserInformationUtil _informationUtil;
-    private readonly SparkRequestUtil _sparkRequestUtil;
+    private readonly AiRequestProcessor _aiRequestProcessor;
 
     public AiGcSerevic(MyDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor,
-        UserInformationUtil informationUtil, SparkRequestUtil sparkRequestUtil)
+        UserInformationUtil informationUtil, AiRequestProcessor aiRequestProcessor)
     {
         _context = context;
         _mapper = mapper;
         _httpContextAccessor = httpContextAccessor;
         _informationUtil = informationUtil;
-        _sparkRequestUtil = sparkRequestUtil;
+        _aiRequestProcessor = aiRequestProcessor;
     }
 
     public async Task<ApiResult> GetModelService(GetModelReq req)
@@ -195,15 +195,15 @@ public class AiGcSerevic : IAiGcService
 
     public async Task<ApiResult> QuestionsAndAnswers(string q)
     {
-        var requestAsync = await _sparkRequestUtil.RequestAsync(q);
+        var requestAsync = await _aiRequestProcessor.SparkProcess(q);
         return ResultHelper.Success("请求成功！", requestAsync);
     }
-    
+
     public async IAsyncEnumerable<string> QuestionsAndAnswersStream(string q)
     {
-        await foreach (var chunk in _sparkRequestUtil.RequestStreamAsync(q))
+        await foreach (var chunk in _aiRequestProcessor.SparkProcessStreamAsync(q))
         {
-            yield return chunk; 
+            yield return chunk;
         }
     }
 }
