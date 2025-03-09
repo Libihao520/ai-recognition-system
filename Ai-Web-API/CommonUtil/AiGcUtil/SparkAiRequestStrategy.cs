@@ -9,11 +9,11 @@ using Newtonsoft.Json.Linq;
 
 namespace CommonUtil.AiGcUtil;
 
-public class SparkRequestUtil
+public class SparkAiRequestStrategy : IAiRequestStrategy
 {
     private readonly AiGcOptions _aiGcOptions;
 
-    public SparkRequestUtil(IOptionsMonitor<AiGcOptions> aiGcOptions)
+    public SparkAiRequestStrategy(IOptionsMonitor<AiGcOptions> aiGcOptions)
     {
         _aiGcOptions = aiGcOptions.CurrentValue;
     }

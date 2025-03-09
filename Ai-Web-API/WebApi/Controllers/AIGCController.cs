@@ -75,7 +75,6 @@ public class AigcController : ControllerBase
         var response = Response;
         response.Headers.Add("Content-Type", "text/event-stream");
 
-        // 这里的 _aiGcService.QuestionsAndAnswersSSE 是一个假设的方法，需要您根据实际需求实现
         await foreach (var message in _aiGcService.QuestionsAndAnswersStream(q))
         {
             // SSE 的消息格式是 "data: <message>\n\n"
