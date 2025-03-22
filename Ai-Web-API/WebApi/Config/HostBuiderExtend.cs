@@ -28,10 +28,6 @@ public static class HostBuiderExtend
         //AI模块配置
         builder.Services.Configure<AiGcOptions>(builder.Configuration.GetSection("AiGcOptions"));
 
-        builder.Services.AddSingleton<EmailUtil>();
-        //获取用户信息工具
-        builder.Services.AddSingleton<UserInformationUtil>();
-
         #region JWT校验
 
         //第二步，增加鉴权逻辑
