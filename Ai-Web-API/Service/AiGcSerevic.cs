@@ -193,9 +193,9 @@ public class AiGcSerevic : IAiGcService
         }
     }
 
-    public async Task<ApiResult> QuestionsAndAnswers(string q)
+    public async Task<ApiResult> QuestionsAndAnswers(string q,CancellationToken cancellationToken)
     {
-        var requestAsync = await _aiRequestProcessor.SparkProcess(q);
+        var requestAsync = await _aiRequestProcessor.SparkProcess(q,cancellationToken);
         return ResultHelper.Success("请求成功！", requestAsync);
     }
 

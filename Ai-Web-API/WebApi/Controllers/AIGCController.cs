@@ -51,9 +51,9 @@ public class AigcController : ControllerBase
     /// <param name="q"></param>
     /// <returns></returns>
     [HttpGet]
-    public Task<ApiResult> QuestionsAndAnswers([FromQuery] string q)
+    public Task<ApiResult> QuestionsAndAnswers([FromQuery] string q,CancellationToken cancellationToken)
     {
-        return _aiGcService.QuestionsAndAnswers(q);
+        return _aiGcService.QuestionsAndAnswers(q,cancellationToken);
     }
 
     /// <summary>
