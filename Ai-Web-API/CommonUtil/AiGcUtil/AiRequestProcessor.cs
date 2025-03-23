@@ -13,15 +13,15 @@ public class AiRequestProcessor
         _requestStrategyFactory = requestStrategyFactory;
     }
 
-    public async Task<string> SparkProcess(string q)
+    public async Task<string> SparkProcess(string q, CancellationToken cancellationToken)
     {
         _requestStrategy = _requestStrategyFactory.Create("Spark");
-        return await _requestStrategy.RequestAsync(q);
+        return await _requestStrategy.RequestAsync(q, cancellationToken);
     }
 
     public IAsyncEnumerable<string> SparkProcessStreamAsync(string q)
     {
         _requestStrategy = _requestStrategyFactory.Create("Spark");
-      return  _requestStrategy.RequestStreamAsync(q);
+        return _requestStrategy.RequestStreamAsync(q);
     }
 }

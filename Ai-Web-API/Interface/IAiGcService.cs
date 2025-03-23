@@ -29,7 +29,7 @@ public interface IAiGcService
     /// </summary>
     /// <param name="q"></param>
     /// <returns></returns>
-    Task<ApiResult> QuestionsAndAnswers(string q);
+    Task<ApiResult> QuestionsAndAnswers(string q,CancellationToken cancellationToken);
 
     /// <summary>
     /// 在线问答（流式传输）

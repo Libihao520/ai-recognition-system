@@ -1,4 +1,5 @@
 using System.Text;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Model;
 using Model.Options;
@@ -12,13 +13,15 @@ namespace CommonUtil.AiGcUtil;
 public class SparkAiRequestStrategy : IAiRequestStrategy
 {
     private readonly AiGcOptions _aiGcOptions;
+    private readonly ILogger<SparkAiRequestStrategy> _logger;
 
-    public SparkAiRequestStrategy(IOptionsMonitor<AiGcOptions> aiGcOptions)
+    public SparkAiRequestStrategy(IOptionsMonitor<AiGcOptions> aiGcOptions, ILogger<SparkAiRequestStrategy> logger)
     {
+        _logger = logger;
         _aiGcOptions = aiGcOptions.CurrentValue;
     }
 
-    public async Task<string> RequestAsync(string q)
+    public async Task<string> RequestAsync(string q, CancellationToken cancellationToken)
     {
         using (var client = new HttpClient())
         {
@@ -43,17 +46,27 @@ public class SparkAiRequestStrategy : IAiRequestStrategy
 
             var jsonContent = Newtonsoft.Json.JsonConvert.SerializeObject(requestData);
             var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
-            var response = await client.PostAsync(_aiGcOptions.url, content);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var responseString = await response.Content.ReadAsStringAsync();
-                var responseData = JsonConvert.DeserializeObject<SparkResponseData>(responseString);
-                return responseData.Choices[0].Message.Content;
+                var response = await client.PostAsync(_aiGcOptions.url, content, cancellationToken);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    var responseData = JsonConvert.DeserializeObject<SparkResponseData>(responseString);
+                    return responseData.Choices[0].Message.Content;
+                }
+
+                return "业务繁忙，请稍后再试！";
             }
-            else
+            catch (OperationCanceledException)
             {
+                _logger.LogInformation("请求被取消！");
+                return "";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"An error occurred: {ex.Message}");
                 return "业务繁忙，请稍后再试！";
             }
         }
