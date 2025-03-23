@@ -72,7 +72,7 @@ public class SparkAiRequestStrategy : IAiRequestStrategy
         }
     }
 
-    public async IAsyncEnumerable<string> RequestStreamAsync(string q)
+    public async IAsyncEnumerable<string> RequestStreamAsync(string q, CancellationToken cancellationToken)
     {
         using (var client = new HttpClient())
         {
@@ -104,7 +104,8 @@ public class SparkAiRequestStrategy : IAiRequestStrategy
 
                 // 发送请求并等待响应头 HttpCompletionOption.ResponseHeadersRead
                 // 流式处理响应体 
-                using (var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
+                using (var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead,
+                           cancellationToken))
                 {
                     response.EnsureSuccessStatusCode();
 
@@ -113,6 +114,12 @@ public class SparkAiRequestStrategy : IAiRequestStrategy
                     {
                         while (!reader.EndOfStream)
                         {
+                            if (cancellationToken.IsCancellationRequested)
+                            {
+                                _logger.LogInformation("请求被取消！");
+                                yield break;
+                            }
+
                             var line = await reader.ReadLineAsync();
                             if (!string.IsNullOrEmpty(line))
                             {
