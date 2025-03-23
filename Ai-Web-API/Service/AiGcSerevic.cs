@@ -199,9 +199,9 @@ public class AiGcSerevic : IAiGcService
         return ResultHelper.Success("请求成功！", requestAsync);
     }
 
-    public async IAsyncEnumerable<string> QuestionsAndAnswersStream(string q)
+    public async IAsyncEnumerable<string> QuestionsAndAnswersStream(string q,CancellationToken cancellationToken)
     {
-        await foreach (var chunk in _aiRequestProcessor.SparkProcessStreamAsync(q))
+        await foreach (var chunk in _aiRequestProcessor.SparkProcessStreamAsync(q,cancellationToken))
         {
             yield return chunk;
         }

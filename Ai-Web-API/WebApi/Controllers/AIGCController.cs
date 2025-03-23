@@ -62,7 +62,7 @@ public class AigcController : ControllerBase
     /// <param name="q"></param>
     [HttpGet]
     [AllowAnonymous]
-    public async Task QuestionsAndAnswersStream([FromQuery] string q, string token)
+    public async Task QuestionsAndAnswersStream([FromQuery] string q, string token,CancellationToken cancellationToken)
     {
         //  验证 token
         if (string.IsNullOrEmpty(token) || !ValidateToken(token))
@@ -75,7 +75,7 @@ public class AigcController : ControllerBase
         var response = Response;
         response.Headers.Add("Content-Type", "text/event-stream");
 
-        await foreach (var message in _aiGcService.QuestionsAndAnswersStream(q))
+        await foreach (var message in _aiGcService.QuestionsAndAnswersStream(q,cancellationToken))
         {
             // SSE 的消息格式是 "data: <message>\n\n"
             await response.WriteAsync($"data: {message}\n\n");

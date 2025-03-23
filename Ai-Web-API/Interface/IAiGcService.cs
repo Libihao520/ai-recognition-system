@@ -36,5 +36,5 @@ public interface IAiGcService
     /// </summary>
     /// <param name="q"></param>
     /// <returns></returns>
-    IAsyncEnumerable<string> QuestionsAndAnswersStream(string q);
+    IAsyncEnumerable<string> QuestionsAndAnswersStream(string q,CancellationToken cancellationToken);
 }

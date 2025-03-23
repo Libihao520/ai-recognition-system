@@ -19,9 +19,9 @@ public class AiRequestProcessor
         return await _requestStrategy.RequestAsync(q, cancellationToken);
     }
 
-    public IAsyncEnumerable<string> SparkProcessStreamAsync(string q)
+    public IAsyncEnumerable<string> SparkProcessStreamAsync(string q,CancellationToken cancellationToken)
     {
         _requestStrategy = _requestStrategyFactory.Create("Spark");
-        return _requestStrategy.RequestStreamAsync(q);
+        return _requestStrategy.RequestStreamAsync(q,cancellationToken);
     }
 }
