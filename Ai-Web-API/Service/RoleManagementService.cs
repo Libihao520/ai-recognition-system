@@ -26,15 +26,13 @@ public class RoleManagementService : IRoleManagementService
     private readonly ILogger<RoleManagementService> _logger;
     private readonly MyDbContext _context;
     private readonly IMapper _mapper;
-    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly UserInformationUtil _informationUtil;
 
-    public RoleManagementService(MyDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor,
+    public RoleManagementService(MyDbContext context, IMapper mapper,
         ILogger<RoleManagementService> logger, UserInformationUtil informationUtil)
     {
         _context = context;
         _mapper = mapper;
-        _httpContextAccessor = httpContextAccessor;
         _logger = logger;
         _informationUtil = informationUtil;
     }
@@ -106,7 +104,6 @@ public class RoleManagementService : IRoleManagementService
                     return ResultHelper.Error("用户名称已被注册了，请换一个！");
                 }
 
-                var httpContextUser = _httpContextAccessor.HttpContext.User;
                 var createUserId = _informationUtil.GetCurrentUserId();
                 //TODO 验证邮箱是否合规（最好是将注册的验证邮箱抽出来通用） CreateUserId采用当前操作角色的id 
                 Users insterUser = new Users()
@@ -159,8 +156,7 @@ public class RoleManagementService : IRoleManagementService
         //异步事务
         using var transaction = await _context.Database.BeginTransactionAsync();
 
-        var user = _httpContextAccessor.HttpContext.User;
-        var createUserId = long.Parse(user.Claims.FirstOrDefault(c => c.Type == "Id").Value);
+        var createUserId = _informationUtil.GetCurrentUserId();
         var usersToAdd = new List<Users>();
         using (var stream = new MemoryStream())
         {
