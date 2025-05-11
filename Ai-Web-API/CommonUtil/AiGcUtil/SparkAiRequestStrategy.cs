@@ -59,7 +59,7 @@ public class SparkAiRequestStrategy : IAiRequestStrategy
         }
     }
 
-    public async IAsyncEnumerable<string> RequestStreamAsync(string q, CancellationToken cancellationToken)
+    public async IAsyncEnumerable<string> RequestStreamAsync<T>(T q, CancellationToken cancellationToken)
     {
         //TODO 看能不能网页一刷新就把缓存清掉，相当于一刷新就是新的问答界面
         using (var client = new HttpClient())
@@ -69,20 +69,7 @@ public class SparkAiRequestStrategy : IAiRequestStrategy
             client.DefaultRequestHeaders.Accept.Add(
                 new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
-            var requestData = new
-            {
-                model = "generalv3.5",
-                messages = new[]
-                {
-                    new
-                    {
-                        role = "user",
-                        content = q
-                    }
-                },
-                stream = true
-            };
-            var jsonContent = new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8,
+            var jsonContent = new StringContent(JsonConvert.SerializeObject(q), Encoding.UTF8,
                 "application/json");
 
             // 创建 HttpRequestMessage
