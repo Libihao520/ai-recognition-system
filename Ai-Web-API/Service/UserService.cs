@@ -26,15 +26,17 @@ public class UserService : IUserService
     private MyDbContext _context;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly EmailUtil _emailUtil;
+    private readonly UserInformationUtil _informationUtil;
 
     public UserService(IMapper mapper, MyDbContext context, IHttpContextAccessor httpContextAccessor,
-        EmailUtil emailUtil, ILogger<UserService> logger)
+        EmailUtil emailUtil, ILogger<UserService> logger, UserInformationUtil informationUtil)
     {
         _mapper = mapper;
         _context = context;
         _httpContextAccessor = httpContextAccessor;
         _emailUtil = emailUtil;
         _logger = logger;
+        _informationUtil = informationUtil;
     }
 
     public GetUserRes GetUser(string userName, string passWord)
@@ -170,9 +172,7 @@ public class UserService : IUserService
     /// <exception cref="NotImplementedException"></exception>
     public async Task<ApiResult> GetUserInfo()
     {
-        var httpContextUser = _httpContextAccessor.HttpContext.User;
-        var userId = long.Parse(httpContextUser.Claims.FirstOrDefault(c => c.Type == "Id").Value);
-        var user = await _context.Users.FindAsync(userId);
+        var user = await _context.Users.FindAsync(_informationUtil.GetCurrentUserId());
         if (user == null)
         {
             return ResultHelper.Error("用户不存在！");
@@ -192,15 +192,7 @@ public class UserService : IUserService
 
     public async Task<ApiResult> PutUserAvatar(PhotoAddDto po, CancellationToken cancellationToken)
     {
-        var httpContextUser = _httpContextAccessor.HttpContext.User;
-        var userIdClaim = httpContextUser.Claims.FirstOrDefault(c => c.Type == "Id");
-
-        if (userIdClaim == null || !long.TryParse(userIdClaim.Value, out long userId))
-        {
-            return ResultHelper.Error("用户 ID 不存在！");
-        }
-
-        var user = await _context.Users.FindAsync(userId, cancellationToken);
+        var user = await _context.Users.FindAsync(_informationUtil.GetCurrentUserId(), cancellationToken);
         if (user == null)
         {
             return ResultHelper.Error("用户不存在！");
