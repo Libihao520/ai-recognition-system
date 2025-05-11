@@ -16,6 +16,7 @@ using Model;
 using Model.Dto.AiModel;
 using Model.Entities;
 using Model.Other;
+using Model.UtilData;
 using MySqlConnector;
 using Newtonsoft.Json.Linq;
 
@@ -193,15 +194,16 @@ public class AiGcSerevic : IAiGcService
         }
     }
 
-    public async Task<ApiResult> QuestionsAndAnswers(string q,CancellationToken cancellationToken)
+    public async Task<ApiResult> QuestionsAndAnswers(string q, CancellationToken cancellationToken)
     {
-        var requestAsync = await _aiRequestProcessor.SparkProcess(q,cancellationToken);
+
+        var requestAsync = await _aiRequestProcessor.SparkProcess(q, cancellationToken);
         return ResultHelper.Success("请求成功！", requestAsync);
     }
 
-    public async IAsyncEnumerable<string> QuestionsAndAnswersStream(string q,CancellationToken cancellationToken)
+    public async IAsyncEnumerable<string> QuestionsAndAnswersStream(string q, CancellationToken cancellationToken)
     {
-        await foreach (var chunk in _aiRequestProcessor.SparkProcessStreamAsync(q,cancellationToken))
+        await foreach (var chunk in _aiRequestProcessor.SparkProcessStreamAsync(q, cancellationToken))
         {
             yield return chunk;
         }
