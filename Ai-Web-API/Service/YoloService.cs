@@ -30,11 +30,12 @@ public class YoloService : IYoloService
     private MyDbContext _context;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly UserInformationUtil _informationUtil;
-    
+
     private static readonly string? BasePath =
         Directory.GetCurrentDirectory();
 
-    public YoloService(MyDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor, UserInformationUtil informationUtil)
+    public YoloService(MyDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor,
+        UserInformationUtil informationUtil)
     {
         _context = context;
         _mapper = mapper;
@@ -48,7 +49,7 @@ public class YoloService : IYoloService
     /// <returns></returns>
     public async Task<ApiResult> getpkqTb(YoloDetectionQueryReq req)
     {
-        IQueryable<YoLoTbs> yolotb = _context.YoLoTbs.Where(p => p.IsDeleted == 0).OrderByDescending(q=>q.CreateDate);
+        IQueryable<YoLoTbs> yolotb = _context.YoLoTbs.Where(p => p.IsDeleted == 0).OrderByDescending(q => q.CreateDate);
         //筛选条件
         if (req.ModelCls != "全部")
         {
@@ -80,6 +81,7 @@ public class YoloService : IYoloService
                 yoloPkqRese.CreateName =
                     await _informationUtil.GetUserNameByIdAsync(long.Parse(yoloPkqRese.CreateName));
         }
+
         return ResultHelper.Success("获取成功！", yoloPkqResList, total);
     }
 
@@ -106,13 +108,20 @@ public class YoloService : IYoloService
                 {
                     using var yolo = new Yolo(Path.Combine(BasePath, aiModels.Path), false);
                     var runClassification = yolo.RunClassification(image);
-                    if (aiModels.ModelName == "动物识别")
+                    if (runClassification[0].Confidence < 0.8)
                     {
-                        result = YoloClassAnimalUtil.GetAnimalName(runClassification[0].Label);
+                        result = "未识别出来！";
                     }
                     else
                     {
-                        result = runClassification[0].Label;
+                        if (aiModels.ModelName == "动物识别")
+                        {
+                            result = YoloClassAnimalUtil.GetAnimalName(runClassification[0].Label);
+                        }
+                        else
+                        {
+                            result = runClassification[0].Label;
+                        }
                     }
                 }
 
