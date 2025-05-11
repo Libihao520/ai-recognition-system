@@ -10,7 +10,6 @@ namespace CommonUtil.AiGcUtil;
 /// </summary>
 public class AiRequestProcessor
 {
-    private IAiRequestStrategy? _requestStrategy;
     private readonly AiRequestStrategyFactory _requestStrategyFactory;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly UserInformationUtil _informationUtil;
@@ -25,44 +24,37 @@ public class AiRequestProcessor
 
     public async Task<string> SparkProcess(string q, CancellationToken cancellationToken)
     {
-        var userId = _informationUtil.GetCurrentUserId();
+        var messages = GetAndUpdateMessages(q);
+        var sparkRequestData = new SparkRequestData { messages = messages };
 
-        var messages = new List<message>();
-        if (CacheManager.Exist(string.Format(RedisKey.UserActiveCode, userId)))
-        {
-            messages = CacheManager.Get<List<message>>(string.Format(RedisKey.UserActiveCode, userId));
-        }
-
-        messages.Add(new message() { content = q });
-        CacheManager.Set(string.Format(RedisKey.UserActiveCode, userId), messages, TimeSpan.FromMinutes(30));
-
-        var sparkRequestData = new SparkRequestData
-        {
-            messages = messages
-        };
-        _requestStrategy = _requestStrategyFactory.Create("Spark");
-        return await _requestStrategy.RequestAsync(sparkRequestData, cancellationToken);
+        var requestStrategy = _requestStrategyFactory.Create("Spark");
+        return await requestStrategy.RequestAsync(sparkRequestData, cancellationToken);
     }
 
     public IAsyncEnumerable<string> SparkProcessStreamAsync(string q, CancellationToken cancellationToken)
     {
-        var userId = _informationUtil.GetCurrentUserId();
-
-        var messages = new List<message>();
-        if (CacheManager.Exist(string.Format(RedisKey.UserActiveCode, userId)))
-        {
-            messages = CacheManager.Get<List<message>>(string.Format(RedisKey.UserActiveCode, userId));
-        }
-
-        messages.Add(new message() { content = q });
-        CacheManager.Set(string.Format(RedisKey.UserActiveCode, userId), messages, TimeSpan.FromMinutes(30));
-
+        var messages = GetAndUpdateMessages(q);
         var sparkRequestData = new SparkRequestData
         {
             messages = messages,
             stream = true
         };
-        _requestStrategy = _requestStrategyFactory.Create("Spark");
-        return _requestStrategy.RequestStreamAsync<SparkRequestData>(sparkRequestData, cancellationToken);
+        var requestStrategy = _requestStrategyFactory.Create("Spark");
+        return requestStrategy.RequestStreamAsync<SparkRequestData>(sparkRequestData, cancellationToken);
+    }
+
+    private List<message> GetAndUpdateMessages(string newMessage)
+    {
+        var userId = _informationUtil.GetCurrentUserId();
+        var cacheKey = string.Format(RedisKey.UserActiveCode, userId);
+
+        var messages = CacheManager.Exist(cacheKey)
+            ? CacheManager.Get<List<message>>(cacheKey)
+            : new List<message>();
+
+        messages.Add(new message() { content = newMessage });
+        CacheManager.Set(cacheKey, messages, TimeSpan.FromMinutes(30));
+
+        return messages;
     }
 }
