@@ -1,21 +1,39 @@
 using EFCoreMigrations;
+using Microsoft.AspNetCore.Http;
 
 namespace CommonUtil;
 
 public class UserInformationUtil
 {
     private readonly MyDbContext _context;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public UserInformationUtil(MyDbContext context)
+    public UserInformationUtil(MyDbContext context, IHttpContextAccessor httpContextAccessor)
     {
         _context = context;
+        _httpContextAccessor = httpContextAccessor;
+    }
+
+    public long GetCurrentUserId()
+    {
+        var httpContextUser = _httpContextAccessor.HttpContext?.User;
+        if (httpContextUser == null)
+        {
+            throw new InvalidOperationException("无法获取当前用户信息");
+        }
+
+        var claim = httpContextUser.Claims.FirstOrDefault(c => c.Type == "Id");
+        if (claim == null || !long.TryParse(claim.Value, out var userId))
+        {
+            throw new InvalidOperationException("用户ID无效或不存在");
+        }
+
+        return userId;
     }
 
     public async Task<string> GetUserNameByIdAsync(long userId)
     {
         var findAsync = await _context.Users.FindAsync(userId);
-        // 模拟从数据库获取用户名
-        // 在实际应用中，这里应该是数据库查询
         if (findAsync != null)
         {
             return findAsync.Name;
@@ -24,5 +42,11 @@ public class UserInformationUtil
         {
             return "用户不存在！";
         }
+    }
+
+    public async Task<string> GetCurrentUserNameAsync()
+    {
+        var userId = GetCurrentUserId();
+        return await GetUserNameByIdAsync(userId);
     }
 }

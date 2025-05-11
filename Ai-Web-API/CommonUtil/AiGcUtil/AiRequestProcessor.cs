@@ -13,17 +13,19 @@ public class AiRequestProcessor
     private IAiRequestStrategy? _requestStrategy;
     private readonly AiRequestStrategyFactory _requestStrategyFactory;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly UserInformationUtil _informationUtil;
 
-    public AiRequestProcessor(AiRequestStrategyFactory requestStrategyFactory, IHttpContextAccessor httpContextAccessor)
+    public AiRequestProcessor(AiRequestStrategyFactory requestStrategyFactory, IHttpContextAccessor httpContextAccessor,
+        UserInformationUtil informationUtil)
     {
         _requestStrategyFactory = requestStrategyFactory;
         _httpContextAccessor = httpContextAccessor;
+        _informationUtil = informationUtil;
     }
 
     public async Task<string> SparkProcess(string q, CancellationToken cancellationToken)
     {
-        var httpContextUser = _httpContextAccessor.HttpContext.User;
-        var userId = long.Parse(httpContextUser.Claims.FirstOrDefault(c => c.Type == "Id").Value);
+        var userId = _informationUtil.GetCurrentUserId();
 
         var messages = new List<message>();
         if (CacheManager.Exist(string.Format(RedisKey.UserActiveCode, userId)))
@@ -44,8 +46,7 @@ public class AiRequestProcessor
 
     public IAsyncEnumerable<string> SparkProcessStreamAsync(string q, CancellationToken cancellationToken)
     {
-        var httpContextUser = _httpContextAccessor.HttpContext.User;
-        var userId = long.Parse(httpContextUser.Claims.FirstOrDefault(c => c.Type == "Id").Value);
+        var userId = _informationUtil.GetCurrentUserId();
 
         var messages = new List<message>();
         if (CacheManager.Exist(string.Format(RedisKey.UserActiveCode, userId)))
