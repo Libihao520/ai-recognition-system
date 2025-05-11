@@ -44,7 +44,24 @@ public class AiRequestProcessor
 
     public IAsyncEnumerable<string> SparkProcessStreamAsync(string q, CancellationToken cancellationToken)
     {
+        var httpContextUser = _httpContextAccessor.HttpContext.User;
+        var userId = long.Parse(httpContextUser.Claims.FirstOrDefault(c => c.Type == "Id").Value);
+
+        var messages = new List<message>();
+        if (CacheManager.Exist(string.Format(RedisKey.UserActiveCode, userId)))
+        {
+            messages = CacheManager.Get<List<message>>(string.Format(RedisKey.UserActiveCode, userId));
+        }
+
+        messages.Add(new message() { content = q });
+        CacheManager.Set(string.Format(RedisKey.UserActiveCode, userId), messages, TimeSpan.FromMinutes(30));
+
+        var sparkRequestData = new SparkRequestData
+        {
+            messages = messages,
+            stream = true
+        };
         _requestStrategy = _requestStrategyFactory.Create("Spark");
-        return _requestStrategy.RequestStreamAsync(q, cancellationToken);
+        return _requestStrategy.RequestStreamAsync<SparkRequestData>(sparkRequestData, cancellationToken);
     }
 }

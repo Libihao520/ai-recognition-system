@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using Interface;
 using Microsoft.AspNetCore.Authorization;
@@ -51,9 +52,9 @@ public class AigcController : ControllerBase
     /// <param name="q"></param>
     /// <returns></returns>
     [HttpGet]
-    public Task<ApiResult> QuestionsAndAnswers([FromQuery] string q,CancellationToken cancellationToken)
+    public Task<ApiResult> QuestionsAndAnswers([FromQuery] string q, CancellationToken cancellationToken)
     {
-        return _aiGcService.QuestionsAndAnswers(q,cancellationToken);
+        return _aiGcService.QuestionsAndAnswers(q, cancellationToken);
     }
 
     /// <summary>
@@ -62,20 +63,24 @@ public class AigcController : ControllerBase
     /// <param name="q"></param>
     [HttpGet]
     [AllowAnonymous]
-    public async Task QuestionsAndAnswersStream([FromQuery] string q, string token,CancellationToken cancellationToken)
+    public async Task QuestionsAndAnswersStream([FromQuery] string q, string token, CancellationToken cancellationToken)
     {
-        //  验证 token
-        if (string.IsNullOrEmpty(token) || !ValidateToken(token))
+        // 验证 token 并获取 ClaimsPrincipal
+        var principal = ValidateToken(token);
+        if (principal == null)
         {
             Response.StatusCode = StatusCodes.Status401Unauthorized;
             await Response.WriteAsync("Unauthorized");
             return;
         }
 
+        // 将 ClaimsPrincipal 设置到当前 HttpContext.User
+        HttpContext.User = principal;
+        
         var response = Response;
         response.Headers.Add("Content-Type", "text/event-stream");
 
-        await foreach (var message in _aiGcService.QuestionsAndAnswersStream(q,cancellationToken))
+        await foreach (var message in _aiGcService.QuestionsAndAnswersStream(q, cancellationToken))
         {
             // SSE 的消息格式是 "data: <message>\n\n"
             await response.WriteAsync($"data: {message}\n\n");
@@ -84,15 +89,15 @@ public class AigcController : ControllerBase
     }
 
     // 手动验证 token 的方法
-    private bool ValidateToken(string token)
+    private ClaimsPrincipal? ValidateToken(string token)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_jwtTokenOptions.SecurityKey);
 
         try
         {
-            // 验证 token
-            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            //验证 token 并返回 ClaimsPrincipal
+            var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
             {
                 ValidateIssuer = true,
                 ValidateAudience = true,
@@ -103,11 +108,11 @@ public class AigcController : ControllerBase
                 IssuerSigningKey = new SymmetricSecurityKey(key)
             }, out SecurityToken validatedToken);
 
-            return true; // token 有效
+            return principal; // 返回 ClaimsPrincipal
         }
         catch
         {
-            return false; // token 无效
+            return null; // token 无效
         }
     }
 }
