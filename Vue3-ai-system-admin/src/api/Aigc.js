@@ -45,3 +45,6 @@ export const QuestionsAndAnswersStream = (q, onMessage) => {
 
   return eventSource;
 };
+//
+export const DelHistory = () =>
+  request.delete('/Aigc/DelHistory');

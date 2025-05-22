@@ -18,7 +18,8 @@
             <div class="chat-history" v-for="(message, index) in chatMessages" :key="index">
               <div :class="message.role === 'user' ? 'user-message' : 'gpt-message'">
                 <el-avatar :src="gpt" v-if="message.role === 'gpt'" />
-                <div :class="message.role === 'user' ? 'user-content' : 'gpt-content'">
+                <div :class="message.role === 'user' ? 'user-content' : 'gpt-content'
+                  ">
                   <!-- <span class="message-role">{{ message.role }}</span> -->
                   <span class="message-content" v-html="renderMarkdown(message.content, message.role)"></span>
                 </div>
@@ -29,13 +30,8 @@
             </div>
           </div>
           <el-row class="input-row" style="margin-top: 15px">
-            <el-input
-              v-model="newMessage"
-              placeholder="请输入消息"
-              clearable
-              @keyup.enter="sendMessage"
-              style="width: 80%"
-            />
+            <el-input v-model="newMessage" placeholder="请输入消息" clearable @keyup.enter="sendMessage"
+              style="width: 80%" />
 
             <el-button type="primary" @click="sendMessage">发送</el-button>
           </el-row>
@@ -47,7 +43,7 @@
 
 <script setup>
 import { ref, nextTick, reactive } from 'vue'
-import { QuestionsAndAnswers, QuestionsAndAnswersStream } from '../../api/Aigc'
+import { QuestionsAndAnswers, QuestionsAndAnswersStream,DelHistory } from '../../api/Aigc'
 import { useUserStore } from '@/stores'
 import { onMounted } from 'vue'
 import gpt from '@/assets/gpt.png'
@@ -71,7 +67,15 @@ const chatHistoryWrapper = ref(null) // 用于滚动操作的 DOM 引用
 const userStore = useUserStore()
 const startStream = ref(true)
 
+// 清理对话历史的方法
+const clearChatHistory = () => {
+  chatMessages.value = []
+  DelHistory()
+  console.log('对话历史已清空')
+}
+
 onMounted(() => {
+  clearChatHistory()
   userStore.getUser()
 })
 
@@ -176,12 +180,14 @@ const sendMessage = async () => {
 
 .user-message {
   display: flex;
-  justify-content: flex-end; /* 用户消息靠右 */
+  justify-content: flex-end;
+  /* 用户消息靠右 */
 }
 
 .gpt-message {
   display: flex;
-  justify-content: flex-start; /* 系统消息靠左 */
+  justify-content: flex-start;
+  /* 系统消息靠左 */
 }
 
 .user-content {
@@ -191,7 +197,8 @@ const sendMessage = async () => {
   border-radius: 10px;
   display: inline-block;
   max-width: 70%;
-  text-align: left; /* 用户消息内容左对齐 */
+  text-align: left;
+  /* 用户消息内容左对齐 */
 }
 
 .gpt-content {
@@ -201,7 +208,8 @@ const sendMessage = async () => {
   border-radius: 10px;
   display: inline-block;
   max-width: 70%;
-  text-align: left; /* 系统消息内容左对齐 */
+  text-align: left;
+  /* 系统消息内容左对齐 */
 }
 
 .message-role {

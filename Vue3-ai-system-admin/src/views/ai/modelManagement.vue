@@ -33,12 +33,10 @@ const onAddTblist = () => {
 }
 //编辑逻辑
 const onEditChannel = (row) => {
-  console.log(row)
   modelManagementEditRef.value.open(row)
 }
 //删除逻辑
 const onDelChannel = async (row, $index) => {
-  console.log(row.id)
   const res = await DelModelService(row.id)
   getTableList()
 }

@@ -5,6 +5,7 @@ using Azure.Core;
 using CommonUtil;
 using CommonUtil.AiGcUtil;
 using CommonUtil.RandomIdUtil;
+using CommonUtil.RedisUtil;
 using CommonUtil.RequesUtil;
 using EFCoreMigrations;
 using Interface;
@@ -13,6 +14,7 @@ using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer.ValueGeneration.Internal;
 using Model;
+using Model.Consts;
 using Model.Dto.AiModel;
 using Model.Entities;
 using Model.Other;
@@ -196,7 +198,6 @@ public class AiGcSerevic : IAiGcService
 
     public async Task<ApiResult> QuestionsAndAnswers(string q, CancellationToken cancellationToken)
     {
-
         var requestAsync = await _aiRequestProcessor.SparkProcess(q, cancellationToken);
         return ResultHelper.Success("请求成功！", requestAsync);
     }
@@ -207,5 +208,14 @@ public class AiGcSerevic : IAiGcService
         {
             yield return chunk;
         }
+    }
+
+    public ApiResult DelHistoryService()
+    {
+        var userId = _informationUtil.GetCurrentUserId();
+        var cacheKey = string.Format(RedisKey.UserAiRecentDialogs, userId);
+        if (CacheManager.Exist(cacheKey))
+            CacheManager.Remove(cacheKey);
+        return ResultHelper.Success("请求成功", "成功移除缓存");
     }
 }

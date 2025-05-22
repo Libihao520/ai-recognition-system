@@ -76,7 +76,7 @@ public class AigcController : ControllerBase
 
         // 将 ClaimsPrincipal 设置到当前 HttpContext.User
         HttpContext.User = principal;
-        
+
         var response = Response;
         response.Headers.Add("Content-Type", "text/event-stream");
 
@@ -86,6 +86,16 @@ public class AigcController : ControllerBase
             await response.WriteAsync($"data: {message}\n\n");
             await response.Body.FlushAsync(); // 确保消息被立即发送
         }
+    }
+
+    /// <summary>
+    /// 移除缓存
+    /// </summary>
+    /// <returns></returns>
+    [HttpDelete]
+    public ApiResult DelHistory()
+    {
+        return _aiGcService.DelHistoryService();
     }
 
     // 手动验证 token 的方法
