@@ -46,7 +46,7 @@ public class AiRequestProcessor
     private List<message> GetAndUpdateMessages(string newMessage)
     {
         var userId = _informationUtil.GetCurrentUserId();
-        var cacheKey = string.Format(RedisKey.UserActiveCode, userId);
+        var cacheKey = string.Format(RedisKey.UserAiRecentDialogs, userId);
 
         var messages = CacheManager.Exist(cacheKey)
             ? CacheManager.Get<List<message>>(cacheKey)
