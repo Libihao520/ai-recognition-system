@@ -1,3 +1,4 @@
+using System.Text;
 using CommonUtil.RedisUtil;
 using Microsoft.AspNetCore.Http;
 using Model.Consts;
@@ -28,10 +29,13 @@ public class AiRequestProcessor
         var sparkRequestData = new SparkRequestData { messages = messages };
 
         var requestStrategy = _requestStrategyFactory.Create("Spark");
-        return await requestStrategy.RequestAsync(sparkRequestData, cancellationToken);
+        var requestAsync = await requestStrategy.RequestAsync(sparkRequestData, cancellationToken);
+
+        GetAndUpdateMessages(requestAsync, "gpt");
+        return requestAsync;
     }
 
-    public IAsyncEnumerable<string> SparkProcessStreamAsync(string q, CancellationToken cancellationToken)
+    public async IAsyncEnumerable<string> SparkProcessStreamAsync(string q, CancellationToken cancellationToken)
     {
         var messages = GetAndUpdateMessages(q);
         var sparkRequestData = new SparkRequestData
@@ -40,21 +44,32 @@ public class AiRequestProcessor
             stream = true
         };
         var requestStrategy = _requestStrategyFactory.Create("Spark");
-        return requestStrategy.RequestStreamAsync<SparkRequestData>(sparkRequestData, cancellationToken);
+        var fullResponse = new StringBuilder(); // 用于累积完整响应
+
+        await foreach (var chunk in requestStrategy.RequestStreamAsync<SparkRequestData>(sparkRequestData,
+                           cancellationToken))
+        {
+            yield return chunk;
+            fullResponse.Append(chunk);
+        }
+
+        // 流结束后处理
+        string finalResponse = fullResponse.ToString().Replace("\\n", "\n");
+        GetAndUpdateMessages(finalResponse, "gpt"); // 存入缓存
     }
 
-    private List<message> GetAndUpdateMessages(string newMessage)
+    private List<message> GetAndUpdateMessages(string newMessage, string role = "user")
     {
         var userId = _informationUtil.GetCurrentUserId();
         var cacheKey = string.Format(RedisKey.UserAiRecentDialogs, userId);
 
-        var messages = CacheManager.Exist(cacheKey)
+        var Messages = CacheManager.Exist(cacheKey)
             ? CacheManager.Get<List<message>>(cacheKey)
             : new List<message>();
 
-        messages.Add(new message() { content = newMessage });
-        CacheManager.Set(cacheKey, messages, TimeSpan.FromMinutes(30));
+        Messages.Add(new message() { role = role, content = newMessage });
+        CacheManager.Set(cacheKey, Messages, TimeSpan.FromMinutes(30));
 
-        return messages;
+        return Messages.Where(m => m.role == role).ToList();
     }
 }

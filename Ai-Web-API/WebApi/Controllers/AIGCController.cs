@@ -89,6 +89,16 @@ public class AigcController : ControllerBase
     }
 
     /// <summary>
+    /// 获取缓存
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public ApiResult GetHistory()
+    {
+        return _aiGcService.GetHistoryService();
+    }
+    
+    /// <summary>
     /// 移除缓存
     /// </summary>
     /// <returns></returns>

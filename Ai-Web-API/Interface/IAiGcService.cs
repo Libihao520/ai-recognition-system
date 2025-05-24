@@ -39,6 +39,12 @@ public interface IAiGcService
     IAsyncEnumerable<string> QuestionsAndAnswersStream(string q, CancellationToken cancellationToken);
 
     /// <summary>
+    /// 获取缓存
+    /// </summary>
+    /// <returns></returns>
+    ApiResult GetHistoryService();
+
+    /// <summary>
     /// 移除缓存
     /// </summary>
     /// <returns></returns>
