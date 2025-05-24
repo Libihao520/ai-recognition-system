@@ -65,9 +65,12 @@
               clearable
               @keyup.enter="sendMessage"
               style="width: 80%"
+              :disabled="isSending"
             />
 
-            <el-button type="primary" @click="sendMessage">发送</el-button>
+            <el-button type="primary" @click="sendMessage" :disabled="isSending"
+              >发送</el-button
+            >
           </el-row>
         </el-main>
       </el-container>
@@ -105,6 +108,7 @@ const newMessage = ref('') // 输入框绑定的新消息
 const chatHistoryWrapper = ref(null) // 用于滚动操作的 DOM 引用
 const userStore = useUserStore()
 const startStream = ref(true)
+const isSending = ref(false)
 
 // 清理对话历史的方法
 const clearChatHistory = async () => {
@@ -134,7 +138,10 @@ const renderMarkdown = (content, role) => {
 
 // 定义方法
 const sendMessage = async () => {
-  if (newMessage.value.trim() === '') return // 如果输入为空则不发送
+  if (isSending.value) return
+  if (newMessage.value.trim() === '') return
+
+  isSending.value = true
 
   // 添加用户消息
   chatMessages.value.push({
@@ -159,6 +166,7 @@ const sendMessage = async () => {
           chatHistoryWrapper.value.scrollHeight
       }
     })
+    isSending.value = false
     console.log(chatMessages.value)
   } else {
     // 流式处理
@@ -192,12 +200,23 @@ const sendMessage = async () => {
     }
 
     // 发送 SSE 请求
-    QuestionsAndAnswersStream(userMessage, (data) => {
-      // 将新数据加入队列
-      const originalMessage = data.replace(/\\n/g, '\n')
-      messageQueue.push(originalMessage)
-      // 触发处理
-      processQueue()
+    QuestionsAndAnswersStream(userMessage, (data, done) => {
+      // 假设 data 是字符串，done 是布尔值，done=true 表示流式结束
+      if (data) {
+        const originalMessage = data.replace(/\\n/g, '\n')
+        messageQueue.push(originalMessage)
+        processQueue()
+      }
+      if (done) {
+        // 等待队列全部处理完再解除禁用
+        const waitQueue = async () => {
+          while (isProcessingQueue || messageQueue.length > 0) {
+            await new Promise((resolve) => setTimeout(resolve, 50))
+          }
+          isSending.value = false
+        }
+        waitQueue()
+      }
     })
   }
   newMessage.value = ''
