@@ -37,11 +37,31 @@ export const QuestionsAndAnswersStream = (q, onMessage) => {
   const eventSource = new EventSource(apiUrl)
 
   eventSource.onmessage = (event) => {
-    onMessage(event.data)
+    // 尝试解析消息，判断是否为结束信号
+    let data = event.data
+    let done = false
+    try {
+      // 假设服务端最后一条消息为 {"done":true}
+      const parsed = JSON.parse(event.data)
+      if (parsed && parsed.done) {
+        done = true
+        data = '' // 结束信号不传递内容
+      } else if (typeof parsed.data === 'string') {
+        data = parsed.data
+      }
+    } catch (e) {
+      // 普通文本消息，忽略
+    }
+    onMessage(data, done)
+    if (done) {
+      eventSource.close()
+    }
   }
 
   eventSource.onerror = () => {
     eventSource.close()
+    // 发生错误时也通知前端流结束
+    onMessage('', true)
   }
 
   return eventSource
