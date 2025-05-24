@@ -210,6 +210,18 @@ public class AiGcSerevic : IAiGcService
         }
     }
 
+    public ApiResult GetHistoryService()
+    {
+        var userId = _informationUtil.GetCurrentUserId();
+        var cacheKey = string.Format(RedisKey.UserAiRecentDialogs, userId);
+
+        var Messages = CacheManager.Exist(cacheKey)
+            ? CacheManager.Get<List<message>>(cacheKey)
+            : new List<message>();
+
+        return ResultHelper.Success("请求成功", Messages);
+    }
+
     public ApiResult DelHistoryService()
     {
         var userId = _informationUtil.GetCurrentUserId();

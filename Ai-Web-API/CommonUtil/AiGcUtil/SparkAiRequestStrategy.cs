@@ -61,7 +61,6 @@ public class SparkAiRequestStrategy : IAiRequestStrategy
 
     public async IAsyncEnumerable<string> RequestStreamAsync<T>(T q, CancellationToken cancellationToken)
     {
-        //TODO 看能不能网页一刷新就把缓存清掉，相当于一刷新就是新的问答界面
         using (var client = new HttpClient())
         {
             client.DefaultRequestHeaders.Authorization =

@@ -1,9 +1,24 @@
 <template>
   <page-containel>
     <template #extra>
-      <div class="stream-switch-container">
-        流式返回：
-        <el-switch v-model="startStream" inline-prompt active-text="是" inactive-text="否" />
+      <div
+        class="stream-switch-container"
+        style="display: flex; align-items: center"
+      >
+        <span style="margin-right: 6px">流式返回：</span>
+        <el-switch
+          v-model="startStream"
+          inline-prompt
+          active-text="是"
+          inactive-text="否"
+        />
+        <el-button
+          type="danger"
+          size="small"
+          @click="clearChatHistory"
+          style="margin-left: 36px"
+          >清理历史</el-button
+        >
       </div>
     </template>
     <div id="app">
@@ -15,13 +30,27 @@
         <!-- 主体内容区，包含对话记录和输入框 -->
         <el-main>
           <div class="chat-history-wrapper" ref="chatHistoryWrapper">
-            <div class="chat-history" v-for="(message, index) in chatMessages" :key="index">
-              <div :class="message.role === 'user' ? 'user-message' : 'gpt-message'">
+            <div
+              class="chat-history"
+              v-for="(message, index) in chatMessages"
+              :key="index"
+            >
+              <div
+                :class="
+                  message.role === 'user' ? 'user-message' : 'gpt-message'
+                "
+              >
                 <el-avatar :src="gpt" v-if="message.role === 'gpt'" />
-                <div :class="message.role === 'user' ? 'user-content' : 'gpt-content'
-                  ">
+                <div
+                  :class="
+                    message.role === 'user' ? 'user-content' : 'gpt-content'
+                  "
+                >
                   <!-- <span class="message-role">{{ message.role }}</span> -->
-                  <span class="message-content" v-html="renderMarkdown(message.content, message.role)"></span>
+                  <span
+                    class="message-content"
+                    v-html="renderMarkdown(message.content, message.role)"
+                  ></span>
                 </div>
                 <div class="avatar-container" v-if="message.role === 'user'">
                   <el-avatar :src="userStore.user.photo || avatar" />
@@ -30,8 +59,13 @@
             </div>
           </div>
           <el-row class="input-row" style="margin-top: 15px">
-            <el-input v-model="newMessage" placeholder="请输入消息" clearable @keyup.enter="sendMessage"
-              style="width: 80%" />
+            <el-input
+              v-model="newMessage"
+              placeholder="请输入消息"
+              clearable
+              @keyup.enter="sendMessage"
+              style="width: 80%"
+            />
 
             <el-button type="primary" @click="sendMessage">发送</el-button>
           </el-row>
@@ -43,7 +77,12 @@
 
 <script setup>
 import { ref, nextTick, reactive } from 'vue'
-import { QuestionsAndAnswers, QuestionsAndAnswersStream,DelHistory } from '../../api/Aigc'
+import {
+  QuestionsAndAnswers,
+  QuestionsAndAnswersStream,
+  GetHistory,
+  DelHistory
+} from '../../api/Aigc'
 import { useUserStore } from '@/stores'
 import { onMounted } from 'vue'
 import gpt from '@/assets/gpt.png'
@@ -68,14 +107,19 @@ const userStore = useUserStore()
 const startStream = ref(true)
 
 // 清理对话历史的方法
-const clearChatHistory = () => {
+const clearChatHistory = async () => {
   chatMessages.value = []
   DelHistory()
-  console.log('对话历史已清空')
+}
+//获取对话历史的方法
+const getChatHistory = async () => {
+  chatMessages.value = []
+  var res = await GetHistory()
+  chatMessages.value = res.data.data
 }
 
 onMounted(() => {
-  clearChatHistory()
+  getChatHistory()
   userStore.getUser()
 })
 
@@ -111,9 +155,11 @@ const sendMessage = async () => {
     // 滚动到底部
     nextTick(() => {
       if (chatHistoryWrapper.value) {
-        chatHistoryWrapper.value.scrollTop = chatHistoryWrapper.value.scrollHeight
+        chatHistoryWrapper.value.scrollTop =
+          chatHistoryWrapper.value.scrollHeight
       }
     })
+    console.log(chatMessages.value)
   } else {
     // 流式处理
     const gptMessage = reactive({ role: 'gpt', content: '' })
@@ -137,7 +183,8 @@ const sendMessage = async () => {
           await new Promise((resolve) => setTimeout(resolve, 30))
           // 滚动到底部
           nextTick(() => {
-            chatHistoryWrapper.value.scrollTop = chatHistoryWrapper.value.scrollHeight
+            chatHistoryWrapper.value.scrollTop =
+              chatHistoryWrapper.value.scrollHeight
           })
         }
       }
