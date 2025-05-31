@@ -13,13 +13,13 @@ namespace CommonUtil.AiGcUtil;
 
 public class SparkAiRequestStrategy : IAiRequestStrategy
 {
-    private readonly AiGcOptions _aiGcOptions;
+    private readonly AiGcService _aiGcService;
     private readonly ILogger<SparkAiRequestStrategy> _logger;
 
-    public SparkAiRequestStrategy(IOptionsMonitor<AiGcOptions> aiGcOptions, ILogger<SparkAiRequestStrategy> logger)
+    public SparkAiRequestStrategy(IOptions<List<AiGcService>> aiGcOptions, ILogger<SparkAiRequestStrategy> logger)
     {
         _logger = logger;
-        _aiGcOptions = aiGcOptions.CurrentValue;
+        _aiGcService = aiGcOptions.Value.FirstOrDefault(x => x.Model == "Spark-Max");
     }
 
     public async Task<string> RequestAsync<T>(T q, CancellationToken cancellationToken)
@@ -27,7 +27,7 @@ public class SparkAiRequestStrategy : IAiRequestStrategy
         using (var client = new HttpClient())
         {
             client.DefaultRequestHeaders.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _aiGcOptions.token);
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _aiGcService.Token);
             client.DefaultRequestHeaders.Accept.Add(
                 new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -35,7 +35,7 @@ public class SparkAiRequestStrategy : IAiRequestStrategy
             var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
             try
             {
-                var response = await client.PostAsync(_aiGcOptions.url, content, cancellationToken);
+                var response = await client.PostAsync(_aiGcService.Url, content, cancellationToken);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -64,7 +64,7 @@ public class SparkAiRequestStrategy : IAiRequestStrategy
         using (var client = new HttpClient())
         {
             client.DefaultRequestHeaders.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _aiGcOptions.token);
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _aiGcService.Token);
             client.DefaultRequestHeaders.Accept.Add(
                 new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -72,7 +72,7 @@ public class SparkAiRequestStrategy : IAiRequestStrategy
                 "application/json");
 
             // 创建 HttpRequestMessage
-            using (var request = new HttpRequestMessage(HttpMethod.Post, _aiGcOptions.url))
+            using (var request = new HttpRequestMessage(HttpMethod.Post, _aiGcService.Url))
             {
                 request.Content = jsonContent;
 

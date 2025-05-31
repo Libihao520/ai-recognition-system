@@ -26,7 +26,7 @@ public static class HostBuiderExtend
         //注册邮箱配置
         builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("EmailOptions"));
         //AI模块配置
-        builder.Services.Configure<AiGcOptions>(builder.Configuration.GetSection("AiGcOptions"));
+        builder.Services.Configure<List<AiGcService>>(builder.Configuration.GetSection("AiGcOptions"));
 
         #region JWT校验
 

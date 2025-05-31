@@ -2,7 +2,11 @@ namespace Model.Options;
 
 public class AiGcOptions
 {
-    public string url { get; set; }
-
-    public string token { get; set; }
+    public List<AiGcService> Services { get; set; }
+}
+public class AiGcService
+{
+    public string Model { get; set; }
+    public string Url { get; set; }
+    public string Token { get; set; }
 }

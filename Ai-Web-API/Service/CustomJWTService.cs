@@ -28,7 +28,7 @@ public class CustomJwtService : ICustomJwtService
         {
             new Claim("Id", getUser.Id.ToString()),
             new Claim("Name", getUser.Name),
-            new Claim("RoleName",getUser.Role.ToString()),
+            new Claim("RoleName", getUser.Role.ToString()),
         };
 
         //需要加密：需要加密key:
@@ -38,7 +38,7 @@ public class CustomJwtService : ICustomJwtService
         SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         //token过期时间，10分钟有效期
-        var expires = DateTime.Now.AddMinutes(10);
+        var expires = DateTime.Now.AddMinutes(30);
 #if DEBUG
         //调试期间过期时间为100分钟
         expires = DateTime.Now.AddMinutes(100);
