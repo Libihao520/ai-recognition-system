@@ -23,15 +23,12 @@ http://47.107.226.106:8080/login
 
 1.  模型合并
 ```
-因为模型过大，被分割上传到git中，因此将代码拉取下来后需要本地对模型进行合成
-在路径 ai-recognition-system\Ai-Web-API\WebApi\Model 下，可见有很多part_开头的文件
-在任意空白处右键，更多=>点击Git Bash Here
-执行命令  cat part_* > animal.onnx 在文件夹下就会有我们合成后的模型animal.onnx
+因为我的演示模型过大，我单独上传到了百度云网盘了，如果需要的话请自行下载
+通过网盘分享的文件：Model
+链接: https://pan.baidu.com/s/1sTZ8uQLpyrl3hygkZ3VmvA?pwd=ewfk 提取码: ewfk
+模型下载下来后放到路径 ai-recognition-system\Ai-Web-API\WebApi\Model 下
 ```
-![image](readmePhoto/git1.png)
-![image](readmePhoto/git2.png)
-1.  xxxx
-2.  xxxx
+
 
 ## 详细介绍
 提示：因本开源项目还在开发阶段，下面介绍可能和实际项目有所差异
