@@ -2,6 +2,6 @@
 Ai-Web-API/.vs
 Ai-Web-API/.idea
 Ai-Web-API/Service/best.onnx
-Ai-Web-API/WebApi/Model/animal.onnx
 Ai-Web-API/.DS_Store
 .DS_Store
+Ai-Web-API/WebApi/Model
