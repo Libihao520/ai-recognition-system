@@ -196,17 +196,53 @@ public class AiGcSerevic : IAiGcService
         }
     }
 
-    public async Task<ApiResult> QuestionsAndAnswers(string q, CancellationToken cancellationToken)
+    public async Task<ApiResult> QuestionsAndAnswers(string q, string? model, CancellationToken cancellationToken)
     {
-        var requestAsync = await _aiRequestProcessor.SparkProcess(q, cancellationToken);
-        return ResultHelper.Success("请求成功！", requestAsync);
+        object? result = null;
+        if (!string.IsNullOrEmpty(model))
+        {
+            if (model.StartsWith("DeepSeek", StringComparison.OrdinalIgnoreCase))
+            {
+                result = await _aiRequestProcessor.DeepSeekProcess(q, model, cancellationToken);
+            }
+            else if (model.StartsWith("Spark", StringComparison.OrdinalIgnoreCase))
+            {
+                result = await _aiRequestProcessor.SparkProcess(q, cancellationToken);
+            }
+            else
+            {
+                return ResultHelper.Error("不支持的模型类型");
+            }
+        }
+        else
+        {
+            // 默认
+            result = await _aiRequestProcessor.SparkProcess(q, cancellationToken);
+        }
+
+        return ResultHelper.Success("请求成功！", result);
     }
 
-    public async IAsyncEnumerable<string> QuestionsAndAnswersStream(string q, CancellationToken cancellationToken)
+    public async IAsyncEnumerable<string> QuestionsAndAnswersStream(string q, string model,
+        CancellationToken cancellationToken)
     {
-        await foreach (var chunk in _aiRequestProcessor.SparkProcessStreamAsync(q, cancellationToken))
+        if (model.StartsWith("DeepSeek", StringComparison.OrdinalIgnoreCase))
         {
-            yield return chunk;
+            await foreach (var chunk in _aiRequestProcessor.DeepSeekProcessStreamAsync(q, model, cancellationToken))
+            {
+                yield return chunk;
+            }
+        }
+        else if (model.StartsWith("Spark", StringComparison.OrdinalIgnoreCase))
+        {
+            await foreach (var chunk in _aiRequestProcessor.SparkProcessStreamAsync(q, cancellationToken))
+            {
+                yield return chunk;
+            }
+        }
+        else
+        {
+            yield return "不支持的模型类型";
         }
     }
 

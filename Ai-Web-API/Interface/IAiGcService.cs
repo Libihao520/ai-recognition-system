@@ -29,14 +29,14 @@ public interface IAiGcService
     /// </summary>
     /// <param name="q"></param>
     /// <returns></returns>
-    Task<ApiResult> QuestionsAndAnswers(string q, CancellationToken cancellationToken);
+    Task<ApiResult> QuestionsAndAnswers(string q, string? model, CancellationToken cancellationToken);
 
     /// <summary>
     /// 在线问答（流式传输）
     /// </summary>
     /// <param name="q"></param>
     /// <returns></returns>
-    IAsyncEnumerable<string> QuestionsAndAnswersStream(string q, CancellationToken cancellationToken);
+    IAsyncEnumerable<string> QuestionsAndAnswersStream(string q, string? model, CancellationToken cancellationToken);
 
     /// <summary>
     /// 获取缓存

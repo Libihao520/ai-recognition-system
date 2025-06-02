@@ -19,6 +19,8 @@ public class AutofacModuleRegister : Autofac.Module
         builder.RegisterType<AiRequestStrategyFactory>().AsSelf().SingleInstance();
         //讯飞API实现注册
         builder.RegisterType<SparkAiRequestStrategy>().AsSelf().InstancePerDependency();
+        //DeepSeek-API实现注册
+        builder.RegisterType<DeepSeekAiRequestStrategy>().AsSelf().InstancePerDependency();
         //发送邮箱工具
         builder.RegisterType<EmailUtil>().AsSelf().SingleInstance();
         //获取用户信息工具

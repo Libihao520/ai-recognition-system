@@ -50,20 +50,23 @@ public class AigcController : ControllerBase
     ///  在线问答
     /// </summary>
     /// <param name="q"></param>
+    /// <param name="model"></param>
     /// <returns></returns>
     [HttpGet]
-    public Task<ApiResult> QuestionsAndAnswers([FromQuery] string q, CancellationToken cancellationToken)
+    public Task<ApiResult> QuestionsAndAnswers([FromQuery] string q, string? model, CancellationToken cancellationToken)
     {
-        return _aiGcService.QuestionsAndAnswers(q, cancellationToken);
+        return _aiGcService.QuestionsAndAnswers(q, model, cancellationToken);
     }
 
     /// <summary>
     /// 在线问答（流式传输）
     /// </summary>
     /// <param name="q"></param>
+    /// <param name="model"></param>
     [HttpGet]
     [AllowAnonymous]
-    public async Task QuestionsAndAnswersStream([FromQuery] string q, string token, CancellationToken cancellationToken)
+    public async Task QuestionsAndAnswersStream([FromQuery] string q, string token, string model,
+        CancellationToken cancellationToken)
     {
         // 验证 token 并获取 ClaimsPrincipal
         var principal = ValidateToken(token);
@@ -80,7 +83,7 @@ public class AigcController : ControllerBase
         var response = Response;
         response.Headers.Add("Content-Type", "text/event-stream");
 
-        await foreach (var message in _aiGcService.QuestionsAndAnswersStream(q, cancellationToken))
+        await foreach (var message in _aiGcService.QuestionsAndAnswersStream(q, model, cancellationToken))
         {
             // SSE 的消息格式是 "data: <message>\n\n"
             await response.WriteAsync($"data: {message}\n\n");
@@ -97,7 +100,7 @@ public class AigcController : ControllerBase
     {
         return _aiGcService.GetHistoryService();
     }
-    
+
     /// <summary>
     /// 移除缓存
     /// </summary>

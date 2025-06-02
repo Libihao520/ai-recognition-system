@@ -26,7 +26,7 @@ public class AiRequestProcessor
     public async Task<string> SparkProcess(string q, CancellationToken cancellationToken)
     {
         var messages = GetAndUpdateMessages(q);
-        var sparkRequestData = new SparkRequestData { messages = messages };
+        var sparkRequestData = new AiRequestData { messages = messages };
 
         var requestStrategy = _requestStrategyFactory.Create("Spark");
         var requestAsync = await requestStrategy.RequestAsync(sparkRequestData, cancellationToken);
@@ -38,7 +38,7 @@ public class AiRequestProcessor
     public async IAsyncEnumerable<string> SparkProcessStreamAsync(string q, CancellationToken cancellationToken)
     {
         var messages = GetAndUpdateMessages(q);
-        var sparkRequestData = new SparkRequestData
+        var sparkRequestData = new AiRequestData
         {
             messages = messages,
             stream = true
@@ -46,7 +46,7 @@ public class AiRequestProcessor
         var requestStrategy = _requestStrategyFactory.Create("Spark");
         var fullResponse = new StringBuilder(); // 用于累积完整响应
 
-        await foreach (var chunk in requestStrategy.RequestStreamAsync<SparkRequestData>(sparkRequestData,
+        await foreach (var chunk in requestStrategy.RequestStreamAsync<AiRequestData>(sparkRequestData,
                            cancellationToken))
         {
             yield return chunk;
@@ -58,6 +58,46 @@ public class AiRequestProcessor
         GetAndUpdateMessages(finalResponse, "gpt"); // 存入缓存
     }
 
+    public async Task<string> DeepSeekProcess(string q,string model, CancellationToken cancellationToken)
+    {
+        var messages = GetAndUpdateMessages(q);
+        var sparkRequestData = new AiRequestData
+        {
+            model = model,
+            messages = messages,
+            stream = false
+        };
+
+        var requestStrategy = _requestStrategyFactory.Create("DeepSeek");
+        var requestAsync = await requestStrategy.RequestAsync<AiRequestData>(sparkRequestData, cancellationToken);
+
+        GetAndUpdateMessages(requestAsync, "gpt");
+        return requestAsync;
+    }
+
+    public async IAsyncEnumerable<string> DeepSeekProcessStreamAsync(string q,string model, CancellationToken cancellationToken)
+    {
+        var messages = GetAndUpdateMessages(q);
+        var requestData = new AiRequestData
+        {
+            model = model,
+            messages = messages,
+            stream = true
+        };
+        var requestStrategy = _requestStrategyFactory.Create("DeepSeek");
+        var fullResponse = new StringBuilder(); // 用于累积完整响应
+
+        await foreach (var chunk in requestStrategy.RequestStreamAsync<AiRequestData>(requestData,
+                           cancellationToken))
+        {
+            yield return chunk;
+            fullResponse.Append(chunk);
+        }
+
+        // 流结束后处理
+        string finalResponse = fullResponse.ToString().Replace("\\n", "\n");
+        GetAndUpdateMessages(finalResponse, "gpt"); // 存入缓存
+    }
     private List<message> GetAndUpdateMessages(string newMessage, string role = "user")
     {
         var userId = _informationUtil.GetCurrentUserId();

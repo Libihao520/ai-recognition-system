@@ -23,15 +23,15 @@ export const PutModelService = (file, additionalData = {}) => {
 export const DelModelService = (id) =>
   request.delete('/Aigc/DelModelService', { params: { id } })
 
-export const QuestionsAndAnswers = (q) =>
-  request.get('/Aigc/QuestionsAndAnswers', { params: { q } })
+export const QuestionsAndAnswers = (q, model) =>
+  request.get('/Aigc/QuestionsAndAnswers', { params: { q, model } })
 
-export const QuestionsAndAnswersStream = (q, onMessage) => {
+export const QuestionsAndAnswersStream = (q, onMessage, model) => {
   const useStore = useUserStore()
   const token = useStore.token
 
-  // 构造完整的 API 地址，包含 token 作为查询参数
-  const apiUrl = `${baseURL}/Aigc/QuestionsAndAnswersStream?q=${encodeURIComponent(q)}&token=${encodeURIComponent(token)}`
+  // 构造完整的 API 地址，包含 token 和 model 作为查询参数
+  const apiUrl = `${baseURL}/Aigc/QuestionsAndAnswersStream?q=${encodeURIComponent(q)}&token=${encodeURIComponent(token)}&model=${encodeURIComponent(model)}`
 
   // 创建 EventSource 实例
   const eventSource = new EventSource(apiUrl)

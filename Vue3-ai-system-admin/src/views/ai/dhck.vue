@@ -12,6 +12,12 @@
           active-text="是"
           inactive-text="否"
         />
+        <span style="margin-left: 24px; margin-right: 6px">选择模型：</span>
+        <el-select v-model="currentModel" style="width: 150px" size="small">
+          <el-option label="Spark-Max" value="Spark-Max" />
+          <el-option label="DeepSeek-V3" value="DeepSeek-V3" />
+          <el-option label="DeepSeek-R1" value="DeepSeek-R1" />
+        </el-select>
         <el-button
           type="danger"
           size="small"
@@ -25,7 +31,19 @@
       <el-container style="height: 80%">
         <!-- 标题栏 -->
         <el-header>
-          <div class="header-content">与讯飞星火Spark Max对话窗口</div>
+          <div class="header-content">
+            与
+            <template v-if="currentModel === 'Spark-Max'">
+              讯飞星火Spark Max
+            </template>
+            <template v-else-if="currentModel === 'DeepSeek-V3'">
+              DeepSeek-V3
+            </template>
+            <template v-else-if="currentModel === 'DeepSeek-R1'">
+              DeepSeek-R1
+            </template>
+            对话窗口
+          </div>
         </el-header>
         <!-- 主体内容区，包含对话记录和输入框 -->
         <el-main>
@@ -109,6 +127,7 @@ const chatHistoryWrapper = ref(null) // 用于滚动操作的 DOM 引用
 const userStore = useUserStore()
 const startStream = ref(true)
 const isSending = ref(false)
+const currentModel = ref('Spark-Max')
 
 // 清理对话历史的方法
 const clearChatHistory = async () => {
@@ -154,7 +173,7 @@ const sendMessage = async () => {
 
   if (startStream.value === false) {
     //非流式
-    const res = await QuestionsAndAnswers(newMessage.value)
+    const res = await QuestionsAndAnswers(newMessage.value, currentModel.value)
     chatMessages.value.push({
       role: 'gpt',
       content: res.data.data
@@ -200,24 +219,28 @@ const sendMessage = async () => {
     }
 
     // 发送 SSE 请求
-    QuestionsAndAnswersStream(userMessage, (data, done) => {
-      // 假设 data 是字符串，done 是布尔值，done=true 表示流式结束
-      if (data) {
-        const originalMessage = data.replace(/\\n/g, '\n')
-        messageQueue.push(originalMessage)
-        processQueue()
-      }
-      if (done) {
-        // 等待队列全部处理完再解除禁用
-        const waitQueue = async () => {
-          while (isProcessingQueue || messageQueue.length > 0) {
-            await new Promise((resolve) => setTimeout(resolve, 50))
-          }
-          isSending.value = false
+    QuestionsAndAnswersStream(
+      userMessage,
+      (data, done) => {
+        // 假设 data 是字符串，done 是布尔值，done=true 表示流式结束
+        if (data) {
+          const originalMessage = data.replace(/\\n/g, '\n')
+          messageQueue.push(originalMessage)
+          processQueue()
         }
-        waitQueue()
-      }
-    })
+        if (done) {
+          // 等待队列全部处理完再解除禁用
+          const waitQueue = async () => {
+            while (isProcessingQueue || messageQueue.length > 0) {
+              await new Promise((resolve) => setTimeout(resolve, 50))
+            }
+            isSending.value = false
+          }
+          waitQueue()
+        }
+      },
+      currentModel.value
+    )
   }
   newMessage.value = ''
 }

@@ -1,6 +1,6 @@
 namespace Model.UtilData;
 
-public class SparkRequestData
+public class AiRequestData
 {
     /// <summary>
     /// 模型版本
